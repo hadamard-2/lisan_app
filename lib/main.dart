@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/pages/auth/login_page.dart';
+import 'package:lisan_app/pages/profile_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF14161B),
         textTheme: GoogleFonts.rubikTextTheme(ThemeData.dark().textTheme),
       ),
-      home: const LoginPage(),
+      home: const ProfilePage(),
     );
   }
 }
