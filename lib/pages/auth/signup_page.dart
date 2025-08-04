@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lisan_app/pages/home_page.dart';
 import '../../widgets/auth/auth_header.dart';
 import '../../widgets/auth/auth_text_field.dart';
 import '../../widgets/auth/auth_button.dart';
@@ -112,11 +113,15 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
       if (mounted) {
         setState(() => _isLoading = false);
         // Navigate to home or show success
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Account created successfully!'),
-            backgroundColor: Color(0xFFF1CC06),
-          ),
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     content: Text('Account created successfully!'),
+        //     backgroundColor: Color(0xFFF1CC06),
+        //   ),
+        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
         );
       }
     }
