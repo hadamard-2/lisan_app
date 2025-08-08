@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final int streakCount = 47;
   final int hearts = 3;
   final int maxHearts = 5;
-  final String userName = "Jim";
+  final String userName = "Dwight";
 
   final List<UnitData> units = [
     UnitData(
@@ -351,11 +351,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               color: Colors.white.withAlpha(51),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              Icons.visibility_rounded,
-              color: Colors.white,
-              size: 24,
-            ),
+            child: Icon(Icons.book_rounded, color: Colors.white, size: 24),
           ),
         ],
       ),

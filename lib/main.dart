@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/pages/auth/login_page.dart';
+import 'package:lisan_app/pages/exercise/build_sentence_exercise_page.dart';
+import 'package:lisan_app/pages/exercise/translation_exercise_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +29,28 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF14161B),
         textTheme: GoogleFonts.rubikTextTheme(ThemeData.dark().textTheme),
       ),
-      home: const LoginPage(),
+      // home: const LoginPage(),
+      // home: TranslationExercisePage(
+      //   sourceText: "Hello, how are you?",
+      //   correctAnswer: "ሰላም፣ እንዴት ነህ?",
+      //   isAmharicToEnglish: false,
+      //   wordBank: ["ሰላም፣", "እንዴት", "ነህ?"], // Optional
+      //   currentExercise: 3,
+      //   totalExercises: 10,
+      //   initialHearts: 5,
+      // ),
+      // home: BuildSentenceExercisePage(
+      //   targetSentenceEnglish: "I am learning Amharic",
+      //   correctWordsOrder: ["እኔ", "አማርኛ", "እየተማርኩ", "ነው"],
+      //   wordBank: [
+      //     "እኔ", "አማርኛ", "እየተማርኩ", "ነው", // Correct words
+      //     "እያነበብኩ", "ቤት", "ውሀ", // Distractors
+      //   ],
+      //   currentExercise: 2,
+      //   totalExercises: 10,
+      //   initialHearts: 5,
+      //   isAmharicSentence: true,
+      // ),
     );
   }
 }

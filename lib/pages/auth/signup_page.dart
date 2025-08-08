@@ -128,20 +128,24 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
   }
 
   Future<void> _handleGoogleSignUp() async {
-    setState(() => _isGoogleLoading = true);
+    // setState(() => _isGoogleLoading = true);
 
-    // Simulate Google sign-up process
-    await Future.delayed(const Duration(seconds: 2));
+    // // Simulate Google sign-up process
+    // await Future.delayed(const Duration(seconds: 2));
 
-    if (mounted) {
-      setState(() => _isGoogleLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Google sign-up successful!'),
-          backgroundColor: Color(0xFFF1CC06),
-        ),
-      );
-    }
+    // if (mounted) {
+    //   setState(() => _isGoogleLoading = false);
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(
+    //       content: Text('Google sign-up successful!'),
+    //       backgroundColor: Color(0xFFF1CC06),
+    //     ),
+    //   );
+    // }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );
   }
 
   @override
