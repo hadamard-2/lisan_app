@@ -52,9 +52,9 @@ abstract class BaseAuthPageState<T extends BaseAuthPage> extends State<T>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: FadeTransition(
+    return SafeArea(
+      child: Scaffold(
+        body: FadeTransition(
           opacity: _fadeAnimation,
           child: SlideTransition(
             position: _slideAnimation,

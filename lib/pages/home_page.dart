@@ -600,10 +600,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF14161B),
-      body: SafeArea(
-        child: FadeTransition(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color(0xFF14161B),
+        body: FadeTransition(
           opacity: _fadeAnimation,
           child: Column(
             children: [
