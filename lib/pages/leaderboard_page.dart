@@ -1,32 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/material_symbols_icons.dart';
-// import 'package:crystal_navigation_bar/crystal_navigation_bar.dart';
-// import 'package:iconly/iconly.dart';
-
-// Design System Colors
-class DesignColors {
-  static const Color primaryGold = Color(0xFFF1CC06);
-  static const Color lightGold = Color(0xFFFFD700);
-  static const Color darkestBg = Color(0xFF14161B);
-  static const Color cardBg = Color(0xFF1E2127);
-  static const Color borderColor = Color(0xFF2A2D33);
-  static const Color primaryText = Colors.white;
-  static const Color secondaryText = Color(0xFFB0B0B0);
-  static const Color tertiaryText = Color(0xFF888888);
-  static const Color successColor = Colors.green;
-  static const Color errorColor = Colors.red;
-}
-
-// Design System Spacing
-class DesignSpacing {
-  static const double xs = 4.0;
-  static const double sm = 8.0;
-  static const double md = 16.0;
-  static const double lg = 24.0;
-  static const double xl = 32.0;
-  static const double xxl = 40.0;
-  static const double xxxl = 48.0;
-}
+import 'package:lisan_app/design/style.dart';
 
 // Mock data model
 class User {
@@ -47,8 +20,6 @@ class User {
   });
 }
 
-// enum _SelectedTab { home, leaderboard, profile }
-
 class LeaderboardPage extends StatefulWidget {
   const LeaderboardPage({super.key});
 
@@ -57,21 +28,6 @@ class LeaderboardPage extends StatefulWidget {
 }
 
 class _LeaderboardPageState extends State<LeaderboardPage> {
-  // var _selectedTab = _SelectedTab.leaderboard;
-
-  // void _handleIndexChanged(int i) {
-  //   setState(() {
-  //     _selectedTab = _SelectedTab.values[i];
-  //   });
-  // }
-
-  int _selectedIndex = 0;
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   // Mock data matching the screenshot
   final List<User> mockUsers = [
     User(
@@ -106,97 +62,31 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: DesignColors.darkestBg,
-        extendBody: true,
-        body: Column(
-          children: [
-            // Header
-            LeaderboardHeader(),
+    return Column(
+      children: [
+        // Header
+        LeaderboardHeader(),
 
-            // Leaderboard List
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.only(bottom: 120),
-                itemCount: mockUsers.length,
-                itemBuilder: (context, index) {
-                  final user = mockUsers[index];
-                  final rank = index + 1;
-                  final isPromotionZone = rank == 6;
+        // Leaderboard List
+        Expanded(
+          child: ListView.builder(
+            padding: EdgeInsets.only(bottom: 120),
+            itemCount: mockUsers.length,
+            itemBuilder: (context, index) {
+              final user = mockUsers[index];
+              final rank = index + 1;
+              final isPromotionZone = rank == 6;
 
-                  return Column(
-                    children: [
-                      if (isPromotionZone) PromotionZoneWidget(),
-                      LeaderboardItem(user: user, rank: rank),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: Container(
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          decoration: BoxDecoration(
-            color: DesignColors.cardBg,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: DesignColors.borderColor, width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: DesignColors.darkestBg.withAlpha((0.8 * 255).toInt()),
-                blurRadius: 20,
-                spreadRadius: 0,
-                offset: Offset(0, -2),
-              ),
-            ],
-          ),
-          height: 80,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Symbols.home_rounded, 0),
-              _buildNavItem(Symbols.trophy, 1),
-              _buildNavItem(Symbols.person_rounded, 2),
-            ],
+              return Column(
+                children: [
+                  if (isPromotionZone) PromotionZoneWidget(),
+                  LeaderboardItem(user: user, rank: rank),
+                ],
+              );
+            },
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, int index) {
-    final isSelected = _selectedIndex == index;
-    return GestureDetector(
-      onTap: () => _onItemTapped(index),
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            SizedBox(height: 6),
-            Icon(
-              icon,
-              size: 32,
-              fill: isSelected ? 1 : 0,
-              color: isSelected
-                  ? DesignColors.lightGold
-                  : DesignColors.tertiaryText.withAlpha((0.5 * 255).toInt()),
-            ),
-            SizedBox(height: 6),
-            Container(
-              height: 2,
-              width: 18,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? DesignColors.primaryGold
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(1),
-              ),
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 }
@@ -252,7 +142,7 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
       (league) => league['current'] == true,
     );
     if (currentIndex != -1) {
-      const itemWidth = 95.0; // Trophy width + spacing
+      const itemWidth = 92.5; // Trophy width + spacing
       final screenWidth = MediaQuery.of(context).size.width;
       final targetOffset =
           (currentIndex * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
@@ -387,7 +277,8 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
       margin: const EdgeInsets.only(bottom: 40),
       decoration: BoxDecoration(
         color: isCompleted && nextIsUnlocked
-            ? DesignColors.primaryGold.withAlpha((0.2 * 255).toInt())
+            // ? DesignColors.primaryGold.withAlpha((0.2 * 255).toInt())
+            ? DesignColors.borderColor
             : DesignColors.borderColor.withAlpha((0.3 * 255).toInt()),
         borderRadius: BorderRadius.circular(2),
       ),
@@ -450,7 +341,7 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
                     height: 50,
                     decoration: BoxDecoration(
                       color: DesignColors.darkestBg.withAlpha(
-                        (0.7 * 255).toInt(),
+                        (0.2 * 255).toInt(),
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -515,11 +406,11 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
 
   Color _getContrastingTextColor(Color backgroundColor) {
     // Calculate luminance to determine if text should be dark or light
-    final luminance =
-        (0.299 * backgroundColor.red +
-            0.587 * backgroundColor.green +
-            0.114 * backgroundColor.blue) /
-        255;
+    final red = (backgroundColor.r * 255.0).round() & 0xff;
+    final green = (backgroundColor.g * 255.0).round() & 0xff;
+    final blue = (backgroundColor.b * 255.0).round() & 0xff;
+
+    final luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
 
     return luminance > 0.5 ? DesignColors.darkestBg : Colors.white;
   }

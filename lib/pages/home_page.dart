@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-import 'package:lisan_app/pages/profile_page.dart';
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -23,7 +21,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   // Constants for scroll calculation
   final double _headerHeight =
       280.0; // Height before units start (welcome + current indicator)
-  final double _approximateUnitHeight = 650.0; // Approximate height per unit
+  final double _approximateUnitHeight = 500.0; // Approximate height per unit
 
   // Demo data
   final int streakCount = 47;
@@ -158,7 +156,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   // Mathematical positioning for smooth curves (sin wave with bigger amplitude)
   double _getLessonOffset(int lessonIndex) {
-    const double amplitude = -90.0; // Increase for bigger wave
+    const double amplitude = -110.0; // Increase for bigger wave
     const double frequency =
         pi / 3; // Controls wave period (6 lessons per cycle)
     return sin(lessonIndex * frequency) * amplitude;
@@ -223,38 +221,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ),
                   ),
                 ],
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Profile Button
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfilePage()),
-              );
-            },
-            child: Container(
-              width: 37,
-              height: 37,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFF1CC06), Color(0xFFFFD700)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: const Center(
-                child: Text(
-                  "D",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF14161B),
-                  ),
-                ),
               ),
             ),
           ),
@@ -600,29 +566,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: const Color(0xFF14161B),
-        body: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Column(
-            children: [
-              _buildTopNavigation(),
-              const SizedBox(height: 16),
-              _buildWelcomeSection(),
-              const SizedBox(height: 16),
-              // Dynamic Current Unit Indicator (shows which unit is in viewport)
-              _buildCurrentUnitIndicator(),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  child: _buildAdventurePath(),
-                ),
-              ),
-              const SizedBox(height: 32),
-            ],
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: Column(
+        children: [
+          const SizedBox(height: 8),
+          _buildTopNavigation(),
+          const SizedBox(height: 4),
+          _buildWelcomeSection(),
+          const SizedBox(height: 8),
+          // Dynamic Current Unit Indicator
+          _buildCurrentUnitIndicator(),
+          const SizedBox(height: 4),
+          Expanded(
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: _buildAdventurePath(),
+            ),
           ),
-        ),
+          const SizedBox(height: 32),
+        ],
       ),
     );
   }

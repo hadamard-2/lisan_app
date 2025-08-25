@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class AuthTextField extends StatelessWidget {
+class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
-  final String hintText;
+  final String? hintText;
   final IconData prefixIcon;
   final bool obscureText;
   final Widget? suffixIcon;
@@ -12,12 +12,12 @@ class AuthTextField extends StatelessWidget {
   final void Function(String)? onChanged;
   final Color? borderColor;
 
-  const AuthTextField({
+  const CustomTextField({
     super.key,
     required this.controller,
     required this.labelText,
-    required this.hintText,
     required this.prefixIcon,
+    this.hintText,
     this.obscureText = false,
     this.suffixIcon,
     this.keyboardType = TextInputType.text,

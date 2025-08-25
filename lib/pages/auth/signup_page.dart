@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lisan_app/pages/home_page.dart';
+import 'package:lisan_app/root_screen.dart';
 import '../../widgets/auth/auth_header.dart';
-import '../../widgets/auth/auth_text_field.dart';
+import '../../widgets/custom_text_field.dart';
 import '../../widgets/auth/auth_button.dart';
 import '../../widgets/auth/google_signin_button.dart';
 import '../../widgets/auth/auth_divider.dart';
@@ -121,7 +121,7 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
         // );
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => RootScreen()),
         );
       }
     }
@@ -144,7 +144,7 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
     // }
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomePage()),
+      MaterialPageRoute(builder: (context) => RootScreen()),
     );
   }
 
@@ -176,7 +176,7 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
           const SizedBox(height: 32),
 
           // Name Field
-          AuthTextField(
+          CustomTextField(
             controller: _nameController,
             labelText: 'Full Name',
             hintText: 'Enter your full name',
@@ -188,7 +188,7 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
           const SizedBox(height: 20),
 
           // Email Field
-          AuthTextField(
+          CustomTextField(
             controller: _emailController,
             labelText: 'Email',
             hintText: 'Enter your email',
@@ -200,7 +200,7 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
           const SizedBox(height: 20),
 
           // Password Field
-          AuthTextField(
+          CustomTextField(
             controller: _passwordController,
             labelText: 'Password',
             hintText: 'Enter your password',
@@ -223,7 +223,7 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
           const SizedBox(height: 20),
 
           // Confirm Password Field
-          AuthTextField(
+          CustomTextField(
             controller: _confirmPasswordController,
             labelText: 'Confirm Password',
             hintText: 'Confirm your password',

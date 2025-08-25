@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lisan_app/pages/home_page.dart';
+import 'package:lisan_app/root_screen.dart';
 import '../../widgets/auth/auth_header.dart';
-import '../../widgets/auth/auth_text_field.dart';
+import '../../widgets/custom_text_field.dart';
 import '../../widgets/auth/auth_button.dart';
 import '../../widgets/auth/google_signin_button.dart';
 import '../../widgets/auth/auth_divider.dart';
@@ -71,7 +71,7 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
         // );
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => RootScreen()),
         );
       }
     }
@@ -95,7 +95,7 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomePage()),
+      MaterialPageRoute(builder: (context) => RootScreen()),
     );
   }
 
@@ -127,7 +127,7 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
           const SizedBox(height: 32),
 
           // Email Field
-          AuthTextField(
+          CustomTextField(
             controller: _emailController,
             labelText: 'Email',
             hintText: 'Enter your email',
@@ -139,7 +139,7 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
           const SizedBox(height: 20),
 
           // Password Field
-          AuthTextField(
+          CustomTextField(
             controller: _passwordController,
             labelText: 'Password',
             hintText: 'Enter your password',

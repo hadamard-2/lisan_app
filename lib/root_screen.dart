@@ -1,0 +1,94 @@
+import 'package:flutter/material.dart';
+import 'package:lisan_app/pages/home_page.dart';
+import 'package:lisan_app/pages/leaderboard_page.dart';
+import 'package:lisan_app/pages/user_stats_page.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:lisan_app/design/style.dart';
+
+class RootScreen extends StatefulWidget {
+  const RootScreen({super.key});
+
+  @override
+  State<RootScreen> createState() => _RootScreenState();
+}
+
+class _RootScreenState extends State<RootScreen> {
+  int _pageIndex = 0;
+  void _onNavItemTapped(int index) {
+    setState(() {
+      _pageIndex = index;
+    });
+  }
+
+  final _pages = [HomePage(), LeaderboardPage(), UserStatsPage()];
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        extendBody: true,
+        body: _pages[_pageIndex],
+        bottomNavigationBar: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          decoration: BoxDecoration(
+            color: DesignColors.cardBg,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: DesignColors.borderColor, width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: DesignColors.darkestBg.withAlpha((0.8 * 255).toInt()),
+                blurRadius: 20,
+                spreadRadius: 0,
+                offset: Offset(0, -2),
+              ),
+            ],
+          ),
+          height: 80,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(Symbols.home_rounded, 0),
+              _buildNavItem(Symbols.trophy, 1),
+              _buildNavItem(Symbols.person_rounded, 2),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, int index) {
+    final isSelected = _pageIndex == index;
+    return GestureDetector(
+      onTap: () => _onNavItemTapped(index),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            SizedBox(height: 6),
+            Icon(
+              icon,
+              size: 32,
+              fill: isSelected ? 1 : 0,
+              color: isSelected
+                  ? DesignColors.lightGold
+                  : DesignColors.tertiaryText.withAlpha((0.5 * 255).toInt()),
+            ),
+            SizedBox(height: 6),
+            Container(
+              height: 2,
+              width: 18,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? DesignColors.primaryGold
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
