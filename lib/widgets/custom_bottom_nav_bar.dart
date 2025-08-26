@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:lisan_app/design/style.dart';
+import 'package:lisan_app/design/theme.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -28,17 +28,15 @@ class CustomBottomNavBar extends StatelessWidget {
               size: 32,
               fill: isSelected ? 1 : 0,
               color: isSelected
-                  ? DesignColors.lightGold
-                  : DesignColors.tertiaryText.withAlpha((0.5 * 255).toInt()),
+                  ? DesignColors.primaryLight
+                  : DesignColors.textTertiary.withAlpha((0.5 * 255).toInt()),
             ),
             SizedBox(height: 6),
             Container(
               height: 2,
               width: 18,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? DesignColors.primaryGold
-                    : Colors.transparent,
+                color: isSelected ? DesignColors.primary : Colors.transparent,
                 borderRadius: BorderRadius.circular(1),
               ),
             ),
@@ -53,12 +51,12 @@ class CustomBottomNavBar extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: DesignColors.cardBg,
+        color: DesignColors.backgroundCard,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DesignColors.borderColor, width: 1),
+        border: Border.all(color: DesignColors.backgroundBorder, width: 1),
         boxShadow: [
           BoxShadow(
-            color: DesignColors.darkestBg.withAlpha((0.8 * 255).toInt()),
+            color: DesignColors.backgroundDark.withAlpha((0.8 * 255).toInt()),
             blurRadius: 20,
             offset: Offset(0, -2),
           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lisan_app/design/style.dart';
+import 'package:lisan_app/design/theme.dart';
 
 // Mock data model
 class User {
@@ -183,7 +183,7 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
                   Text(
                     '${currentLeague['name']} League',
                     style: const TextStyle(
-                      color: DesignColors.primaryText,
+                      color: DesignColors.textPrimary,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,
@@ -193,7 +193,7 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
                   Text(
                     'League ${currentIndex + 1} of ${leagues.length}',
                     style: TextStyle(
-                      color: DesignColors.secondaryText,
+                      color: DesignColors.textSecondary,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -206,14 +206,10 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
                   vertical: DesignSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: DesignColors.primaryGold.withAlpha(
-                    (0.1 * 255).toInt(),
-                  ),
+                  color: DesignColors.primary.withAlpha((0.1 * 255).toInt()),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: DesignColors.primaryGold.withAlpha(
-                      (0.3 * 255).toInt(),
-                    ),
+                    color: DesignColors.primary.withAlpha((0.3 * 255).toInt()),
                     width: 1,
                   ),
                 ),
@@ -222,14 +218,14 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
                   children: [
                     Icon(
                       Icons.access_time,
-                      color: DesignColors.primaryGold,
+                      color: DesignColors.primary,
                       size: 16,
                     ),
                     SizedBox(width: DesignSpacing.xs),
                     const Text(
                       '4 DAYS',
                       style: TextStyle(
-                        color: DesignColors.primaryGold,
+                        color: DesignColors.primary,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                         letterSpacing: 0.5,
@@ -278,8 +274,8 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
       decoration: BoxDecoration(
         color: isCompleted && nextIsUnlocked
             // ? DesignColors.primaryGold.withAlpha((0.2 * 255).toInt())
-            ? DesignColors.borderColor
-            : DesignColors.borderColor.withAlpha((0.3 * 255).toInt()),
+            ? DesignColors.backgroundBorder
+            : DesignColors.backgroundBorder.withAlpha((0.3 * 255).toInt()),
         borderRadius: BorderRadius.circular(2),
       ),
     );
@@ -304,7 +300,9 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
             decoration: BoxDecoration(
               color: isUnlocked
                   ? color
-                  : DesignColors.borderColor.withAlpha((0.3 * 255).toInt()),
+                  : DesignColors.backgroundBorder.withAlpha(
+                      (0.3 * 255).toInt(),
+                    ),
               borderRadius: BorderRadius.circular(12),
               boxShadow: isCurrent
                   ? [
@@ -331,7 +329,7 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
                 Icon(
                   Icons.emoji_events,
                   color: isUnlocked
-                      ? DesignColors.darkestBg
+                      ? DesignColors.backgroundDark
                       : Colors.transparent,
                   size: 24,
                 ),
@@ -340,14 +338,14 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: DesignColors.darkestBg.withAlpha(
+                      color: DesignColors.backgroundDark.withAlpha(
                         (0.2 * 255).toInt(),
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       Icons.lock,
-                      color: DesignColors.tertiaryText,
+                      color: DesignColors.textTertiary,
                       size: 20,
                     ),
                   ),
@@ -364,8 +362,8 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
               color: isCurrent
                   ? color
                   : isUnlocked
-                  ? DesignColors.primaryText
-                  : DesignColors.tertiaryText,
+                  ? DesignColors.textPrimary
+                  : DesignColors.textTertiary,
               fontSize: 10,
               fontWeight: isCurrent ? FontWeight.bold : FontWeight.w600,
               letterSpacing: 0.5,
@@ -412,7 +410,7 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
 
     final luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
 
-    return luminance > 0.5 ? DesignColors.darkestBg : Colors.white;
+    return luminance > 0.5 ? DesignColors.backgroundDark : Colors.white;
   }
 }
 
@@ -425,7 +423,7 @@ class LeaderboardItem extends StatelessWidget {
   Widget getRankWidget() {
     if (rank <= 3) {
       final colors = {
-        1: DesignColors.primaryGold,
+        1: DesignColors.primary,
         2: Color(0xFFC0C0C0), // Silver
         3: Color(0xFFCD7F32), // Bronze
       };
@@ -457,7 +455,7 @@ class LeaderboardItem extends StatelessWidget {
         rank.toString(),
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: DesignColors.primaryText,
+          color: DesignColors.textPrimary,
           fontSize: 16,
           fontWeight: FontWeight.w600,
         ),
@@ -472,7 +470,7 @@ class LeaderboardItem extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: DesignColors.borderColor, width: 0.5),
+          bottom: BorderSide(color: DesignColors.backgroundBorder, width: 0.5),
         ),
       ),
       child: Row(
@@ -490,13 +488,16 @@ class LeaderboardItem extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: DesignColors.cardBg,
+                  color: DesignColors.backgroundCard,
                   shape: BoxShape.circle,
-                  border: Border.all(color: DesignColors.borderColor, width: 1),
+                  border: Border.all(
+                    color: DesignColors.backgroundBorder,
+                    width: 1,
+                  ),
                 ),
                 child: Icon(
                   Icons.person,
-                  color: DesignColors.secondaryText,
+                  color: DesignColors.textSecondary,
                   size: 24,
                 ),
               ),
@@ -510,10 +511,10 @@ class LeaderboardItem extends StatelessWidget {
                     width: 12,
                     height: 12,
                     decoration: BoxDecoration(
-                      color: DesignColors.successColor,
+                      color: DesignColors.success,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: DesignColors.darkestBg,
+                        color: DesignColors.backgroundDark,
                         width: 1,
                       ),
                     ),
@@ -536,7 +537,7 @@ class LeaderboardItem extends StatelessWidget {
                       child: Text(
                         user.name,
                         style: TextStyle(
-                          color: DesignColors.primaryText,
+                          color: DesignColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -555,7 +556,7 @@ class LeaderboardItem extends StatelessWidget {
                     Text(
                       user.streak.toString(),
                       style: TextStyle(
-                        color: DesignColors.tertiaryText,
+                        color: DesignColors.textTertiary,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -574,7 +575,7 @@ class LeaderboardItem extends StatelessWidget {
               Text(
                 '${user.xp} XP',
                 style: TextStyle(
-                  color: DesignColors.primaryText,
+                  color: DesignColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
@@ -600,37 +601,29 @@ class PromotionZoneWidget extends StatelessWidget {
       ),
       padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
       decoration: BoxDecoration(
-        color: DesignColors.successColor.withAlpha((0.1 * 255).toInt()),
+        color: DesignColors.success.withAlpha((0.1 * 255).toInt()),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: DesignColors.successColor.withAlpha((0.3 * 255).toInt()),
+          color: DesignColors.success.withAlpha((0.3 * 255).toInt()),
           width: 1,
         ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.keyboard_arrow_up,
-            color: DesignColors.successColor,
-            size: 20,
-          ),
+          Icon(Icons.keyboard_arrow_up, color: DesignColors.success, size: 20),
           SizedBox(width: DesignSpacing.xs),
           Text(
             'PROMOTION ZONE',
             style: TextStyle(
-              color: DesignColors.successColor,
+              color: DesignColors.success,
               fontWeight: FontWeight.w800,
               fontSize: 14,
               letterSpacing: 1.0,
             ),
           ),
           SizedBox(width: DesignSpacing.xs),
-          Icon(
-            Icons.keyboard_arrow_up,
-            color: DesignColors.successColor,
-            size: 20,
-          ),
+          Icon(Icons.keyboard_arrow_up, color: DesignColors.success, size: 20),
         ],
       ),
     );
