@@ -5,52 +5,82 @@ enum ExerciseState { initial, checking, correct, incorrect }
 
 enum ExerciseType { translation, speaking, multipleChoice, readAndRespond }
 
-class ExerciseTemplate extends StatefulWidget {
-  final Widget exerciseContent;
-  final double progress;
+class LessonTemplate extends StatefulWidget {
+  final List<Widget> exercises;
+  final double? initialProgress; // Optional: override auto-calculated progress
   final int hearts;
   final bool showAudioHelper;
-  final VoidCallback? onExit;
-  final VoidCallback? onCheck;
-  final VoidCallback? onContinue;
-  final VoidCallback? onAudioHelper;
-  final String? feedbackMessage;
-  final String? correctAnswer;
+  final bool requeueIncorrectAnswers;
+  final int maxRequeues;
 
-  const ExerciseTemplate({
+  // Callbacks
+  final VoidCallback? onExit;
+  final Function(BuildContext context) onLessonCompletion;
+  final Function(int currentIndex, int totalRemaining)? onExerciseComplete;
+  final Function(Widget exercise)? onExerciseRequeued;
+  final VoidCallback? onAudioHelper;
+
+  // Per-exercise data (functions that take current exercise index)
+  final String? Function(int index)? getFeedbackMessage;
+  final String? Function(int index)? getCorrectAnswer;
+  final bool Function(int index)? validateAnswer; // Returns true if correct
+
+  const LessonTemplate({
     super.key,
-    required this.exerciseContent,
-    this.progress = 0.0,
+    required this.exercises,
+    required this.onLessonCompletion,
+    this.initialProgress,
     this.hearts = 5,
     this.showAudioHelper = false,
+    this.requeueIncorrectAnswers = true,
+    this.maxRequeues = 1,
     this.onExit,
-    this.onCheck,
-    this.onContinue,
+    this.onExerciseComplete,
+    this.onExerciseRequeued,
     this.onAudioHelper,
-    this.feedbackMessage,
-    this.correctAnswer,
+    this.getFeedbackMessage,
+    this.getCorrectAnswer,
+    this.validateAnswer,
   });
 
   @override
-  State<ExerciseTemplate> createState() => _ExerciseTemplateState();
+  State<LessonTemplate> createState() => _LessonTemplateState();
 }
 
-class _ExerciseTemplateState extends State<ExerciseTemplate>
+class _LessonTemplateState extends State<LessonTemplate>
     with TickerProviderStateMixin {
   ExerciseState _exerciseState = ExerciseState.initial;
+  late List<Widget> _exerciseQueue;
+  late List<int>
+  _requeueCount; // Track how many times each exercise has been requeued
+  int _currentExerciseIndex = 0;
+  int _totalExercisesCompleted = 0;
+
   late AnimationController _feedbackController;
   late AnimationController _buttonController;
+  late AnimationController _transitionController;
   late Animation<double> _buttonAnimation;
   late Animation<Offset> _feedbackSlideAnimation;
+  late Animation<Offset> _exerciseSlideAnimation;
 
   @override
   void initState() {
     super.initState();
+
+    // Initialize exercise queue and requeue tracking
+    _exerciseQueue = List<Widget>.from(widget.exercises);
+    _requeueCount = List<int>.filled(widget.exercises.length, 0);
+
+    // Initialize animation controllers
     _feedbackController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
     _buttonController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _transitionController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
@@ -63,13 +93,44 @@ class _ExerciseTemplateState extends State<ExerciseTemplate>
         Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(
           CurvedAnimation(parent: _feedbackController, curve: Curves.easeOut),
         );
+    _exerciseSlideAnimation =
+        Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _transitionController,
+            curve: Curves.easeInOut,
+          ),
+        );
+
+    // Start with first exercise
+    _transitionController.forward();
   }
 
   @override
   void dispose() {
     _feedbackController.dispose();
     _buttonController.dispose();
+    _transitionController.dispose();
     super.dispose();
+  }
+
+  double get _progress {
+    if (widget.initialProgress != null) return widget.initialProgress!;
+    if (_exerciseQueue.isEmpty) return 1.0;
+    return _totalExercisesCompleted / _exerciseQueue.length;
+  }
+
+  Widget get _currentExercise => _exerciseQueue[_currentExerciseIndex];
+
+  String? get _currentFeedbackMessage =>
+      widget.getFeedbackMessage?.call(_getOriginalIndex());
+
+  String? get _currentCorrectAnswer =>
+      widget.getCorrectAnswer?.call(_getOriginalIndex());
+
+  int _getOriginalIndex() {
+    // This is a simplified approach - you might need more sophisticated tracking
+    // if you need to know the original index of requeued exercises
+    return _currentExerciseIndex.clamp(0, widget.exercises.length - 1);
   }
 
   void _handleCheck() {
@@ -82,12 +143,16 @@ class _ExerciseTemplateState extends State<ExerciseTemplate>
     // Simulate checking delay
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) {
+        // Validate answer
+        final isCorrect =
+            widget.validateAnswer?.call(_getOriginalIndex()) ?? true;
+
         setState(() {
-          // This would normally be determined by actual answer validation
-          _exerciseState = ExerciseState.correct; // or ExerciseState.incorrect
+          _exerciseState = isCorrect
+              ? ExerciseState.correct
+              : ExerciseState.incorrect;
         });
         _feedbackController.forward();
-        widget.onCheck?.call();
       }
     });
   }
@@ -95,10 +160,59 @@ class _ExerciseTemplateState extends State<ExerciseTemplate>
   void _handleContinue() {
     _feedbackController.reverse();
     _buttonController.reverse();
+
+    final wasCorrect = _exerciseState == ExerciseState.correct;
+
+    // Handle incorrect answer re-queueing
+    if (!wasCorrect && widget.requeueIncorrectAnswers) {
+      final originalIndex = _getOriginalIndex();
+      if (_requeueCount[originalIndex] < widget.maxRequeues) {
+        _requeueCount[originalIndex]++;
+        _exerciseQueue.add(_currentExercise);
+        widget.onExerciseRequeued?.call(_currentExercise);
+      }
+    }
+
+    _totalExercisesCompleted++;
+
     setState(() {
       _exerciseState = ExerciseState.initial;
     });
-    widget.onContinue?.call();
+
+    // Move to next exercise or complete
+    _moveToNextExercise();
+  }
+
+  void _moveToNextExercise() {
+    print('Current Exercise Index: $_currentExerciseIndex');
+    print('Exercise Queue Length: ${_exerciseQueue.length}');
+
+    // Check if this was the last exercise
+    if (_currentExerciseIndex == _exerciseQueue.length - 1) {
+      // All exercises completed - trigger completion callback
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (mounted) {
+          widget.onLessonCompletion(context);
+        }
+      });
+      return;
+    }
+
+    // Animate transition to next exercise
+    _transitionController.reverse().then((_) {
+      if (mounted) {
+        setState(() {
+          _currentExerciseIndex++;
+        });
+
+        widget.onExerciseComplete?.call(
+          _currentExerciseIndex,
+          _exerciseQueue.length - _currentExerciseIndex - 1,
+        );
+
+        _transitionController.forward();
+      }
+    });
   }
 
   Color _getButtonColor() {
@@ -121,7 +235,9 @@ class _ExerciseTemplateState extends State<ExerciseTemplate>
       case ExerciseState.checking:
         return 'CHECKING...';
       case ExerciseState.correct:
-        return 'CONTINUE';
+        return _currentExerciseIndex == _exerciseQueue.length - 1
+            ? 'DONE'
+            : 'CONTINUE';
       case ExerciseState.incorrect:
         return 'GOT IT';
     }
@@ -140,11 +256,14 @@ class _ExerciseTemplateState extends State<ExerciseTemplate>
                 // Top Bar
                 _buildTopBar(),
 
-                // Main Content (Scrollable)
+                // Main Content (Scrollable with transition animation)
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(DesignSpacing.lg),
-                    child: widget.exerciseContent,
+                  child: SlideTransition(
+                    position: _exerciseSlideAnimation,
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(DesignSpacing.lg),
+                      child: _currentExercise,
+                    ),
                   ),
                 ),
 
@@ -192,7 +311,7 @@ class _ExerciseTemplateState extends State<ExerciseTemplate>
               ),
               child: FractionallySizedBox(
                 alignment: Alignment.centerLeft,
-                widthFactor: widget.progress,
+                widthFactor: _progress,
                 child: Container(
                   decoration: BoxDecoration(
                     color: DesignColors.primary,
@@ -294,7 +413,7 @@ class _ExerciseTemplateState extends State<ExerciseTemplate>
                       ],
                     ),
 
-                    if (widget.feedbackMessage != null) ...[
+                    if (_currentFeedbackMessage != null) ...[
                       const SizedBox(height: DesignSpacing.md),
                       Text(
                         'Meaning:',
@@ -306,7 +425,7 @@ class _ExerciseTemplateState extends State<ExerciseTemplate>
                       ),
                       const SizedBox(height: DesignSpacing.xs),
                       Text(
-                        widget.feedbackMessage!,
+                        _currentFeedbackMessage!,
                         style: TextStyle(
                           color: isCorrect
                               ? DesignColors.success
@@ -316,7 +435,7 @@ class _ExerciseTemplateState extends State<ExerciseTemplate>
                       ),
                     ],
 
-                    if (!isCorrect && widget.correctAnswer != null) ...[
+                    if (!isCorrect && _currentCorrectAnswer != null) ...[
                       const SizedBox(height: DesignSpacing.md),
                       Text(
                         'Correct Answer:',
@@ -328,7 +447,7 @@ class _ExerciseTemplateState extends State<ExerciseTemplate>
                       ),
                       const SizedBox(height: DesignSpacing.xs),
                       Text(
-                        widget.correctAnswer!,
+                        _currentCorrectAnswer!,
                         style: const TextStyle(
                           color: DesignColors.success,
                           fontSize: 16,

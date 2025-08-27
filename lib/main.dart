@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:lisan_app/pages/exercise/lesson_template.dart';
+import 'package:lisan_app/pages/exercise/lesson_completion_page.dart';
 import 'package:lisan_app/root_screen.dart';
 
 void main() {
@@ -29,7 +32,21 @@ class MyApp extends StatelessWidget {
         splashColor: Colors.transparent,
         splashFactory: NoSplash.splashFactory,
       ),
-      home: RootScreen(),
+      home: LessonTemplate(
+        exercises: [
+          Center(child: Text('Exercise 1 Placeholder')),
+          Center(child: Text('Exercise 2 Placeholder')),
+          Center(child: Text('Exercise 3 Placeholder')),
+        ],
+        onLessonCompletion: (context) => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LessonCompletionPage()),
+        ),
+        validateAnswer: (index) => true,
+        getFeedbackMessage: (index) => 'Feedback for exercise $index',
+        getCorrectAnswer: (index) => 'Correct answer for exercise $index',
+        onExerciseRequeued: (exercise) => print('Exercise requeued: $exercise'),
+      ),
     );
   }
 }
