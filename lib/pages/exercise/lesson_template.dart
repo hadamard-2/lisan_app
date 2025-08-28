@@ -3,8 +3,6 @@ import 'package:lisan_app/design/theme.dart';
 
 enum ExerciseState { initial, checking, correct, incorrect }
 
-enum ExerciseType { translation, speaking, multipleChoice, readAndRespond }
-
 class LessonTemplate extends StatefulWidget {
   final List<Widget> exercises;
   final double? initialProgress; // Optional: override auto-calculated progress
