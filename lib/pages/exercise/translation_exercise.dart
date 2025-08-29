@@ -58,61 +58,80 @@ class _TranslationExerciseState extends State<TranslationExercise> {
 class BlockBuildWidget extends StatefulWidget {
   final Map<String, dynamic> exerciseData;
   final Function(bool isCorrect) onAnswerChanged;
-
   const BlockBuildWidget({
-    Key? key,
+    super.key,
     required this.exerciseData,
     required this.onAnswerChanged,
-  }) : super(key: key);
-
+  });
   @override
   State<BlockBuildWidget> createState() => _BlockBuildWidgetState();
 }
 
 class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProviderStateMixin {
   List<String> selectedBlocks = [];
-  List<String> availableBlocks = [];
+  List<AvailableBlock> availableBlocks = [];
   late AnimationController _animationController;
-
+  
   @override
   void initState() {
     super.initState();
     final data = widget.exerciseData['data'] as Map<String, dynamic>;
-    availableBlocks = List<String>.from(data['blocks'] ?? []);
+    
+    // Initialize available blocks as AvailableBlock objects
+    availableBlocks = (data['blocks'] as List<dynamic>? ?? [])
+        .map<AvailableBlock>((block) => AvailableBlock(text: block.toString()))
+        .toList();
+    
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
   }
-
+  
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
-
+  
   void _selectBlock(String block) {
     setState(() {
+      // Add block to selected blocks
       selectedBlocks.add(block);
-      availableBlocks.remove(block);
+      
+      // Mark the block as selected in availableBlocks
+      for (var availableBlock in availableBlocks) {
+        if (availableBlock.text == block) {
+          availableBlock.isSelected = true;
+          break;
+        }
+      }
     });
     _animationController.forward().then((_) => _animationController.reset());
     _validateAnswer();
   }
-
+  
   void _deselectBlock(String block, int index) {
     setState(() {
+      // Remove block from selected blocks
       selectedBlocks.removeAt(index);
-      availableBlocks.add(block);
+      
+      // Mark the block as not selected in availableBlocks
+      for (var availableBlock in availableBlocks) {
+        if (availableBlock.text == block) {
+          availableBlock.isSelected = false;
+          break;
+        }
+      }
     });
     _validateAnswer();
   }
-
+  
   void _validateAnswer() {
     final data = widget.exerciseData['data'] as Map<String, dynamic>;
     final correctSequences = data['correct_sequences'] as List<dynamic>?;
     
-    if (correctSequences != null && selectedBlocks.length > 0) {
+    if (correctSequences != null && selectedBlocks.isNotEmpty) {
       final isCorrect = correctSequences.any((sequence) {
         final correctSeq = List<String>.from(sequence);
         return _listEquals(selectedBlocks, correctSeq);
@@ -123,7 +142,7 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProvider
       }
     }
   }
-
+  
   bool _listEquals(List<String> a, List<String> b) {
     if (a.length != b.length) return false;
     for (int i = 0; i < a.length; i++) {
@@ -131,12 +150,11 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProvider
     }
     return true;
   }
-
+  
   @override
   Widget build(BuildContext context) {
     final data = widget.exerciseData['data'] as Map<String, dynamic>;
     final sourceText = data['source_text'] ?? '';
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -236,24 +254,38 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProvider
               scale: 1.0,
               duration: const Duration(milliseconds: 200),
               child: GestureDetector(
-                onTap: () => _selectBlock(block),
+                onTap: block.isSelected ? null : () => _selectBlock(block.text),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: DesignSpacing.md,
                     vertical: DesignSpacing.sm,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.transparent,
+                    color: block.isSelected 
+                        ? DesignColors.backgroundCard.withOpacity(0.5)
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: DesignColors.backgroundBorder),
-                  ),
-                  child: Text(
-                    block,
-                    style: const TextStyle(
-                      color: DesignColors.textPrimary,
-                      fontSize: 16,
+                    border: Border.all(
+                      color: block.isSelected 
+                          ? DesignColors.backgroundBorder.withOpacity(0.5)
+                          : DesignColors.backgroundBorder,
                     ),
                   ),
+                  child: block.isSelected
+                      ? Text(
+                          block.text,
+                          style: TextStyle(
+                            color: DesignColors.textTertiary,
+                            fontSize: 16,
+                          ),
+                        )
+                      : Text(
+                          block.text,
+                          style: const TextStyle(
+                            color: DesignColors.textPrimary,
+                            fontSize: 16,
+                          ),
+                        ),
                 ),
               ),
             );
@@ -264,15 +296,25 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProvider
   }
 }
 
+class AvailableBlock {
+  final String text;
+  bool isSelected;
+  
+  AvailableBlock({
+    required this.text,
+    this.isSelected = false,
+  });
+}
+
 class FreeTextWidget extends StatefulWidget {
   final Map<String, dynamic> exerciseData;
   final Function(bool isCorrect) onAnswerChanged;
 
   const FreeTextWidget({
-    Key? key,
+    super.key,
     required this.exerciseData,
     required this.onAnswerChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<FreeTextWidget> createState() => _FreeTextWidgetState();

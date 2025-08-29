@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/pages/exercise/lesson_template.dart';
 import 'package:lisan_app/pages/exercise/lesson_completion_page.dart';
 import 'package:lisan_app/pages/exercise/translation_exercise.dart';
+import 'package:lisan_app/pages/exercise/complete_sentence_exercise.dart';
+
 import 'package:lisan_app/root_screen.dart';
 
 void main() {
@@ -19,23 +21,11 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // Track answers for each exercise
-  Map<int, bool> exerciseAnswers = {};
+  Map<int, dynamic> exerciseAnswers = {};
 
   // Exercise data
   final List<Map<String, dynamic>> exerciseData = [
-    {
-      "id": "tr_001",
-      "type": "translation",
-      "subtype": "free_text",
-      "instruction": "Translate this sentence",
-      "data": {
-        "source_text": "I wanted to teach you Spanish.",
-        "source_lang": "en",
-        "target_lang": "fr",
-        "correct_answers": ["Je voulais t'apprendre l'espagnol."],
-      },
-    },
-    {
+        {
       "id": "tr_002",
       "type": "translation",
       "subtype": "block_build",
@@ -50,26 +40,82 @@ class _MyAppState extends State<MyApp> {
         ],
       },
     },
-    {
-      "id": "tr_003",
-      "type": "translation",
-      "subtype": "block_build",
-      "instruction": "Arrange these words to form the correct translation",
-      "data": {
-        "source_text": "The cat is sleeping.",
-        "source_lang": "en",
-        "target_lang": "es",
-        "blocks": ["El", "gato", "está", "durmiendo"],
-        "correct_sequences": [
-          ["El", "gato", "está", "durmiendo"],
-        ],
-      },
-    },
+    // {
+    //   "id": "cs_001",
+    //   "type": "complete_sentence",
+    //   "subtype": "given_start",
+    //   "instruction": "Complete the sentence",
+    //   "data": {
+    //     "provided_text": "Yesterday I went to",
+    //     "correct_answers": [
+    //       "Yesterday I went to the store",
+    //       "Yesterday I went to school",
+    //       "Yesterday I went to work",
+    //       "Yesterday I went to the park",
+    //     ],
+    //   },
+    // },
+    // {
+    //   "id": "cs_002",
+    //   "type": "complete_sentence",
+    //   "subtype": "given_end",
+    //   "instruction": "Complete the beginning of this sentence",
+    //   "data": {
+    //     "provided_text": "is my favorite food",
+    //     "correct_answers": [
+    //       "Pizza is my favorite food",
+    //       "Pasta is my favorite food",
+    //       "Rice is my favorite food",
+    //     ],
+    //   },
+    // },
+    // {
+    //   "id": "cs_003",
+    //   "type": "complete_sentence",
+    //   "subtype": "select_from_blocks",
+    //   "instruction": "Fill in the blanks using the word blocks",
+    //   "data": {
+    //     "display_with_blanks": "The ____ is ____ in the sky",
+    //     "blocks": ["sun", "shining", "moon", "bright", "bird", "flying"],
+    //     "correct_answers": [
+    //       "The sun is shining in the sky",
+    //       "The moon is bright in the sky",
+    //       "The bird is flying in the sky",
+    //     ],
+    //   },
+    // },
   ];
 
-  void _onAnswerChanged(int exerciseIndex, bool isCorrect) {
+  bool validateAnswer(int index) {
+    final exercise = exerciseData[index];
+    final userAnswer = exerciseAnswers[index];
+
+    if (exercise['type'] == 'translation') {
+      return userAnswer == true;
+    } else if (exercise['type'] == 'complete_sentence') {
+      if (userAnswer == null || userAnswer.toString().trim().isEmpty) {
+        return false;
+      }
+      final correctAnswers =
+          exercise['data']['correct_answers'] as List<dynamic>;
+      final userAnswerLower = userAnswer.toString().toLowerCase().trim();
+      return correctAnswers.any(
+        (correctAnswer) =>
+            correctAnswer.toString().toLowerCase().trim() == userAnswerLower,
+      );
+    }
+    return false;
+  }
+
+  void _onTranslationAnswerChanged(int exerciseIndex, bool isCorrect) {
     setState(() {
       exerciseAnswers[exerciseIndex] = isCorrect;
+    });
+  }
+
+  void _onCompleteSentenceAnswerChanged(int exerciseIndex, String answer) {
+    setState(() {
+      exerciseAnswers[exerciseIndex] = answer;
     });
   }
 
@@ -94,30 +140,32 @@ class _MyAppState extends State<MyApp> {
         splashFactory: NoSplash.splashFactory,
       ),
 
-      // home: LessonTemplate(
-      //   exercises: [
-      //     Center(child: Text('Exercise 1 Placeholder')),
-      //     Center(child: Text('Exercise 2 Placeholder')),
-      //     Center(child: Text('Exercise 3 Placeholder')),
-      //   ],
-      //   onLessonCompletion: (context) => Navigator.push(
-      //     context,
-      //     MaterialPageRoute(builder: (context) => LessonCompletionPage()),
-      //   ),
-      //   validateAnswer: (index) => true,
-      //   getFeedbackMessage: (index) => 'Feedback for exercise $index',
-      //   getCorrectAnswer: (index) => 'Correct answer for exercise $index',
-      //   onExerciseRequeued: (exercise) => print('Exercise requeued: $exercise'),
-      // ),
       home: LessonTemplate(
         exercises: exerciseData.asMap().entries.map((entry) {
           final index = entry.key;
           final exercise = entry.value;
 
-          return TranslationExercise(
-            exerciseData: exercise,
-            onAnswerChanged: (isCorrect) => _onAnswerChanged(index, isCorrect),
-          );
+          if (exercise['type'] == 'translation') {
+            return TranslationExercise(
+              exerciseData: exercise,
+              onAnswerChanged: (isCorrect) =>
+                  _onTranslationAnswerChanged(index, isCorrect),
+            );
+          } else if (exercise['type'] == 'complete_sentence') {
+            return CompleteSentenceExercise(
+              exerciseData: CompleteSentenceExerciseData(
+                id: exercise['id'],
+                type: exercise['type'],
+                subtype: exercise['subtype'],
+                instruction: exercise['instruction'],
+                data: exercise['data'],
+              ),
+              onAnswerChanged: (answer) =>
+                  _onCompleteSentenceAnswerChanged(index, answer),
+            );
+          }
+
+          return Center(child: Text('Unknown exercise type'));
         }).toList(),
 
         onLessonCompletion: (context) => Navigator.push(
@@ -126,46 +174,89 @@ class _MyAppState extends State<MyApp> {
         ),
 
         validateAnswer: (index) {
-          // Return true if the exercise has been answered correctly
-          return exerciseAnswers[index] ?? false;
+          final exercise = exerciseData[index];
+          final userAnswer = exerciseAnswers[index];
+
+          if (exercise['type'] == 'translation') {
+            return userAnswer == true;
+          } else if (exercise['type'] == 'complete_sentence') {
+            if (userAnswer == null || userAnswer.toString().trim().isEmpty) {
+              return false;
+            }
+
+            final correctAnswers =
+                exercise['data']['correct_answers'] as List<dynamic>;
+            final userAnswerLower = userAnswer.toString().toLowerCase().trim();
+
+            return correctAnswers.any(
+              (correctAnswer) =>
+                  correctAnswer.toString().toLowerCase().trim() ==
+                  userAnswerLower,
+            );
+          }
+
+          return false;
         },
 
         getFeedbackMessage: (index) {
-          final isCorrect = exerciseAnswers[index] ?? false;
           final exercise = exerciseData[index];
+          final userAnswer = exerciseAnswers[index];
 
-          if (isCorrect) {
-            return 'Excellent! Your translation is correct.';
-          } else {
-            if (exercise['subtype'] == 'block_build') {
-              return 'Try rearranging the blocks. Pay attention to word order.';
+          if (exercise['type'] == 'translation') {
+            final isCorrect = userAnswer == true;
+            if (isCorrect) {
+              return 'Excellent! Your translation is correct.';
             } else {
-              return 'Check your spelling and grammar. Try again!';
+              if (exercise['subtype'] == 'block_build') {
+                return 'Try rearranging the blocks. Pay attention to word order.';
+              } else {
+                return 'Check your spelling and grammar. Try again!';
+              }
+            }
+          } else if (exercise['type'] == 'complete_sentence') {
+            if (validateAnswer(index)) {
+              return 'Great job! Your sentence completion is correct.';
+            } else {
+              if (exercise['subtype'] == 'given_start') {
+                return 'Think about what would naturally follow this beginning.';
+              } else if (exercise['subtype'] == 'given_end') {
+                return 'Consider what would make sense before this ending.';
+              } else {
+                return 'Try different word combinations to complete the sentence.';
+              }
             }
           }
+
+          return 'Try again!';
         },
 
         getCorrectAnswer: (index) {
           final exercise = exerciseData[index];
-          final data = exercise['data'] as Map<String, dynamic>;
 
-          if (exercise['subtype'] == 'free_text') {
+          if (exercise['type'] == 'translation') {
+            final data = exercise['data'] as Map<String, dynamic>;
+            if (exercise['subtype'] == 'free_text') {
+              final correctAnswers = data['correct_answers'] as List<dynamic>;
+              return correctAnswers.first.toString();
+            } else {
+              final correctSequences =
+                  data['correct_sequences'] as List<dynamic>;
+              final correctSequence = correctSequences.first as List<dynamic>;
+              return correctSequence.join(' ');
+            }
+          } else if (exercise['type'] == 'complete_sentence') {
+            final data = exercise['data'] as Map<String, dynamic>;
             final correctAnswers = data['correct_answers'] as List<dynamic>;
             return correctAnswers.first.toString();
-          } else {
-            final correctSequences = data['correct_sequences'] as List<dynamic>;
-            final correctSequence = correctSequences.first as List<dynamic>;
-            return correctSequence.join(' ');
           }
+
+          return 'No correct answer available';
         },
 
-        onExerciseRequeued: (exercise) {
-          // Handle when an exercise is requeued (failed and needs to be tried again)
+        onExerciseRequeued: (exerciseIndex) {
           print('Exercise requeued for additional practice');
-
-          // Reset the answer for this exercise so user can try again
           setState(() {
-            exerciseAnswers.remove(exercise);
+            exerciseAnswers.remove(exerciseIndex);
           });
         },
       ),
