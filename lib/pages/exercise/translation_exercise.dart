@@ -1,32 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
+import 'package:lisan_app/models/translation_exercise_data.dart';
+import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 
-class TranslationExercise extends StatefulWidget {
-  final Map<String, dynamic> exerciseData;
+class TranslationExercise extends ExerciseWidget {
+  final TranslationExerciseData exerciseData;
   final Function(bool isCorrect) onAnswerChanged;
 
   const TranslationExercise({
     super.key,
     required this.exerciseData,
     required this.onAnswerChanged,
+    super.isRequeued = false,
   });
 
   @override
   State<TranslationExercise> createState() => _TranslationExerciseState();
+
+  @override
+  ExerciseWidget copyWith({
+    TranslationExerciseData? exerciseData,
+    Function(bool)? onAnswerChanged,
+    bool? isRequeued,
+    Key? key,
+  }) {
+    return TranslationExercise(
+      key: key ?? this.key,
+      exerciseData: exerciseData ?? this.exerciseData,
+      onAnswerChanged: onAnswerChanged ?? this.onAnswerChanged,
+      isRequeued: isRequeued ?? this.isRequeued,
+    );
+  }
 }
 
 class _TranslationExerciseState extends State<TranslationExercise> {
   @override
   Widget build(BuildContext context) {
-    final subtype = widget.exerciseData['subtype'] ?? 'free_text';
-    final instruction = widget.exerciseData['instruction'] ?? '';
-    
+    final subtype = widget.exerciseData.subtype;
+    final instruction = widget.exerciseData.instruction;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(DesignSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (widget.isRequeued)
+            Row(
+              spacing: DesignSpacing.sm,
+              children: [
+                Icon(Icons.repeat_rounded),
+                Text(
+                  'PREVIOUS MISTAKE',
+                  style: const TextStyle(
+                    color: Colors.orange, // Or any suitable color
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: DesignSpacing.md),
+              ],
+            ),
+
           // Instruction text
           Text(
             instruction,
@@ -37,7 +72,7 @@ class _TranslationExerciseState extends State<TranslationExercise> {
             ),
           ),
           const SizedBox(height: DesignSpacing.xl),
-          
+
           // Render appropriate subtype
           if (subtype == 'block_build')
             BlockBuildWidget(
@@ -56,7 +91,7 @@ class _TranslationExerciseState extends State<TranslationExercise> {
 }
 
 class BlockBuildWidget extends StatefulWidget {
-  final Map<String, dynamic> exerciseData;
+  final TranslationExerciseData exerciseData;
   final Function(bool isCorrect) onAnswerChanged;
   const BlockBuildWidget({
     super.key,
@@ -67,38 +102,39 @@ class BlockBuildWidget extends StatefulWidget {
   State<BlockBuildWidget> createState() => _BlockBuildWidgetState();
 }
 
-class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProviderStateMixin {
+class _BlockBuildWidgetState extends State<BlockBuildWidget>
+    with TickerProviderStateMixin {
   List<String> selectedBlocks = [];
   List<AvailableBlock> availableBlocks = [];
   late AnimationController _animationController;
-  
+
   @override
   void initState() {
     super.initState();
-    final data = widget.exerciseData['data'] as Map<String, dynamic>;
-    
+    final data = widget.exerciseData;
+
     // Initialize available blocks as AvailableBlock objects
-    availableBlocks = (data['blocks'] as List<dynamic>? ?? [])
+    availableBlocks = (data.blocks ?? [])
         .map<AvailableBlock>((block) => AvailableBlock(text: block.toString()))
         .toList();
-    
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
   }
-  
+
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
-  
+
   void _selectBlock(String block) {
     setState(() {
       // Add block to selected blocks
       selectedBlocks.add(block);
-      
+
       // Mark the block as selected in availableBlocks
       for (var availableBlock in availableBlocks) {
         if (availableBlock.text == block) {
@@ -110,12 +146,12 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProvider
     _animationController.forward().then((_) => _animationController.reset());
     _validateAnswer();
   }
-  
+
   void _deselectBlock(String block, int index) {
     setState(() {
       // Remove block from selected blocks
       selectedBlocks.removeAt(index);
-      
+
       // Mark the block as not selected in availableBlocks
       for (var availableBlock in availableBlocks) {
         if (availableBlock.text == block) {
@@ -126,35 +162,24 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProvider
     });
     _validateAnswer();
   }
-  
+
   void _validateAnswer() {
-    final data = widget.exerciseData['data'] as Map<String, dynamic>;
-    final correctSequences = data['correct_sequences'] as List<dynamic>?;
-    
-    if (correctSequences != null && selectedBlocks.isNotEmpty) {
-      final isCorrect = correctSequences.any((sequence) {
-        final correctSeq = List<String>.from(sequence);
-        return _listEquals(selectedBlocks, correctSeq);
-      });
-      
-      if (selectedBlocks.length == (data['blocks'] as List).length) {
+    if (widget.exerciseData.blocks != null) {
+      final isCorrect = widget.exerciseData.correctAnswers.contains(
+        selectedBlocks.join(' '),
+      );
+
+      if (selectedBlocks.length ==
+          (widget.exerciseData.blocks as List).length) {
         widget.onAnswerChanged(isCorrect);
       }
     }
   }
-  
-  bool _listEquals(List<String> a, List<String> b) {
-    if (a.length != b.length) return false;
-    for (int i = 0; i < a.length; i++) {
-      if (a[i] != b[i]) return false;
-    }
-    return true;
-  }
-  
+
   @override
   Widget build(BuildContext context) {
-    final data = widget.exerciseData['data'] as Map<String, dynamic>;
-    final sourceText = data['source_text'] ?? '';
+    final data = widget.exerciseData;
+    final sourceText = data.sourceText;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -170,11 +195,11 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProvider
           child: Row(
             children: [
               const Icon(
-                Icons.volume_up,
+                Icons.volume_up_rounded,
                 color: DesignColors.primary,
-                size: 20,
+                size: 21,
               ),
-              const SizedBox(width: DesignSpacing.sm),
+              const SizedBox(width: DesignSpacing.md),
               Expanded(
                 child: Text(
                   sourceText,
@@ -188,11 +213,11 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProvider
           ),
         ),
         const SizedBox(height: DesignSpacing.xl),
-        
+
         // Selected blocks area
         Container(
           width: double.infinity,
-          constraints: const BoxConstraints(minHeight: 80),
+          height: 160,
           padding: const EdgeInsets.all(DesignSpacing.md),
           decoration: BoxDecoration(
             color: DesignColors.backgroundCard,
@@ -226,15 +251,17 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProvider
                             vertical: DesignSpacing.sm,
                           ),
                           decoration: BoxDecoration(
-                            color: DesignColors.primary,
+                            color: DesignColors.primary.withAlpha(
+                              (0.2 * 255).toInt(),
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             block,
                             style: const TextStyle(
-                              color: DesignColors.backgroundDark,
+                              color: DesignColors.primary,
                               fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -244,7 +271,7 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProvider
                 ),
         ),
         const SizedBox(height: DesignSpacing.xl),
-        
+
         // Available blocks
         Wrap(
           spacing: DesignSpacing.sm,
@@ -261,12 +288,12 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProvider
                     vertical: DesignSpacing.sm,
                   ),
                   decoration: BoxDecoration(
-                    color: block.isSelected 
+                    color: block.isSelected
                         ? DesignColors.backgroundCard.withOpacity(0.5)
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: block.isSelected 
+                      color: block.isSelected
                           ? DesignColors.backgroundBorder.withOpacity(0.5)
                           : DesignColors.backgroundBorder,
                     ),
@@ -299,15 +326,12 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget> with TickerProvider
 class AvailableBlock {
   final String text;
   bool isSelected;
-  
-  AvailableBlock({
-    required this.text,
-    this.isSelected = false,
-  });
+
+  AvailableBlock({required this.text, this.isSelected = false});
 }
 
 class FreeTextWidget extends StatefulWidget {
-  final Map<String, dynamic> exerciseData;
+  final TranslationExerciseData exerciseData;
   final Function(bool isCorrect) onAnswerChanged;
 
   const FreeTextWidget({
@@ -336,14 +360,12 @@ class _FreeTextWidgetState extends State<FreeTextWidget> {
   }
 
   void _validateAnswer() {
-    final data = widget.exerciseData['data'] as Map<String, dynamic>;
-    final correctAnswers = List<String>.from(data['correct_answers'] ?? []);
     final userInput = _controller.text.trim();
-    
-    final isCorrect = correctAnswers.any((answer) => 
-      answer.toLowerCase() == userInput.toLowerCase()
+
+    final isCorrect = widget.exerciseData.correctAnswers.any(
+      (answer) => answer.toLowerCase() == userInput.toLowerCase(),
     );
-    
+
     if (userInput.isNotEmpty) {
       widget.onAnswerChanged(isCorrect);
     }
@@ -351,9 +373,6 @@ class _FreeTextWidgetState extends State<FreeTextWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final data = widget.exerciseData['data'] as Map<String, dynamic>;
-    final sourceText = data['source_text'] ?? '';
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -367,7 +386,7 @@ class _FreeTextWidgetState extends State<FreeTextWidget> {
             border: Border.all(color: DesignColors.backgroundBorder),
           ),
           child: Text(
-            sourceText,
+            widget.exerciseData.sourceText,
             style: const TextStyle(
               color: DesignColors.textPrimary,
               fontSize: 16,
@@ -375,7 +394,7 @@ class _FreeTextWidgetState extends State<FreeTextWidget> {
           ),
         ),
         const SizedBox(height: DesignSpacing.xl),
-        
+
         // Text input area
         Container(
           width: double.infinity,

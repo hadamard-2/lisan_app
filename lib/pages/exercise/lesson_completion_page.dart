@@ -52,8 +52,23 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            // Some illustration
-            SizedBox(width: double.infinity, height: 120, child: Placeholder()),
+            // Character illustration placeholder
+            Container(
+              height: 120,
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: DesignSpacing.lg),
+              decoration: BoxDecoration(
+                color: DesignColors.backgroundCard,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.celebration,
+                  color: DesignColors.primary,
+                  size: 60,
+                ),
+              ),
+            ),
 
             SizedBox(height: DesignSpacing.lg),
 

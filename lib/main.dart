@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lisan_app/exercise_handlers/exercise_handler_factory.dart';
+import 'package:lisan_app/models/complete_sentence_data.dart';
+import 'package:lisan_app/models/exercise_result.dart';
+import 'package:lisan_app/models/translation_exercise_data.dart';
 
 import 'package:lisan_app/pages/exercise/lesson_template.dart';
 import 'package:lisan_app/pages/exercise/lesson_completion_page.dart';
@@ -22,90 +26,77 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // Track answers for each exercise
   Map<int, dynamic> exerciseAnswers = {};
+  late List<ExerciseHandler> handlers;
+
+  @override
+  void initState() {
+    super.initState();
+    handlers = exerciseData.map(ExerciseHandlerFactory.createHandler).toList();
+  }
 
   // Exercise data
   final List<Map<String, dynamic>> exerciseData = [
-        {
-      "id": "tr_002",
-      "type": "translation",
-      "subtype": "block_build",
-      "instruction": "Build the French translation from the blocks",
+    // {
+    //   "id": "tr_001",
+    //   "type": "translation",
+    //   "subtype": "block_build",
+    //   "instruction": "Translate this sentence",
+    //   "data": {
+    //     "source_text": "The cat is sleeping under the table.",
+    //     "source_lang": "en",
+    //     "target_lang": "fr",
+    //     "blocks": ["dort", "sous", "Le", "la", "table", "chat"],
+    //     "correct_answers": ["Le chat dort sous la table"],
+    //   },
+    // },
+    // {
+    //   "id": "tr_002",
+    //   "type": "translation",
+    //   "subtype": "free_text",
+    //   "instruction": "Translate this sentence",
+    //   "data": {
+    //     "source_text": "They are different now.",
+    //     "source_lang": "en",
+    //     "target_lang": "fr",
+    //     "blocks": ["différents", "sont", "Ils", "maintenant"],
+    //     "correct_answers": ["Ils sont différents maintenant"],
+    //   },
+    // },
+    {
+      "id": "cs_001",
+      "type": "complete_sentence",
+      "subtype": "given_start",
+      "instruction": "Complete the sentence",
       "data": {
-        "source_text": "They are different now.",
-        "source_lang": "en",
-        "target_lang": "fr",
-        "blocks": ["Ils", "sont", "différents", "maintenant"],
-        "correct_sequences": [
-          ["Ils", "sont", "différents", "maintenant"],
-        ],
+        "target_sentence": "Hier je suis allé au magasin",
+        "provided_text": "Yesterday I went to",
+        "correct_answers": ["Yesterday I went to the store"],
       },
     },
-    // {
-    //   "id": "cs_001",
-    //   "type": "complete_sentence",
-    //   "subtype": "given_start",
-    //   "instruction": "Complete the sentence",
-    //   "data": {
-    //     "provided_text": "Yesterday I went to",
-    //     "correct_answers": [
-    //       "Yesterday I went to the store",
-    //       "Yesterday I went to school",
-    //       "Yesterday I went to work",
-    //       "Yesterday I went to the park",
-    //     ],
-    //   },
-    // },
-    // {
-    //   "id": "cs_002",
-    //   "type": "complete_sentence",
-    //   "subtype": "given_end",
-    //   "instruction": "Complete the beginning of this sentence",
-    //   "data": {
-    //     "provided_text": "is my favorite food",
-    //     "correct_answers": [
-    //       "Pizza is my favorite food",
-    //       "Pasta is my favorite food",
-    //       "Rice is my favorite food",
-    //     ],
-    //   },
-    // },
-    // {
-    //   "id": "cs_003",
-    //   "type": "complete_sentence",
-    //   "subtype": "select_from_blocks",
-    //   "instruction": "Fill in the blanks using the word blocks",
-    //   "data": {
-    //     "display_with_blanks": "The ____ is ____ in the sky",
-    //     "blocks": ["sun", "shining", "moon", "bright", "bird", "flying"],
-    //     "correct_answers": [
-    //       "The sun is shining in the sky",
-    //       "The moon is bright in the sky",
-    //       "The bird is flying in the sky",
-    //     ],
-    //   },
-    // },
+    {
+      "id": "cs_002",
+      "type": "complete_sentence",
+      "subtype": "given_end",
+      "instruction": "Complete the sentence",
+      "data": {
+        "target_sentence": "La pizza est ma nourriture préférée",
+        "provided_text": "is my favorite food",
+        "correct_answers": ["Pizza is my favorite food"],
+      },
+    },
+    {
+      "id": "cs_003",
+      "type": "complete_sentence",
+      "subtype": "select_from_blocks",
+      "instruction": "Complete the sentence",
+      "data": {
+        "target_sentence": "Le soleil brille dans le ciel",
+        "display_with_blanks": "The ____ is ____ in the sky",
+        "blocks": ["sun", "shining", "moon", "bright", "bird", "flying"],
+        "correct_answers": ["The sun is shining in the sky"],
+      },
+    },
   ];
-
-  bool validateAnswer(int index) {
-    final exercise = exerciseData[index];
-    final userAnswer = exerciseAnswers[index];
-
-    if (exercise['type'] == 'translation') {
-      return userAnswer == true;
-    } else if (exercise['type'] == 'complete_sentence') {
-      if (userAnswer == null || userAnswer.toString().trim().isEmpty) {
-        return false;
-      }
-      final correctAnswers =
-          exercise['data']['correct_answers'] as List<dynamic>;
-      final userAnswerLower = userAnswer.toString().toLowerCase().trim();
-      return correctAnswers.any(
-        (correctAnswer) =>
-            correctAnswer.toString().toLowerCase().trim() == userAnswerLower,
-      );
-    }
-    return false;
-  }
 
   void _onTranslationAnswerChanged(int exerciseIndex, bool isCorrect) {
     setState(() {
@@ -145,27 +136,24 @@ class _MyAppState extends State<MyApp> {
           final index = entry.key;
           final exercise = entry.value;
 
-          if (exercise['type'] == 'translation') {
-            return TranslationExercise(
-              exerciseData: exercise,
-              onAnswerChanged: (isCorrect) =>
-                  _onTranslationAnswerChanged(index, isCorrect),
-            );
-          } else if (exercise['type'] == 'complete_sentence') {
-            return CompleteSentenceExercise(
-              exerciseData: CompleteSentenceExerciseData(
-                id: exercise['id'],
-                type: exercise['type'],
-                subtype: exercise['subtype'],
-                instruction: exercise['instruction'],
-                data: exercise['data'],
-              ),
-              onAnswerChanged: (answer) =>
-                  _onCompleteSentenceAnswerChanged(index, answer),
-            );
+          switch (exercise['type']) {
+            case 'translation':
+              return TranslationExercise(
+                key: ValueKey(exercise['id']),
+                exerciseData: TranslationExerciseData.fromJson(exercise),
+                onAnswerChanged: (isCorrect) =>
+                    _onTranslationAnswerChanged(index, isCorrect),
+              );
+            case 'complete_sentence':
+              return CompleteSentenceExercise(
+                key: ValueKey(exercise['id']),
+                exerciseData: CompleteSentenceExerciseData.fromJson(exercise),
+                onAnswerChanged: (answer) =>
+                    _onCompleteSentenceAnswerChanged(index, answer),
+              );
+            default:
+              return Center(child: Text('Unknown exercise type'));
           }
-
-          return Center(child: Text('Unknown exercise type'));
         }).toList(),
 
         onLessonCompletion: (context) => Navigator.push(
@@ -174,83 +162,24 @@ class _MyAppState extends State<MyApp> {
         ),
 
         validateAnswer: (index) {
-          final exercise = exerciseData[index];
-          final userAnswer = exerciseAnswers[index];
-
-          if (exercise['type'] == 'translation') {
-            return userAnswer == true;
-          } else if (exercise['type'] == 'complete_sentence') {
-            if (userAnswer == null || userAnswer.toString().trim().isEmpty) {
-              return false;
-            }
-
-            final correctAnswers =
-                exercise['data']['correct_answers'] as List<dynamic>;
-            final userAnswerLower = userAnswer.toString().toLowerCase().trim();
-
-            return correctAnswers.any(
-              (correctAnswer) =>
-                  correctAnswer.toString().toLowerCase().trim() ==
-                  userAnswerLower,
-            );
-          }
-
-          return false;
+          final result = handlers[index].validateAndGetFeedback(
+            exerciseAnswers[index],
+          );
+          return result.isCorrect;
         },
 
         getFeedbackMessage: (index) {
-          final exercise = exerciseData[index];
-          final userAnswer = exerciseAnswers[index];
-
-          if (exercise['type'] == 'translation') {
-            final isCorrect = userAnswer == true;
-            if (isCorrect) {
-              return 'Excellent! Your translation is correct.';
-            } else {
-              if (exercise['subtype'] == 'block_build') {
-                return 'Try rearranging the blocks. Pay attention to word order.';
-              } else {
-                return 'Check your spelling and grammar. Try again!';
-              }
-            }
-          } else if (exercise['type'] == 'complete_sentence') {
-            if (validateAnswer(index)) {
-              return 'Great job! Your sentence completion is correct.';
-            } else {
-              if (exercise['subtype'] == 'given_start') {
-                return 'Think about what would naturally follow this beginning.';
-              } else if (exercise['subtype'] == 'given_end') {
-                return 'Consider what would make sense before this ending.';
-              } else {
-                return 'Try different word combinations to complete the sentence.';
-              }
-            }
-          }
-
-          return 'Try again!';
+          final result = handlers[index].validateAndGetFeedback(
+            exerciseAnswers[index],
+          );
+          return result.feedbackMessage;
         },
 
         getCorrectAnswer: (index) {
-          final exercise = exerciseData[index];
-
-          if (exercise['type'] == 'translation') {
-            final data = exercise['data'] as Map<String, dynamic>;
-            if (exercise['subtype'] == 'free_text') {
-              final correctAnswers = data['correct_answers'] as List<dynamic>;
-              return correctAnswers.first.toString();
-            } else {
-              final correctSequences =
-                  data['correct_sequences'] as List<dynamic>;
-              final correctSequence = correctSequences.first as List<dynamic>;
-              return correctSequence.join(' ');
-            }
-          } else if (exercise['type'] == 'complete_sentence') {
-            final data = exercise['data'] as Map<String, dynamic>;
-            final correctAnswers = data['correct_answers'] as List<dynamic>;
-            return correctAnswers.first.toString();
-          }
-
-          return 'No correct answer available';
+          final result = handlers[index].validateAndGetFeedback(
+            exerciseAnswers[index],
+          );
+          return result.correctAnswer;
         },
 
         onExerciseRequeued: (exerciseIndex) {

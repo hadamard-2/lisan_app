@@ -1,25 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
+import 'package:lisan_app/models/complete_sentence_data.dart';
+import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 
-// Exercise data model
-class CompleteSentenceExerciseData {
-  final String id;
-  final String type;
-  final String subtype;
-  final String instruction;
-  final Map<String, dynamic> data;
-
-  CompleteSentenceExerciseData({
-    required this.id,
-    required this.type,
-    required this.subtype,
-    required this.instruction,
-    required this.data,
-  });
-}
-
-// Main complete sentence exercise widget
-class CompleteSentenceExercise extends StatefulWidget {
+class CompleteSentenceExercise extends ExerciseWidget {
   final CompleteSentenceExerciseData exerciseData;
   final Function(String) onAnswerChanged;
 
@@ -27,7 +11,23 @@ class CompleteSentenceExercise extends StatefulWidget {
     super.key,
     required this.exerciseData,
     required this.onAnswerChanged,
+    super.isRequeued = false,
   });
+
+  @override
+  CompleteSentenceExercise copyWith({
+    CompleteSentenceExerciseData? exerciseData,
+    Function(String)? onAnswerChanged,
+    bool? isRequeued,
+    Key? key,
+  }) {
+    return CompleteSentenceExercise(
+      key: key ?? this.key,
+      exerciseData: exerciseData ?? this.exerciseData,
+      onAnswerChanged: onAnswerChanged ?? this.onAnswerChanged,
+      isRequeued: isRequeued ?? this.isRequeued,
+    );
+  }
 
   @override
   State<CompleteSentenceExercise> createState() =>
@@ -51,6 +51,23 @@ class _CompleteSentenceExerciseState extends State<CompleteSentenceExercise> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (widget.isRequeued)
+            Row(
+              children: [
+                Icon(Icons.repeat_rounded, color: Colors.orange),
+                SizedBox(width: DesignSpacing.sm),
+                Text(
+                  'PREVIOUS MISTAKE',
+                  style: const TextStyle(
+                    color: Colors.orange, // Or any suitable color
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: DesignSpacing.xxxl),
+              ],
+            ),
+
           // Instruction text
           Text(
             widget.exerciseData.instruction,
@@ -73,17 +90,17 @@ class _CompleteSentenceExerciseState extends State<CompleteSentenceExercise> {
     switch (widget.exerciseData.subtype) {
       case 'given_start':
         return GivenStartWidget(
-          data: widget.exerciseData.data,
+          data: widget.exerciseData,
           onAnswerChanged: _updateAnswer,
         );
       case 'given_end':
         return GivenEndWidget(
-          data: widget.exerciseData.data,
+          data: widget.exerciseData,
           onAnswerChanged: _updateAnswer,
         );
       case 'select_from_blocks':
         return SelectFromBlocksWidget(
-          data: widget.exerciseData.data,
+          data: widget.exerciseData,
           onAnswerChanged: _updateAnswer,
         );
       default:
@@ -97,9 +114,10 @@ class _CompleteSentenceExerciseState extends State<CompleteSentenceExercise> {
   }
 }
 
+// NOTE - GivenStartWiget & GivenEndWidget can be merged together
 // Given start subtype widget
 class GivenStartWidget extends StatefulWidget {
-  final Map<String, dynamic> data;
+  final CompleteSentenceExerciseData data;
   final Function(String) onAnswerChanged;
 
   const GivenStartWidget({
@@ -120,7 +138,7 @@ class _GivenStartWidgetState extends State<GivenStartWidget> {
     super.initState();
     _controller = TextEditingController();
     _controller.addListener(() {
-      final fullAnswer = '${widget.data['provided_text']} ${_controller.text}';
+      final fullAnswer = '${widget.data.providedText} ${_controller.text}';
       widget.onAnswerChanged(fullAnswer);
     });
   }
@@ -136,28 +154,29 @@ class _GivenStartWidgetState extends State<GivenStartWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Character illustration placeholder
         Container(
-          height: 120,
           width: double.infinity,
-          margin: const EdgeInsets.only(bottom: DesignSpacing.lg),
+          padding: const EdgeInsets.all(DesignSpacing.lg),
           decoration: BoxDecoration(
             color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: DesignColors.backgroundBorder),
           ),
-          child: const Center(
-            child: Icon(
-              Icons.person_rounded,
-              color: DesignColors.primary,
-              size: 60,
+          child: Text(
+            widget.data.targetSentence,
+            style: const TextStyle(
+              color: DesignColors.textPrimary,
+              fontSize: 16,
             ),
           ),
         ),
+        const SizedBox(height: DesignSpacing.xl),
 
         // Sentence with inline text field
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(DesignSpacing.md),
+          height: 160,
+          padding: const EdgeInsets.all(DesignSpacing.lg),
           decoration: BoxDecoration(
             color: DesignColors.backgroundCard,
             borderRadius: BorderRadius.circular(12),
@@ -165,11 +184,12 @@ class _GivenStartWidgetState extends State<GivenStartWidget> {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 10,
             children: [
               // Provided text
               Text(
-                widget.data['provided_text'],
+                widget.data.providedText!,
                 style: const TextStyle(
                   color: DesignColors.textPrimary,
                   fontSize: 16,
@@ -187,6 +207,10 @@ class _GivenStartWidgetState extends State<GivenStartWidget> {
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(top: 4, bottom: 12),
+                    isDense: true,
+                  ),
                 ),
               ),
             ],
@@ -199,7 +223,7 @@ class _GivenStartWidgetState extends State<GivenStartWidget> {
 
 // Given end subtype widget
 class GivenEndWidget extends StatefulWidget {
-  final Map<String, dynamic> data;
+  final CompleteSentenceExerciseData data;
   final Function(String) onAnswerChanged;
 
   const GivenEndWidget({
@@ -220,7 +244,7 @@ class _GivenEndWidgetState extends State<GivenEndWidget> {
     super.initState();
     _controller = TextEditingController();
     _controller.addListener(() {
-      final fullAnswer = '${_controller.text} ${widget.data['provided_text']}';
+      final fullAnswer = '${_controller.text} ${widget.data.providedText}';
       widget.onAnswerChanged(fullAnswer);
     });
   }
@@ -236,23 +260,28 @@ class _GivenEndWidgetState extends State<GivenEndWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Character illustration placeholder
         Container(
-          height: 120,
           width: double.infinity,
-          margin: const EdgeInsets.only(bottom: DesignSpacing.lg),
+          padding: const EdgeInsets.all(DesignSpacing.lg),
           decoration: BoxDecoration(
             color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: DesignColors.backgroundBorder),
           ),
-          child: const Center(
-            child: Icon(Icons.person, color: DesignColors.primary, size: 60),
+          child: Text(
+            widget.data.targetSentence,
+            style: const TextStyle(
+              color: DesignColors.textPrimary,
+              fontSize: 16,
+            ),
           ),
         ),
+        const SizedBox(height: DesignSpacing.xl),
 
         // Sentence with inline text field
         Container(
           width: double.infinity,
+          height: 160,
           padding: const EdgeInsets.all(DesignSpacing.md),
           decoration: BoxDecoration(
             color: DesignColors.backgroundCard,
@@ -260,10 +289,13 @@ class _GivenEndWidgetState extends State<GivenEndWidget> {
             border: Border.all(color: DesignColors.backgroundBorder),
           ),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 10,
             children: [
               // Inline text field for the blank
               SizedBox(
-                width: 80, // Fixed width for the blank
+                width: 80,
                 child: TextField(
                   controller: _controller,
                   textAlign: TextAlign.center,
@@ -272,12 +304,16 @@ class _GivenEndWidgetState extends State<GivenEndWidget> {
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(top: 4, bottom: 12),
+                    isDense: true,
+                  ),
                 ),
               ),
 
               // Provided text
               Text(
-                widget.data['provided_text'],
+                widget.data.providedText!,
                 style: const TextStyle(
                   color: DesignColors.textPrimary,
                   fontSize: 16,
@@ -293,8 +329,9 @@ class _GivenEndWidgetState extends State<GivenEndWidget> {
 
 // Select from blocks subtype widget
 class SelectFromBlocksWidget extends StatefulWidget {
-  final Map<String, dynamic> data;
+  final CompleteSentenceExerciseData data;
   final Function(String) onAnswerChanged;
+
   const SelectFromBlocksWidget({
     super.key,
     required this.data,
@@ -307,27 +344,27 @@ class SelectFromBlocksWidget extends StatefulWidget {
 class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
   List<String?> selectedBlocks = [];
   List<AvailableBlock> availableBlocks = [];
-  
+
   @override
   void initState() {
     super.initState();
     _initializeAvailableBlocks();
-    
+
     // Initialize selectedBlocks with nulls based on the number of blanks
-    String displayText = widget.data['display_with_blanks'];
+    String displayText = widget.data.displayWithBlanks!;
     int blankCount = displayText
         .split(' ')
         .where((elem) => elem == '____')
         .length;
     selectedBlocks = List<String?>.filled(blankCount, null);
   }
-  
+
   void _initializeAvailableBlocks() {
-    availableBlocks = widget.data['blocks'].map<AvailableBlock>((block) {
+    availableBlocks = widget.data.blocks!.map<AvailableBlock>((block) {
       return AvailableBlock(text: block);
     }).toList();
   }
-  
+
   void _selectBlock(String block) {
     setState(() {
       // Find the first null position in selectedBlocks
@@ -338,11 +375,11 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
           break;
         }
       }
-      
+
       // If there's a null position, place the block there
       if (firstNullIndex != null) {
         selectedBlocks[firstNullIndex] = block;
-        
+
         // Mark the block as selected in availableBlocks
         for (var availableBlock in availableBlocks) {
           if (availableBlock.text == block) {
@@ -354,13 +391,13 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
     });
     _updateAnswer();
   }
-  
+
   void _deselectBlock(int index) {
     setState(() {
       String? block = selectedBlocks[index];
       if (block != null) {
         selectedBlocks[index] = null;
-        
+
         // Mark the block as not selected in availableBlocks
         for (var availableBlock in availableBlocks) {
           if (availableBlock.text == block) {
@@ -372,13 +409,22 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
     });
     _updateAnswer();
   }
-  
+
   void _updateAnswer() {
-    // Filter out null values when joining
-    String answer = selectedBlocks.where((block) => block != null).join(' ');
-    widget.onAnswerChanged(answer);
+    String displayText = widget.data.displayWithBlanks!;
+    List<String> parts = displayText.split('____');
+    String fullAnswer = '';
+
+    for (int i = 0; i < parts.length; i++) {
+      fullAnswer += parts[i];
+      if (i < selectedBlocks.length && selectedBlocks[i] != null) {
+        fullAnswer += selectedBlocks[i]!;
+      }
+    }
+
+    widget.onAnswerChanged(fullAnswer.trim());
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -428,13 +474,17 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
                     vertical: DesignSpacing.sm,
                   ),
                   decoration: BoxDecoration(
-                    color: block.isSelected 
-                        ? DesignColors.backgroundCard.withAlpha((0.5 * 255).toInt())
+                    color: block.isSelected
+                        ? DesignColors.backgroundCard.withAlpha(
+                            (0.5 * 255).toInt(),
+                          )
                         : DesignColors.backgroundCard,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: block.isSelected 
-                          ? DesignColors.backgroundBorder.withAlpha((0.5 * 255).toInt())
+                      color: block.isSelected
+                          ? DesignColors.backgroundBorder.withAlpha(
+                              (0.5 * 255).toInt(),
+                            )
                           : DesignColors.backgroundBorder,
                     ),
                   ),
@@ -461,12 +511,12 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
       ],
     );
   }
-  
+
   Widget _buildSentenceWithBlanks() {
-    String displayText = widget.data['display_with_blanks'];
+    String displayText = widget.data.displayWithBlanks!;
     List<String> parts = displayText.split('____');
     List<Widget> widgets = [];
-    
+
     for (int i = 0; i < parts.length; i++) {
       // Add text part
       if (parts[i].isNotEmpty) {
@@ -480,7 +530,7 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
           ),
         );
       }
-      
+
       // Add blank or selected word
       if (i < parts.length - 1) {
         if (i < selectedBlocks.length && selectedBlocks[i] != null) {
@@ -519,7 +569,7 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
         }
       }
     }
-    
+
     return Wrap(
       crossAxisAlignment: WrapCrossAlignment.center,
       children: widgets,
@@ -530,9 +580,6 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
 class AvailableBlock {
   final String text;
   bool isSelected;
-  
-  AvailableBlock({
-    required this.text,
-    this.isSelected = false,
-  });
+
+  AvailableBlock({required this.text, this.isSelected = false});
 }

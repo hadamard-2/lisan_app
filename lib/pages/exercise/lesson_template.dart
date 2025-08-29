@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
+import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 
 enum ExerciseState { initial, checking, correct, incorrect }
 
@@ -48,7 +49,7 @@ class LessonTemplate extends StatefulWidget {
 class _LessonTemplateState extends State<LessonTemplate>
     with TickerProviderStateMixin {
   ExerciseState _exerciseState = ExerciseState.initial;
-  late List<Widget> _exerciseQueue;
+  late List<ExerciseWidget> _exerciseQueue;
   late List<int>
   _requeueCount; // Track how many times each exercise has been requeued
   int _currentExerciseIndex = 0;
@@ -66,7 +67,7 @@ class _LessonTemplateState extends State<LessonTemplate>
     super.initState();
 
     // Initialize exercise queue and requeue tracking
-    _exerciseQueue = List<Widget>.from(widget.exercises);
+    _exerciseQueue = List<ExerciseWidget>.from(widget.exercises);
     _requeueCount = List<int>.filled(widget.exercises.length, 0);
 
     // Initialize animation controllers
@@ -117,7 +118,7 @@ class _LessonTemplateState extends State<LessonTemplate>
     return _totalExercisesCompleted / _exerciseQueue.length;
   }
 
-  Widget get _currentExercise => _exerciseQueue[_currentExerciseIndex];
+  ExerciseWidget get _currentExercise => _exerciseQueue[_currentExerciseIndex];
 
   String? get _currentFeedbackMessage =>
       widget.getFeedbackMessage?.call(_getOriginalIndex());
@@ -166,8 +167,11 @@ class _LessonTemplateState extends State<LessonTemplate>
       final originalIndex = _getOriginalIndex();
       if (_requeueCount[originalIndex] < widget.maxRequeues) {
         _requeueCount[originalIndex]++;
-        _exerciseQueue.add(_currentExercise);
-        widget.onExerciseRequeued?.call(_currentExercise);
+
+        final requeuedExercise = _currentExercise.copyWith(isRequeued: true);
+
+        _exerciseQueue.add(requeuedExercise);
+        widget.onExerciseRequeued?.call(requeuedExercise);
       }
     }
 
@@ -182,9 +186,6 @@ class _LessonTemplateState extends State<LessonTemplate>
   }
 
   void _moveToNextExercise() {
-    print('Current Exercise Index: $_currentExerciseIndex');
-    print('Exercise Queue Length: ${_exerciseQueue.length}');
-
     // Check if this was the last exercise
     if (_currentExerciseIndex == _exerciseQueue.length - 1) {
       // All exercises completed - trigger completion callback
@@ -413,15 +414,15 @@ class _LessonTemplateState extends State<LessonTemplate>
 
                     if (_currentFeedbackMessage != null) ...[
                       const SizedBox(height: DesignSpacing.md),
-                      Text(
-                        'Meaning:',
-                        style: const TextStyle(
-                          color: DesignColors.textPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: DesignSpacing.xs),
+                      // Text(
+                      //   'Advice:',
+                      //   style: const TextStyle(
+                      //     color: DesignColors.textPrimary,
+                      //     fontSize: 16,
+                      //     fontWeight: FontWeight.w600,
+                      //   ),
+                      // ),
+                      // const SizedBox(height: DesignSpacing.xs),
                       Text(
                         _currentFeedbackMessage!,
                         style: TextStyle(
