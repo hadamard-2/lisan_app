@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/complete_sentence_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
+import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
 
 class CompleteSentenceExercise extends ExerciseWidget {
+  @override
   final CompleteSentenceExerciseData exerciseData;
   final Function(String) onAnswerChanged;
 
@@ -12,7 +14,7 @@ class CompleteSentenceExercise extends ExerciseWidget {
     required this.exerciseData,
     required this.onAnswerChanged,
     super.isRequeued = false,
-  });
+  }) : super(exerciseData: exerciseData);
 
   @override
   CompleteSentenceExercise copyWith({
@@ -51,22 +53,7 @@ class _CompleteSentenceExerciseState extends State<CompleteSentenceExercise> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.isRequeued)
-            Row(
-              children: [
-                Icon(Icons.repeat_rounded, color: Colors.orange),
-                SizedBox(width: DesignSpacing.sm),
-                Text(
-                  'PREVIOUS MISTAKE',
-                  style: const TextStyle(
-                    color: Colors.orange, // Or any suitable color
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: DesignSpacing.xxxl),
-              ],
-            ),
+          if (widget.isRequeued) PreviousMistakeIndicator(),
 
           // Instruction text
           Text(
@@ -277,6 +264,8 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
   }
 
   void _initializeAvailableBlocks() {
+    widget.data.blocks!.shuffle();
+
     availableBlocks = widget.data.blocks!.map<AvailableBlock>((block) {
       return AvailableBlock(text: block);
     }).toList();
@@ -347,7 +336,6 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // NOTE
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(DesignSpacing.lg),
@@ -474,7 +462,6 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
                   style: const TextStyle(
                     color: DesignColors.primary,
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),

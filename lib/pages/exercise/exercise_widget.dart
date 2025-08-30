@@ -4,8 +4,13 @@ import 'package:flutter/material.dart';
 /// Requires subclasses to implement copyWith for cloning with modified parameters.
 abstract class ExerciseWidget extends StatefulWidget {
   final bool isRequeued;
+  final dynamic exerciseData;
 
-  const ExerciseWidget({super.key, this.isRequeued = false});
+  const ExerciseWidget({
+    super.key, 
+    this.isRequeued = false,
+    required this.exerciseData,
+  });
 
   /// Abstract copyWith method that subclasses must implement.
   /// Each subclass defines its own parameters (e.g., isRequeued, data, etc.).

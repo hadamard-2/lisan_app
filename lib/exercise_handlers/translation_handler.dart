@@ -6,9 +6,13 @@ class TranslationHandler implements ExerciseHandler {
 
   TranslationHandler(this.exerciseData);
 
+  // will need to use levenshtein distance here (and other similar places)
   @override
   ExerciseResult validateAndGetFeedback(dynamic userAnswer) {
-    final isCorrect = userAnswer == true;
+    final trimmedAnswer = userAnswer.trim();
+    final isCorrect = exerciseData.correctAnswers.any(
+      (answer) => answer.toLowerCase() == trimmedAnswer.toLowerCase(),
+    );
 
     return ExerciseResult(
       isCorrect: isCorrect,

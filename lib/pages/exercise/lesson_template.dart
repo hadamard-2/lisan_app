@@ -16,13 +16,13 @@ class LessonTemplate extends StatefulWidget {
   final VoidCallback? onExit;
   final Function(BuildContext context) onLessonCompletion;
   final Function(int currentIndex, int totalRemaining)? onExerciseComplete;
-  final Function(Widget exercise)? onExerciseRequeued;
+  final Function(String id)? onExerciseRequeued;
   final VoidCallback? onAudioHelper;
 
   // Per-exercise data (functions that take current exercise index)
-  final String? Function(int index)? getFeedbackMessage;
-  final String? Function(int index)? getCorrectAnswer;
-  final bool Function(int index)? validateAnswer; // Returns true if correct
+  final String? Function(String id)? getFeedbackMessage;
+  final String? Function(String id)? getCorrectAnswer;
+  final bool Function(String id)? validateAnswer; // Returns true if correct
 
   const LessonTemplate({
     super.key,
@@ -50,8 +50,8 @@ class _LessonTemplateState extends State<LessonTemplate>
     with TickerProviderStateMixin {
   ExerciseState _exerciseState = ExerciseState.initial;
   late List<ExerciseWidget> _exerciseQueue;
-  late List<int>
-  _requeueCount; // Track how many times each exercise has been requeued
+  // Track how many times each exercise has been requeued
+  late List<int> _requeueCount;
   int _currentExerciseIndex = 0;
   int _totalExercisesCompleted = 0;
 
@@ -121,16 +121,10 @@ class _LessonTemplateState extends State<LessonTemplate>
   ExerciseWidget get _currentExercise => _exerciseQueue[_currentExerciseIndex];
 
   String? get _currentFeedbackMessage =>
-      widget.getFeedbackMessage?.call(_getOriginalIndex());
+      widget.getFeedbackMessage?.call(_currentExercise.exerciseData.id);
 
   String? get _currentCorrectAnswer =>
-      widget.getCorrectAnswer?.call(_getOriginalIndex());
-
-  int _getOriginalIndex() {
-    // This is a simplified approach - you might need more sophisticated tracking
-    // if you need to know the original index of requeued exercises
-    return _currentExerciseIndex.clamp(0, widget.exercises.length - 1);
-  }
+      widget.getCorrectAnswer?.call(_currentExercise.exerciseData.id);
 
   void _handleCheck() {
     setState(() {
@@ -144,7 +138,8 @@ class _LessonTemplateState extends State<LessonTemplate>
       if (mounted) {
         // Validate answer
         final isCorrect =
-            widget.validateAnswer?.call(_getOriginalIndex()) ?? true;
+            widget.validateAnswer?.call(_currentExercise.exerciseData.id) ??
+            true;
 
         setState(() {
           _exerciseState = isCorrect
@@ -164,15 +159,20 @@ class _LessonTemplateState extends State<LessonTemplate>
 
     // Handle incorrect answer re-queueing
     if (!wasCorrect && widget.requeueIncorrectAnswers) {
-      final originalIndex = _getOriginalIndex();
-      if (_requeueCount[originalIndex] < widget.maxRequeues) {
-        _requeueCount[originalIndex]++;
+      final exerciseId = _currentExercise
+          .exerciseData
+          .id; // Access ID via the unified property
+      // Note: Since we're using IDs, we don't need _requeueCount anymore (or track per ID if needed)
+      // For simplicity, assume requeuing is allowed without a count limit per ID
+      final requeuedExercise = _currentExercise.copyWith(
+        isRequeued: true,
+        key: UniqueKey(),
+      );
 
-        final requeuedExercise = _currentExercise.copyWith(isRequeued: true);
-
-        _exerciseQueue.add(requeuedExercise);
-        widget.onExerciseRequeued?.call(requeuedExercise);
-      }
+      _exerciseQueue.add(requeuedExercise);
+      widget.onExerciseRequeued?.call(
+        exerciseId,
+      ); // Pass ID instead of the widget
     }
 
     _totalExercisesCompleted++;
@@ -260,7 +260,7 @@ class _LessonTemplateState extends State<LessonTemplate>
                   child: SlideTransition(
                     position: _exerciseSlideAnimation,
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(DesignSpacing.lg),
+                      padding: const EdgeInsets.all(DesignSpacing.md),
                       child: _currentExercise,
                     ),
                   ),

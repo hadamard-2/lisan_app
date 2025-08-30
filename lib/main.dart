@@ -27,43 +27,46 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // Track answers for each exercise
-  Map<int, dynamic> exerciseAnswers = {};
-  late List<ExerciseHandler> handlers;
+  Map<String, dynamic> exerciseAnswers = {};
+  late Map<String, ExerciseHandler> handlers;
 
   @override
   void initState() {
     super.initState();
-    handlers = exerciseData.map(ExerciseHandlerFactory.createHandler).toList();
+    handlers = {};
+    for (var exercise in exerciseData) {
+      handlers[exercise['id']] = ExerciseHandlerFactory.createHandler(exercise);
+    }
   }
 
   // Exercise data
   final List<Map<String, dynamic>> exerciseData = [
-    // {
-    //   "id": "tr_001",
-    //   "type": "translation",
-    //   "subtype": "block_build",
-    //   "instruction": "Translate this sentence",
-    //   "data": {
-    //     "source_text": "The cat is sleeping under the table.",
-    //     "source_lang": "en",
-    //     "target_lang": "fr",
-    //     "blocks": ["dort", "sous", "Le", "la", "table", "chat"],
-    //     "correct_answers": ["Le chat dort sous la table"],
-    //   },
-    // },
-    // {
-    //   "id": "tr_002",
-    //   "type": "translation",
-    //   "subtype": "free_text",
-    //   "instruction": "Translate this sentence",
-    //   "data": {
-    //     "source_text": "They are different now.",
-    //     "source_lang": "en",
-    //     "target_lang": "fr",
-    //     "blocks": ["différents", "sont", "Ils", "maintenant"],
-    //     "correct_answers": ["Ils sont différents maintenant"],
-    //   },
-    // },
+    {
+      "id": "tr_001",
+      "type": "translation",
+      "subtype": "block_build",
+      "instruction": "Translate this sentence",
+      "data": {
+        "source_text": "The cat is sleeping under the table.",
+        "source_lang": "en",
+        "target_lang": "fr",
+        "blocks": ["dort", "sous", "Le", "la", "table", "chat"],
+        "correct_answers": ["Le chat dort sous la table"],
+      },
+    },
+    {
+      "id": "tr_002",
+      "type": "translation",
+      "subtype": "free_text",
+      "instruction": "Translate this sentence",
+      "data": {
+        "source_text": "They are different now.",
+        "source_lang": "en",
+        "target_lang": "fr",
+        "blocks": ["différents", "sont", "Ils", "maintenant"],
+        "correct_answers": ["Ils sont différents maintenant"],
+      },
+    },
     // {
     //   "id": "cs_001",
     //   "type": "complete_sentence",
@@ -98,48 +101,47 @@ class _MyAppState extends State<MyApp> {
     //     "correct_answers": ["The sun is shining in the sky"],
     //   },
     // },
-    {
-      "id": "fb_001",
-      "type": "fill_in_blank",
-      "instruction": "Fill in the blank",
-      "data": {
-        "sentence_with_placeholders": "Je ____",
-        "options": ["mange du pain", "bois de l'eau", "lis un livre"],
-        "correct_answers": ["Je mange du pain"],
-      },
-    },
-    {
-      "id": "fb_002",
-      "type": "fill_in_blank",
-      "instruction": "Fill in the blank",
-      "data": {
-        "sentence_with_placeholders": "____ est allé ____",
-        "options": [
-          "Il ... à l'école",
-          "Elle ... au marché",
-          "Nous ... au parc",
-        ],
-        "correct_answers": ["Il est allé à l'école"],
-      },
-    },
+    // {
+    //   "id": "fb_001",
+    //   "type": "fill_in_blank",
+    //   "instruction": "Fill in the blank",
+    //   "data": {
+    //     "sentence_with_placeholders": "Je ____",
+    //     "options": ["mange du pain", "bois de l'eau", "lis un livre"],
+    //     "correct_answers": ["Je mange du pain"],
+    //   },
+    // },
+    // {
+    //   "id": "fb_002",
+    //   "type": "fill_in_blank",
+    //   "instruction": "Fill in the blank",
+    //   "data": {
+    //     "sentence_with_placeholders": "____ est allé ____",
+    //     "options": [
+    //       "Il ... à l'école",
+    //       "Elle ... au marché",
+    //       "Nous ... au parc",
+    //     ],
+    //     "correct_answers": ["Il est allé à l'école"],
+    //   },
+    // },
   ];
 
-  // NOTE - why the fuck am I accepting isCorrect here?!
-  void _onTranslationAnswerChanged(int exerciseIndex, bool isCorrect) {
+  void _onTranslationAnswerChanged(String exerciseId, String answer) {
     setState(() {
-      exerciseAnswers[exerciseIndex] = isCorrect;
+      exerciseAnswers[exerciseId] = answer;
     });
   }
 
-  void _onCompleteSentenceAnswerChanged(int exerciseIndex, String answer) {
+  void _onCompleteSentenceAnswerChanged(String exerciseId, String answer) {
     setState(() {
-      exerciseAnswers[exerciseIndex] = answer;
+      exerciseAnswers[exerciseId] = answer;
     });
   }
 
-  void _onFillInBlankAnswerChanged(int exerciseIndex, String answer) {
+  void _onFillInBlankAnswerChanged(String exerciseId, String answer) {
     setState(() {
-      exerciseAnswers[exerciseIndex] = answer;
+      exerciseAnswers[exerciseId] = answer;
     });
   }
 
@@ -166,30 +168,30 @@ class _MyAppState extends State<MyApp> {
 
       home: LessonTemplate(
         exercises: exerciseData.asMap().entries.map((entry) {
-          final index = entry.key;
           final exercise = entry.value;
+          final exerciseId = exercise['id'];
 
           switch (exercise['type']) {
             case 'translation':
               return TranslationExercise(
                 key: ValueKey(exercise['id']),
                 exerciseData: TranslationExerciseData.fromJson(exercise),
-                onAnswerChanged: (isCorrect) =>
-                    _onTranslationAnswerChanged(index, isCorrect),
+                onAnswerChanged: (answer) =>
+                    _onTranslationAnswerChanged(exerciseId, answer),
               );
             case 'complete_sentence':
               return CompleteSentenceExercise(
                 key: ValueKey(exercise['id']),
                 exerciseData: CompleteSentenceExerciseData.fromJson(exercise),
                 onAnswerChanged: (answer) =>
-                    _onCompleteSentenceAnswerChanged(index, answer),
+                    _onCompleteSentenceAnswerChanged(exerciseId, answer),
               );
             case 'fill_in_blank':
               return FillInBlankExercise(
                 key: ValueKey(exercise['id']),
                 exerciseData: FillInBlankExerciseData.fromJson(exercise),
                 onAnswerChanged: (answer) =>
-                    _onFillInBlankAnswerChanged(index, answer),
+                    _onFillInBlankAnswerChanged(exerciseId, answer),
               );
             default:
               return Center(child: Text('Unknown exercise type'));
@@ -201,31 +203,32 @@ class _MyAppState extends State<MyApp> {
           MaterialPageRoute(builder: (context) => LessonCompletionPage()),
         ),
 
-        validateAnswer: (index) {
-          final result = handlers[index].validateAndGetFeedback(
-            exerciseAnswers[index],
+        validateAnswer: (String id) {
+          final result = handlers[id]!.validateAndGetFeedback(
+            exerciseAnswers[id],
           );
           return result.isCorrect;
         },
 
-        getFeedbackMessage: (index) {
-          final result = handlers[index].validateAndGetFeedback(
-            exerciseAnswers[index],
+        getFeedbackMessage: (String id) {
+          final result = handlers[id]!.validateAndGetFeedback(
+            exerciseAnswers[id],
           );
           return result.feedbackMessage;
         },
 
-        getCorrectAnswer: (index) {
-          final result = handlers[index].validateAndGetFeedback(
-            exerciseAnswers[index],
+        getCorrectAnswer: (String id) {
+          final result = handlers[id]!.validateAndGetFeedback(
+            exerciseAnswers[id],
           );
           return result.correctAnswer;
         },
 
-        onExerciseRequeued: (exerciseIndex) {
+        // Updated to accept ID
+        onExerciseRequeued: (String id) {
           print('Exercise requeued for additional practice');
           setState(() {
-            exerciseAnswers.remove(exerciseIndex);
+            exerciseAnswers.remove(id);
           });
         },
       ),

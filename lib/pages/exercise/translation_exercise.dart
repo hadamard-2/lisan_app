@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/translation_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
+import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
 
 class TranslationExercise extends ExerciseWidget {
+  @override
   final TranslationExerciseData exerciseData;
-  final Function(bool isCorrect) onAnswerChanged;
+  final Function(String answer) onAnswerChanged;
 
   const TranslationExercise({
     super.key,
     required this.exerciseData,
     required this.onAnswerChanged,
     super.isRequeued = false,
-  });
+  }) : super(exerciseData: exerciseData);
 
   @override
   State<TranslationExercise> createState() => _TranslationExerciseState();
@@ -20,7 +22,7 @@ class TranslationExercise extends ExerciseWidget {
   @override
   ExerciseWidget copyWith({
     TranslationExerciseData? exerciseData,
-    Function(bool)? onAnswerChanged,
+    Function(String)? onAnswerChanged,
     bool? isRequeued,
     Key? key,
   }) {
@@ -41,26 +43,11 @@ class _TranslationExerciseState extends State<TranslationExercise> {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DesignSpacing.lg),
+      padding: const EdgeInsets.all(DesignSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.isRequeued)
-            Row(
-              spacing: DesignSpacing.sm,
-              children: [
-                Icon(Icons.repeat_rounded),
-                Text(
-                  'PREVIOUS MISTAKE',
-                  style: const TextStyle(
-                    color: Colors.orange, // Or any suitable color
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: DesignSpacing.md),
-              ],
-            ),
+          if (widget.isRequeued) PreviousMistakeIndicator(),
 
           // Instruction text
           Text(
@@ -92,7 +79,7 @@ class _TranslationExerciseState extends State<TranslationExercise> {
 
 class BlockBuildWidget extends StatefulWidget {
   final TranslationExerciseData exerciseData;
-  final Function(bool isCorrect) onAnswerChanged;
+  final Function(String answer) onAnswerChanged;
   const BlockBuildWidget({
     super.key,
     required this.exerciseData,
@@ -112,6 +99,7 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget>
   void initState() {
     super.initState();
     final data = widget.exerciseData;
+    data.blocks!.shuffle();
 
     // Initialize available blocks as AvailableBlock objects
     availableBlocks = (data.blocks ?? [])
@@ -144,7 +132,7 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget>
       }
     });
     _animationController.forward().then((_) => _animationController.reset());
-    _validateAnswer();
+    _checkAndSubmitAnswer();
   }
 
   void _deselectBlock(String block, int index) {
@@ -160,19 +148,12 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget>
         }
       }
     });
-    _validateAnswer();
+    _checkAndSubmitAnswer();
   }
 
-  void _validateAnswer() {
+  void _checkAndSubmitAnswer() {
     if (widget.exerciseData.blocks != null) {
-      final isCorrect = widget.exerciseData.correctAnswers.contains(
-        selectedBlocks.join(' '),
-      );
-
-      if (selectedBlocks.length ==
-          (widget.exerciseData.blocks as List).length) {
-        widget.onAnswerChanged(isCorrect);
-      }
+      widget.onAnswerChanged(selectedBlocks.join(' ')); // Pass raw answer
     }
   }
 
@@ -261,7 +242,6 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget>
                             style: const TextStyle(
                               color: DesignColors.primary,
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -289,12 +269,16 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget>
                   ),
                   decoration: BoxDecoration(
                     color: block.isSelected
-                        ? DesignColors.backgroundCard.withAlpha((0.5 * 255).toInt())
+                        ? DesignColors.backgroundCard.withAlpha(
+                            (0.5 * 255).toInt(),
+                          )
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: block.isSelected
-                          ? DesignColors.backgroundBorder.withAlpha((0.5 * 255).toInt())
+                          ? DesignColors.backgroundBorder.withAlpha(
+                              (0.5 * 255).toInt(),
+                            )
                           : DesignColors.backgroundBorder,
                     ),
                   ),
@@ -332,7 +316,7 @@ class AvailableBlock {
 
 class FreeTextWidget extends StatefulWidget {
   final TranslationExerciseData exerciseData;
-  final Function(bool isCorrect) onAnswerChanged;
+  final Function(String answer) onAnswerChanged;
 
   const FreeTextWidget({
     super.key,
@@ -350,7 +334,7 @@ class _FreeTextWidgetState extends State<FreeTextWidget> {
   @override
   void initState() {
     super.initState();
-    _controller.addListener(_validateAnswer);
+    _controller.addListener(_submitAnswer);
   }
 
   @override
@@ -359,15 +343,10 @@ class _FreeTextWidgetState extends State<FreeTextWidget> {
     super.dispose();
   }
 
-  void _validateAnswer() {
+  void _submitAnswer() {
     final userInput = _controller.text.trim();
-
-    final isCorrect = widget.exerciseData.correctAnswers.any(
-      (answer) => answer.toLowerCase() == userInput.toLowerCase(),
-    );
-
     if (userInput.isNotEmpty) {
-      widget.onAnswerChanged(isCorrect);
+      widget.onAnswerChanged(userInput); // Pass raw answer
     }
   }
 

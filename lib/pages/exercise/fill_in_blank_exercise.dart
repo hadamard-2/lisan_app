@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/fill_in_blank_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
+import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
 
 class FillInBlankExercise extends ExerciseWidget {
+  @override
   final FillInBlankExerciseData exerciseData;
   final Function(String) onAnswerChanged;
 
@@ -12,7 +14,7 @@ class FillInBlankExercise extends ExerciseWidget {
     required this.exerciseData,
     required this.onAnswerChanged,
     super.isRequeued = false,
-  });
+  }) : super(exerciseData: exerciseData);
 
   @override
   State<FillInBlankExercise> createState() => _FillInBlankExerciseState();
@@ -40,6 +42,7 @@ class _FillInBlankExerciseState extends State<FillInBlankExercise> {
   Widget build(BuildContext context) {
     final instruction = widget.exerciseData.instruction;
     final options = widget.exerciseData.options;
+    options.shuffle();
 
     return Container(
       width: double.infinity,
@@ -47,22 +50,7 @@ class _FillInBlankExerciseState extends State<FillInBlankExercise> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.isRequeued)
-            Row(
-              children: [
-                Icon(Icons.repeat_rounded, color: Colors.orange),
-                SizedBox(width: DesignSpacing.sm),
-                Text(
-                  'PREVIOUS MISTAKE',
-                  style: const TextStyle(
-                    color: Colors.orange,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: DesignSpacing.xxxl),
-              ],
-            ),
+          if (widget.isRequeued) PreviousMistakeIndicator(),
 
           // Instruction text
           Text(

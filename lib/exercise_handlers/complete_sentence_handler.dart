@@ -27,14 +27,12 @@ class CompleteSentenceHandler implements ExerciseHandler {
     final correctAnswers = exerciseData.correctAnswers;
     final userAnswerLower = userAnswer.toString().toLowerCase().trim();
 
-    print(correctAnswers);
-    print(userAnswerLower);
-
     return correctAnswers.any(
       (correctAnswer) =>
           correctAnswer.toString().toLowerCase().trim() == userAnswerLower,
     );
   }
 
+  // for user display in feedback modal bottom sheet
   String _getCorrectAnswer() => exerciseData.correctAnswers.first;
 }
