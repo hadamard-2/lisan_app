@@ -1,4 +1,4 @@
-import 'package:lisan_app/models/complete_sentence_data.dart';
+import 'package:lisan_app/models/complete_sentence_exercise_data.dart';
 import 'package:lisan_app/models/exercise_result.dart';
 
 class CompleteSentenceHandler implements ExerciseHandler {
@@ -14,7 +14,7 @@ class CompleteSentenceHandler implements ExerciseHandler {
       isCorrect: isCorrect,
       feedbackMessage: isCorrect
           ? 'Great job!'
-          : 'It\'s okay to make mistakes as long as we learn from them.',
+          : 'Mistakes are lessons in disguise.',
       correctAnswer: _getCorrectAnswer(),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
-import 'package:lisan_app/models/complete_sentence_data.dart';
+import 'package:lisan_app/models/complete_sentence_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 
 class CompleteSentenceExercise extends ExerciseWidget {
@@ -172,7 +172,7 @@ class _GivenTextWidgetState extends State<GivenTextWidget> {
         Container(
           width: double.infinity,
           height: 160,
-          padding: const EdgeInsets.all(DesignSpacing.lg), // Standardized to lg
+          padding: const EdgeInsets.all(DesignSpacing.lg),
           decoration: BoxDecoration(
             color: DesignColors.backgroundCard,
             borderRadius: BorderRadius.circular(12),

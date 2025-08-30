@@ -289,12 +289,12 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget>
                   ),
                   decoration: BoxDecoration(
                     color: block.isSelected
-                        ? DesignColors.backgroundCard.withOpacity(0.5)
+                        ? DesignColors.backgroundCard.withAlpha((0.5 * 255).toInt())
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: block.isSelected
-                          ? DesignColors.backgroundBorder.withOpacity(0.5)
+                          ? DesignColors.backgroundBorder.withAlpha((0.5 * 255).toInt())
                           : DesignColors.backgroundBorder,
                     ),
                   ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/exercise_handlers/exercise_handler_factory.dart';
-import 'package:lisan_app/models/complete_sentence_data.dart';
 import 'package:lisan_app/models/exercise_result.dart';
+import 'package:lisan_app/models/complete_sentence_exercise_data.dart';
+import 'package:lisan_app/models/fill_in_blank_data.dart';
 import 'package:lisan_app/models/translation_exercise_data.dart';
+import 'package:lisan_app/pages/exercise/fill_in_blank_exercise.dart';
 
 import 'package:lisan_app/pages/exercise/lesson_template.dart';
 import 'package:lisan_app/pages/exercise/lesson_completion_page.dart';
@@ -62,42 +64,67 @@ class _MyAppState extends State<MyApp> {
     //     "correct_answers": ["Ils sont différents maintenant"],
     //   },
     // },
+    // {
+    //   "id": "cs_001",
+    //   "type": "complete_sentence",
+    //   "subtype": "given_start",
+    //   "instruction": "Complete the sentence",
+    //   "data": {
+    //     "target_sentence": "Hier je suis allé au magasin",
+    //     "provided_text": "Yesterday I went to",
+    //     "correct_answers": ["Yesterday I went to the store"],
+    //   },
+    // },
+    // {
+    //   "id": "cs_002",
+    //   "type": "complete_sentence",
+    //   "subtype": "given_end",
+    //   "instruction": "Complete the sentence",
+    //   "data": {
+    //     "target_sentence": "La pizza est ma nourriture préférée",
+    //     "provided_text": "is my favorite food",
+    //     "correct_answers": ["Pizza is my favorite food"],
+    //   },
+    // },
+    // {
+    //   "id": "cs_003",
+    //   "type": "complete_sentence",
+    //   "subtype": "select_from_blocks",
+    //   "instruction": "Complete the sentence",
+    //   "data": {
+    //     "target_sentence": "Le soleil brille dans le ciel",
+    //     "display_with_blanks": "The ____ is ____ in the sky",
+    //     "blocks": ["sun", "shining", "moon", "bright", "bird", "flying"],
+    //     "correct_answers": ["The sun is shining in the sky"],
+    //   },
+    // },
     {
-      "id": "cs_001",
-      "type": "complete_sentence",
-      "subtype": "given_start",
-      "instruction": "Complete the sentence",
+      "id": "fb_001",
+      "type": "fill_in_blank",
+      "instruction": "Fill in the blank",
       "data": {
-        "target_sentence": "Hier je suis allé au magasin",
-        "provided_text": "Yesterday I went to",
-        "correct_answers": ["Yesterday I went to the store"],
+        "sentence_with_placeholders": "Je ____",
+        "options": ["mange du pain", "bois de l'eau", "lis un livre"],
+        "correct_answers": ["Je mange du pain"],
       },
     },
     {
-      "id": "cs_002",
-      "type": "complete_sentence",
-      "subtype": "given_end",
-      "instruction": "Complete the sentence",
+      "id": "fb_002",
+      "type": "fill_in_blank",
+      "instruction": "Fill in the blank",
       "data": {
-        "target_sentence": "La pizza est ma nourriture préférée",
-        "provided_text": "is my favorite food",
-        "correct_answers": ["Pizza is my favorite food"],
-      },
-    },
-    {
-      "id": "cs_003",
-      "type": "complete_sentence",
-      "subtype": "select_from_blocks",
-      "instruction": "Complete the sentence",
-      "data": {
-        "target_sentence": "Le soleil brille dans le ciel",
-        "display_with_blanks": "The ____ is ____ in the sky",
-        "blocks": ["sun", "shining", "moon", "bright", "bird", "flying"],
-        "correct_answers": ["The sun is shining in the sky"],
+        "sentence_with_placeholders": "____ est allé ____",
+        "options": [
+          "Il ... à l'école",
+          "Elle ... au marché",
+          "Nous ... au parc",
+        ],
+        "correct_answers": ["Il est allé à l'école"],
       },
     },
   ];
 
+  // NOTE - why the fuck am I accepting isCorrect here?!
   void _onTranslationAnswerChanged(int exerciseIndex, bool isCorrect) {
     setState(() {
       exerciseAnswers[exerciseIndex] = isCorrect;
@@ -105,6 +132,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onCompleteSentenceAnswerChanged(int exerciseIndex, String answer) {
+    setState(() {
+      exerciseAnswers[exerciseIndex] = answer;
+    });
+  }
+
+  void _onFillInBlankAnswerChanged(int exerciseIndex, String answer) {
     setState(() {
       exerciseAnswers[exerciseIndex] = answer;
     });
@@ -150,6 +183,13 @@ class _MyAppState extends State<MyApp> {
                 exerciseData: CompleteSentenceExerciseData.fromJson(exercise),
                 onAnswerChanged: (answer) =>
                     _onCompleteSentenceAnswerChanged(index, answer),
+              );
+            case 'fill_in_blank':
+              return FillInBlankExercise(
+                key: ValueKey(exercise['id']),
+                exerciseData: FillInBlankExerciseData.fromJson(exercise),
+                onAnswerChanged: (answer) =>
+                    _onFillInBlankAnswerChanged(index, answer),
               );
             default:
               return Center(child: Text('Unknown exercise type'));

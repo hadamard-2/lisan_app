@@ -14,7 +14,7 @@ class TranslationHandler implements ExerciseHandler {
       isCorrect: isCorrect,
       feedbackMessage: isCorrect
           ? 'Excellent! Your translation is correct.'
-          : 'It\'s okay to make mistakes, as long as we learn from them.',
+          : 'Mistakes are lessons in disguise.',
       correctAnswer: _getCorrectAnswer(),
     );
   }
