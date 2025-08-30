@@ -14,7 +14,7 @@ class CompleteSentenceHandler implements ExerciseHandler {
       isCorrect: isCorrect,
       feedbackMessage: isCorrect
           ? 'Great job!'
-          : 'It\'s okay to make mistakes, as long as we learn from them.',
+          : 'It\'s okay to make mistakes as long as we learn from them.',
       correctAnswer: _getCorrectAnswer(),
     );
   }

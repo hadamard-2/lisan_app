@@ -56,14 +56,13 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
             Container(
               height: 120,
               width: double.infinity,
-              margin: const EdgeInsets.only(bottom: DesignSpacing.lg),
               decoration: BoxDecoration(
                 color: DesignColors.backgroundCard,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Center(
                 child: Icon(
-                  Icons.celebration,
+                  Icons.celebration_rounded,
                   color: DesignColors.primary,
                   size: 60,
                 ),
@@ -78,7 +77,7 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
               child: Text(
                 "0 mistakes!",
                 style: TextStyle(
-                  fontSize: 36,
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
                   color: DesignColors.primary,
                 ),
@@ -94,14 +93,13 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
                 "Scientists should study your big,\nbeautiful brain.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   color: DesignColors.textSecondary,
-                  height: 1.4,
                 ),
               ),
             ),
 
-            SizedBox(height: DesignSpacing.xxxl),
+            SizedBox(height: DesignSpacing.xxl),
 
             // Stats Row
             SlideTransition(

@@ -89,12 +89,8 @@ class _CompleteSentenceExerciseState extends State<CompleteSentenceExercise> {
   Widget _buildExerciseContent() {
     switch (widget.exerciseData.subtype) {
       case 'given_start':
-        return GivenStartWidget(
-          data: widget.exerciseData,
-          onAnswerChanged: _updateAnswer,
-        );
       case 'given_end':
-        return GivenEndWidget(
+        return GivenTextWidget(
           data: widget.exerciseData,
           onAnswerChanged: _updateAnswer,
         );
@@ -114,23 +110,21 @@ class _CompleteSentenceExerciseState extends State<CompleteSentenceExercise> {
   }
 }
 
-// NOTE - GivenStartWiget & GivenEndWidget can be merged together
-// Given start subtype widget
-class GivenStartWidget extends StatefulWidget {
+class GivenTextWidget extends StatefulWidget {
   final CompleteSentenceExerciseData data;
   final Function(String) onAnswerChanged;
 
-  const GivenStartWidget({
+  const GivenTextWidget({
     super.key,
     required this.data,
     required this.onAnswerChanged,
   });
 
   @override
-  State<GivenStartWidget> createState() => _GivenStartWidgetState();
+  State<GivenTextWidget> createState() => _GivenTextWidgetState();
 }
 
-class _GivenStartWidgetState extends State<GivenStartWidget> {
+class _GivenTextWidgetState extends State<GivenTextWidget> {
   late TextEditingController _controller;
 
   @override
@@ -138,7 +132,9 @@ class _GivenStartWidgetState extends State<GivenStartWidget> {
     super.initState();
     _controller = TextEditingController();
     _controller.addListener(() {
-      final fullAnswer = '${widget.data.providedText} ${_controller.text}';
+      final fullAnswer = widget.data.subtype == 'given_start'
+          ? '${widget.data.providedText} ${_controller.text}'
+          : '${_controller.text} ${widget.data.providedText}';
       widget.onAnswerChanged(fullAnswer);
     });
   }
@@ -176,7 +172,7 @@ class _GivenStartWidgetState extends State<GivenStartWidget> {
         Container(
           width: double.infinity,
           height: 160,
-          padding: const EdgeInsets.all(DesignSpacing.lg),
+          padding: const EdgeInsets.all(DesignSpacing.lg), // Standardized to lg
           decoration: BoxDecoration(
             color: DesignColors.backgroundCard,
             borderRadius: BorderRadius.circular(12),
@@ -186,140 +182,61 @@ class _GivenStartWidgetState extends State<GivenStartWidget> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 10,
-            children: [
-              // Provided text
-              Text(
-                widget.data.providedText!,
-                style: const TextStyle(
-                  color: DesignColors.textPrimary,
-                  fontSize: 16,
-                ),
-              ),
-
-              // Inline text field for the blank
-              SizedBox(
-                width: 80,
-                child: TextField(
-                  controller: _controller,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: DesignColors.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(top: 4, bottom: 12),
-                    isDense: true,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// Given end subtype widget
-class GivenEndWidget extends StatefulWidget {
-  final CompleteSentenceExerciseData data;
-  final Function(String) onAnswerChanged;
-
-  const GivenEndWidget({
-    super.key,
-    required this.data,
-    required this.onAnswerChanged,
-  });
-
-  @override
-  State<GivenEndWidget> createState() => _GivenEndWidgetState();
-}
-
-class _GivenEndWidgetState extends State<GivenEndWidget> {
-  late TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController();
-    _controller.addListener(() {
-      final fullAnswer = '${_controller.text} ${widget.data.providedText}';
-      widget.onAnswerChanged(fullAnswer);
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(DesignSpacing.lg),
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: DesignColors.backgroundBorder),
-          ),
-          child: Text(
-            widget.data.targetSentence,
-            style: const TextStyle(
-              color: DesignColors.textPrimary,
-              fontSize: 16,
-            ),
-          ),
-        ),
-        const SizedBox(height: DesignSpacing.xl),
-
-        // Sentence with inline text field
-        Container(
-          width: double.infinity,
-          height: 160,
-          padding: const EdgeInsets.all(DesignSpacing.md),
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: DesignColors.backgroundBorder),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 10,
-            children: [
-              // Inline text field for the blank
-              SizedBox(
-                width: 80,
-                child: TextField(
-                  controller: _controller,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: DesignColors.textPrimary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(top: 4, bottom: 12),
-                    isDense: true,
-                  ),
-                ),
-              ),
-
-              // Provided text
-              Text(
-                widget.data.providedText!,
-                style: const TextStyle(
-                  color: DesignColors.textPrimary,
-                  fontSize: 16,
-                ),
-              ),
-            ],
+            children: widget.data.subtype == 'given_start'
+                ? [
+                    // Provided text first
+                    Text(
+                      widget.data.providedText!,
+                      style: const TextStyle(
+                        color: DesignColors.textPrimary,
+                        fontSize: 16,
+                      ),
+                    ),
+                    // Inline text field for the blank
+                    SizedBox(
+                      width: 80,
+                      child: TextField(
+                        controller: _controller,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: DesignColors.textPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.only(top: 4, bottom: 12),
+                          isDense: true,
+                        ),
+                      ),
+                    ),
+                  ]
+                : [
+                    // Inline text field first
+                    SizedBox(
+                      width: 80,
+                      child: TextField(
+                        controller: _controller,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: DesignColors.textPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.only(top: 4, bottom: 12),
+                          isDense: true,
+                        ),
+                      ),
+                    ),
+                    // Provided text
+                    Text(
+                      widget.data.providedText!,
+                      style: const TextStyle(
+                        color: DesignColors.textPrimary,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
           ),
         ),
       ],
@@ -430,19 +347,25 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Character illustration placeholder
+        // NOTE
         Container(
-          height: 120,
           width: double.infinity,
-          margin: const EdgeInsets.only(bottom: DesignSpacing.lg),
+          padding: const EdgeInsets.all(DesignSpacing.lg),
           decoration: BoxDecoration(
             color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: DesignColors.backgroundBorder),
           ),
-          child: const Center(
-            child: Icon(Icons.pets, color: DesignColors.primary, size: 60),
+          child: Text(
+            widget.data.targetSentence,
+            style: const TextStyle(
+              color: DesignColors.textPrimary,
+              fontSize: 16,
+            ),
           ),
         ),
+        const SizedBox(height: DesignSpacing.xl),
+
         // Sentence with blanks and selected words
         SizedBox(
           height: 200,

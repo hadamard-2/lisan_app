@@ -474,60 +474,6 @@ class _UserStatsPageState extends State<UserStatsPage>
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return SafeArea(
-  //     child: Scaffold(
-  //       backgroundColor: const Color(0xFF14161B),
-  //       appBar: AppBar(
-  //         backgroundColor: const Color(0xFF14161B),
-  //         scrolledUnderElevation: 6,
-  //         shadowColor: Colors.black.withAlpha((0.5 * 255).toInt()),
-  //         surfaceTintColor: Colors.transparent,
-  //         leading: IconButton(
-  //           icon: const Icon(Icons.arrow_back, color: Colors.white),
-  //           onPressed: () => Navigator.pop(context),
-  //         ),
-  //         title: const Text(
-  //           "Profile",
-  //           style: TextStyle(
-  //             fontSize: 18,
-  //             fontWeight: FontWeight.w600,
-  //             color: Colors.white,
-  //           ),
-  //         ),
-  //         actions: [
-  //           IconButton(
-  //             icon: const Icon(Icons.settings_rounded, color: Colors.white),
-  //             onPressed: () {
-  //               // Handle settings navigation
-  //             },
-  //           ),
-  //         ],
-  //       ),
-  //       body: FadeTransition(
-  //         opacity: _fadeAnimation,
-  //         child: SlideTransition(
-  //           position: _slideAnimation,
-  //           child: SingleChildScrollView(
-  //             child: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.center,
-  //               children: [
-  //                 _buildProfileHeader(),
-  //                 const SizedBox(height: 24),
-  //                 _buildStatsGrid(),
-  //                 const SizedBox(height: 32),
-  //                 _buildAchievements(),
-  //                 const SizedBox(height: 32),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return FadeTransition(

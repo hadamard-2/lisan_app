@@ -24,36 +24,32 @@ class _RootScreenState extends State<RootScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        extendBody: true,
-        body: _pages[_pageIndex],
-        bottomNavigationBar: Container(
-          margin: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: DesignColors.backgroundBorder, width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: DesignColors.backgroundDark.withAlpha(
-                  (0.8 * 255).toInt(),
-                ),
-                blurRadius: 20,
-                spreadRadius: 0,
-                offset: Offset(0, -2),
-              ),
-            ],
-          ),
-          height: 80,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Symbols.home_rounded, 0),
-              _buildNavItem(Symbols.trophy, 1),
-              _buildNavItem(Symbols.person_rounded, 2),
-            ],
-          ),
+    return Scaffold(
+      extendBody: true,
+      body: SafeArea(child: _pages[_pageIndex]),
+      bottomNavigationBar: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(
+          color: DesignColors.backgroundCard,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: DesignColors.backgroundBorder, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: DesignColors.backgroundDark.withAlpha((0.8 * 255).toInt()),
+              blurRadius: 20,
+              spreadRadius: 0,
+              offset: Offset(0, -2),
+            ),
+          ],
+        ),
+        height: 80,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(Symbols.home_rounded, 0),
+            _buildNavItem(Symbols.trophy, 1),
+            _buildNavItem(Symbols.person_rounded, 2),
+          ],
         ),
       ),
     );
