@@ -119,10 +119,7 @@ class _GivenTextWidgetState extends State<GivenTextWidget> {
     super.initState();
     _controller = TextEditingController();
     _controller.addListener(() {
-      final fullAnswer = widget.data.subtype == 'given_start'
-          ? '${widget.data.providedText} ${_controller.text}'
-          : '${_controller.text} ${widget.data.providedText}';
-      widget.onAnswerChanged(fullAnswer);
+      widget.onAnswerChanged(_buildFullAnswer());
     });
   }
 
@@ -130,6 +127,82 @@ class _GivenTextWidgetState extends State<GivenTextWidget> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  String _buildFullAnswer() {
+    final providedText = widget.data.providedText!;
+    final userInput = _controller.text;
+
+    // Find the position of the blank (represented by ____) in the provided text
+    if (providedText.contains('____')) {
+      return providedText.replaceAll('____', userInput);
+    }
+
+    // Fallback for backward compatibility with start/end positioning
+    return widget.data.subtype == 'given_start'
+        ? '$providedText $userInput'
+        : '$userInput $providedText';
+  }
+
+  List<Widget> _buildSentenceWidgets() {
+    final providedText = widget.data.providedText!;
+
+    // Check if the provided text contains a blank marker
+    if (providedText.contains('____')) {
+      return _buildSentenceWithInlineBlank(providedText);
+    }
+
+    throw Exception('Could not find blanks when building sentence widgets');
+  }
+
+  List<Widget> _buildSentenceWithInlineBlank(String providedText) {
+    final parts = providedText.split('____');
+    final widgets = <Widget>[];
+
+    for (int i = 0; i < parts.length; i++) {
+      // Add text part before the blank
+      if (parts[i].isNotEmpty) {
+        widgets.add(
+          Text(
+            parts[i],
+            style: const TextStyle(
+              color: DesignColors.textPrimary,
+              fontSize: 16,
+            ),
+          ),
+        );
+      }
+
+      // Add text field for the blank (except after the last part)
+      if (i < parts.length - 1) {
+        widgets.add(
+          SizedBox(
+            width: 80, // Adjustable width
+            child: TextField(
+              controller: _controller,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: DesignColors.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.only(top: 12, bottom: 10),
+                isDense: true,
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: DesignColors.backgroundBorder),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: DesignColors.primary),
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+    }
+
+    return widgets;
   }
 
   @override
@@ -158,72 +231,16 @@ class _GivenTextWidgetState extends State<GivenTextWidget> {
         // Sentence with inline text field
         Container(
           width: double.infinity,
-          height: 160,
           padding: const EdgeInsets.all(DesignSpacing.lg),
           decoration: BoxDecoration(
             color: DesignColors.backgroundCard,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: DesignColors.backgroundBorder),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 10,
-            children: widget.data.subtype == 'given_start'
-                ? [
-                    // Provided text first
-                    Text(
-                      widget.data.providedText!,
-                      style: const TextStyle(
-                        color: DesignColors.textPrimary,
-                        fontSize: 16,
-                      ),
-                    ),
-                    // Inline text field for the blank
-                    SizedBox(
-                      width: 80,
-                      child: TextField(
-                        controller: _controller,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: DesignColors.textPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(top: 4, bottom: 12),
-                          isDense: true,
-                        ),
-                      ),
-                    ),
-                  ]
-                : [
-                    // Inline text field first
-                    SizedBox(
-                      width: 80,
-                      child: TextField(
-                        controller: _controller,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: DesignColors.textPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(top: 4, bottom: 12),
-                          isDense: true,
-                        ),
-                      ),
-                    ),
-                    // Provided text
-                    Text(
-                      widget.data.providedText!,
-                      style: const TextStyle(
-                        color: DesignColors.textPrimary,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            children: _buildSentenceWidgets(),
           ),
         ),
       ],

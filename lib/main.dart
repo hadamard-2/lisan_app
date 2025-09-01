@@ -4,11 +4,15 @@ import 'package:lisan_app/exercise_handlers/exercise_handler_factory.dart';
 import 'package:lisan_app/models/exercise_result.dart';
 import 'package:lisan_app/models/complete_sentence_exercise_data.dart';
 import 'package:lisan_app/models/fill_in_blank_data.dart';
+import 'package:lisan_app/models/listening_exercise_data.dart';
+import 'package:lisan_app/models/speaking_exercise_data.dart';
 import 'package:lisan_app/models/translation_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/fill_in_blank_exercise.dart';
 
 import 'package:lisan_app/pages/exercise/lesson_template.dart';
 import 'package:lisan_app/pages/exercise/lesson_completion_page.dart';
+import 'package:lisan_app/pages/exercise/listening_exercise.dart';
+import 'package:lisan_app/pages/exercise/speaking_exercise.dart';
 import 'package:lisan_app/pages/exercise/translation_exercise.dart';
 import 'package:lisan_app/pages/exercise/complete_sentence_exercise.dart';
 
@@ -41,32 +45,32 @@ class _MyAppState extends State<MyApp> {
 
   // Exercise data
   final List<Map<String, dynamic>> exerciseData = [
-    {
-      "id": "tr_001",
-      "type": "translation",
-      "subtype": "block_build",
-      "instruction": "Translate this sentence",
-      "data": {
-        "source_text": "The cat is sleeping under the table.",
-        "source_lang": "en",
-        "target_lang": "fr",
-        "blocks": ["dort", "sous", "Le", "la", "table", "chat"],
-        "correct_answers": ["Le chat dort sous la table"],
-      },
-    },
-    {
-      "id": "tr_002",
-      "type": "translation",
-      "subtype": "free_text",
-      "instruction": "Translate this sentence",
-      "data": {
-        "source_text": "They are different now.",
-        "source_lang": "en",
-        "target_lang": "fr",
-        "blocks": ["différents", "sont", "Ils", "maintenant"],
-        "correct_answers": ["Ils sont différents maintenant"],
-      },
-    },
+    // {
+    //   "id": "tr_001",
+    //   "type": "translation",
+    //   "subtype": "block_build",
+    //   "instruction": "Translate this sentence",
+    //   "data": {
+    //     "source_text": "The cat is sleeping under the table.",
+    //     "source_lang": "en",
+    //     "target_lang": "fr",
+    //     "blocks": ["dort", "sous", "Le", "la", "table", "chat"],
+    //     "correct_answers": ["Le chat dort sous la table"],
+    //   },
+    // },
+    // {
+    //   "id": "tr_002",
+    //   "type": "translation",
+    //   "subtype": "free_text",
+    //   "instruction": "Translate this sentence",
+    //   "data": {
+    //     "source_text": "They are different now.",
+    //     "source_lang": "en",
+    //     "target_lang": "fr",
+    //     "blocks": ["différents", "sont", "Ils", "maintenant"],
+    //     "correct_answers": ["Ils sont différents maintenant"],
+    //   },
+    // },
     // {
     //   "id": "cs_001",
     //   "type": "complete_sentence",
@@ -85,7 +89,7 @@ class _MyAppState extends State<MyApp> {
     //   "instruction": "Complete the sentence",
     //   "data": {
     //     "target_sentence": "La pizza est ma nourriture préférée",
-    //     "provided_text": "is my favorite food",
+    //     "provided_text": "____ is my favorite food",
     //     "correct_answers": ["Pizza is my favorite food"],
     //   },
     // },
@@ -125,6 +129,84 @@ class _MyAppState extends State<MyApp> {
     //     "correct_answers": ["Il est allé à l'école"],
     //   },
     // },
+    // {
+    //   "id": "sp_001",
+    //   "type": "speaking",
+    //   "instruction": "Speak this sentence",
+    //   "data": {
+    //     "target_text": "ሰላም እንዴት ነህ?",
+    //     "reference_audio_url": "https://cdn.example.com/audio/sp_001.mp3",
+    //     "scoring": {"min_confidence": 0.7},
+    //     "max_record_seconds": 8,
+    //   },
+    // },
+    // {
+    //   "id": "ls_001",
+    //   "type": "listening",
+    //   "subtype": "omit_word",
+    //   "instruction": "Listen and choose the correct missing word.",
+    //   "data": {
+    //     "audio_url": "https://cdn.example.com/audio/ls_001.mp3",
+    //     "display_text": "እሱ ____ እየጠጣ ነው።",
+    //     "options": ["ነጭ", "ነጋ"],
+    //     "correct_answers": ["ነጭ"]
+    //   }
+    // }
+    //     {
+    //   "id": "ls_001",
+    //   "type": "listening",
+    //   "subtype": "omit_word_choose",
+    //   "instruction": "Listen for the missing word",
+    //   "data": {
+    //     "audio_url": "https://cdn.example.com/audio/ls_001.mp3",
+    //     "display_text": "እሱ ____ እየጠጣ ነው።",
+    //     "options": [
+    // 	    {
+    // 		    "id": 1,
+    // 		    "audio_url": "https://cdn.example.com/audio/ls_001_1.mp3",
+    // 		    "text": "ነጭ"
+    // 		},
+    // 		{
+    // 			"id": 2,
+    // 			"audio_url": "https://cdn.example.com/audio/ls_001_2.mp3",
+    // 			"text": "ነጋ"
+    // 		}
+    // 	],
+    //     "correct_option_id": 1
+    //   }
+    // },
+    // {
+    //   "id": "ls_001",
+    //   "type": "listening",
+    //   "subtype": "omit_word_type",
+    //   "instruction": "Type the missing word",
+    //   "data": {
+    //     "audio_url": "https://cdn.example.com/audio/ls_001.mp3",
+    //     "display_text": "እሱ ____ እየጠጣ ነው።",
+    //     "correct_answers": ["ነጭ"],
+    //   },
+    // },
+    // {
+    //   "id": "ls_003",
+    //   "type": "listening",
+    //   "subtype": "free_text",
+    //   "instruction": "Type what you hear",
+    //   "data": {
+    //     "audio_url": "https://cdn.example.com/audio/full_sentence.mp3",
+    //     "correct_answers": ["እኔ በጣም ደስ ብሎኛል"],
+    //   },
+    // },
+    // {
+    //   "id": "ls_004",
+    //   "type": "listening",
+    //   "subtype": "block_build",
+    //   "instruction": "Tap what you hear",
+    //   "data": {
+    //     "audio_url": "https://cdn.example.com/audio/ls_004.mp3",
+    //     "blocks": ["በጣም", "ነኝ", "ጥሩ", "እኔ"],
+    //     "correct_answers": ["እኔ በጣም ጥሩ ነኝ"],
+    //   },
+    // },
   ];
 
   void _onTranslationAnswerChanged(String exerciseId, String answer) {
@@ -140,6 +222,18 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onFillInBlankAnswerChanged(String exerciseId, String answer) {
+    setState(() {
+      exerciseAnswers[exerciseId] = answer;
+    });
+  }
+
+  void _onSpeakingAnswerChanged(String exerciseId, String answer) {
+    setState(() {
+      exerciseAnswers[exerciseId] = answer;
+    });
+  }
+
+  void _onListeningAnswerChanged(String exerciseId, String answer) {
     setState(() {
       exerciseAnswers[exerciseId] = answer;
     });
@@ -193,8 +287,22 @@ class _MyAppState extends State<MyApp> {
                 onAnswerChanged: (answer) =>
                     _onFillInBlankAnswerChanged(exerciseId, answer),
               );
+            case 'speaking':
+              return SpeakingExercise(
+                key: ValueKey(exercise['id']),
+                exerciseData: SpeakingExerciseData.fromJson(exercise),
+                onAnswerChanged: (answer) =>
+                    _onSpeakingAnswerChanged(exerciseId, answer),
+              );
+            case 'listening':
+              return ListeningExercise(
+                key: ValueKey(exercise['id']),
+                exerciseData: ListeningExerciseData.fromJson(exercise),
+                onAnswerChanged: (answer) =>
+                    _onListeningAnswerChanged(exerciseId, answer),
+              );
             default:
-              return Center(child: Text('Unknown exercise type'));
+              throw Exception('Unknown exercise type');
           }
         }).toList(),
 

@@ -8,7 +8,7 @@ class LessonTemplate extends StatefulWidget {
   final List<Widget> exercises;
   final double? initialProgress; // Optional: override auto-calculated progress
   final int hearts;
-  final bool showAudioHelper;
+  final bool isVoiceBased;
   final bool requeueIncorrectAnswers;
   final int maxRequeues;
 
@@ -17,7 +17,7 @@ class LessonTemplate extends StatefulWidget {
   final Function(BuildContext context) onLessonCompletion;
   final Function(int currentIndex, int totalRemaining)? onExerciseComplete;
   final Function(String id)? onExerciseRequeued;
-  final VoidCallback? onAudioHelper;
+  final VoidCallback? onVoiceBasedExercise;
 
   // Per-exercise data (functions that take current exercise index)
   final String? Function(String id)? getFeedbackMessage;
@@ -30,13 +30,13 @@ class LessonTemplate extends StatefulWidget {
     required this.onLessonCompletion,
     this.initialProgress,
     this.hearts = 5,
-    this.showAudioHelper = false,
+    this.isVoiceBased = false,
     this.requeueIncorrectAnswers = true,
     this.maxRequeues = 1,
     this.onExit,
     this.onExerciseComplete,
     this.onExerciseRequeued,
-    this.onAudioHelper,
+    this.onVoiceBasedExercise,
     this.getFeedbackMessage,
     this.getCorrectAnswer,
     this.validateAnswer,
@@ -414,15 +414,6 @@ class _LessonTemplateState extends State<LessonTemplate>
 
                     if (_currentFeedbackMessage != null) ...[
                       const SizedBox(height: DesignSpacing.md),
-                      // Text(
-                      //   'Advice:',
-                      //   style: const TextStyle(
-                      //     color: DesignColors.textPrimary,
-                      //     fontSize: 16,
-                      //     fontWeight: FontWeight.w600,
-                      //   ),
-                      // ),
-                      // const SizedBox(height: DesignSpacing.xs),
                       Text(
                         _currentFeedbackMessage!,
                         style: TextStyle(
@@ -493,21 +484,31 @@ class _LessonTemplateState extends State<LessonTemplate>
   }
 
   Widget _buildBottomSection() {
+    String skipText = '';
+    print(_currentExercise.exerciseData.type);
+    switch (_currentExercise.exerciseData.type) {
+      case 'speaking':
+        skipText = 'CAN\'T SPEAK NOW';
+        break;
+      case 'listening':
+        skipText = 'CAN\'T LISTEN NOW';
+        break;
+    }
+
     return Container(
       padding: const EdgeInsets.all(DesignSpacing.md),
       child: Column(
-        spacing: DesignSpacing.sm,
+        spacing: DesignSpacing.md,
         children: [
-          // Audio Helper Button (if needed)
-          if (widget.showAudioHelper && _exerciseState == ExerciseState.initial)
+          if (skipText.isNotEmpty && _exerciseState == ExerciseState.initial)
             TextButton(
-              onPressed: widget.onAudioHelper,
-              child: const Text(
-                "CAN'T SPEAK NOW",
+              // onPressed: widget.onVoiceBasedExercise,
+              onPressed: skipVoiceBasedExercises,
+              child: Text(
+                skipText,
                 style: TextStyle(
                   color: DesignColors.textTertiary,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16,
+                  fontSize: 15,
                 ),
               ),
             ),
@@ -555,5 +556,12 @@ class _LessonTemplateState extends State<LessonTemplate>
         ],
       ),
     );
+  }
+
+  // skips voice based exercise for the rest of the lesson
+  void skipVoiceBasedExercises() {
+    // show feedback overlay with
+    // text: "We'll skip ${exerciseType} for this lesson."
+    // button: "CONTINUE"
   }
 }

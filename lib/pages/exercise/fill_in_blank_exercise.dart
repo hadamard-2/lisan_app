@@ -39,10 +39,15 @@ class _FillInBlankExerciseState extends State<FillInBlankExercise> {
   int _selectedOptionIndex = -1;
 
   @override
+  void initState() {
+    super.initState();
+    widget.exerciseData.options.shuffle();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final instruction = widget.exerciseData.instruction;
     final options = widget.exerciseData.options;
-    options.shuffle();
 
     return Container(
       width: double.infinity,
@@ -102,10 +107,13 @@ class _FillInBlankExerciseState extends State<FillInBlankExercise> {
             child: Container(
               width: double.infinity,
               height: 60,
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.center,
               padding: const EdgeInsets.all(DesignSpacing.md),
               margin: const EdgeInsets.only(bottom: DesignSpacing.sm),
               decoration: BoxDecoration(
+                color: _selectedOptionIndex == index
+                    ? DesignColors.primary.withAlpha((0.1 * 255).toInt())
+                    : Colors.transparent,
                 border: Border.all(
                   color: _selectedOptionIndex == index
                       ? DesignColors.primary
