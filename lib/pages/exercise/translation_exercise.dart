@@ -3,6 +3,7 @@ import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/translation_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
+import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
 
 class TranslationExercise extends ExerciseWidget {
   @override
@@ -160,39 +161,11 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget>
   @override
   Widget build(BuildContext context) {
     final data = widget.exerciseData;
-    final sourceText = data.sourceText;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Source text bubble
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(DesignSpacing.lg),
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: DesignColors.backgroundBorder),
-          ),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.volume_up_rounded,
-                color: DesignColors.primary,
-                size: 21,
-              ),
-              const SizedBox(width: DesignSpacing.md),
-              Expanded(
-                child: Text(
-                  sourceText,
-                  style: const TextStyle(
-                    color: DesignColors.textPrimary,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        TextBubbleWidget(text: data.sourceText, audioUrl: data.sourceAudio,),
         const SizedBox(height: DesignSpacing.xl),
 
         // Selected blocks area
@@ -355,23 +328,7 @@ class _FreeTextWidgetState extends State<FreeTextWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Source text bubble
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(DesignSpacing.lg),
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: DesignColors.backgroundBorder),
-          ),
-          child: Text(
-            widget.exerciseData.sourceText,
-            style: const TextStyle(
-              color: DesignColors.textPrimary,
-              fontSize: 16,
-            ),
-          ),
-        ),
+        TextBubbleWidget(text: widget.exerciseData.sourceText),
         const SizedBox(height: DesignSpacing.xl),
 
         // Text input area

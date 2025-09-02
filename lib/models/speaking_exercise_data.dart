@@ -4,6 +4,7 @@ class SpeakingExerciseData extends ExerciseData {
   String targetText;
   double minConfidence;
   int maxRecordSeconds;
+  String? audioUrl; // Added optional audio URL
 
   SpeakingExerciseData({
     required super.id,
@@ -13,6 +14,7 @@ class SpeakingExerciseData extends ExerciseData {
     required this.targetText,
     required this.minConfidence,
     required this.maxRecordSeconds,
+    this.audioUrl, // Added optional parameter
   });
 
   factory SpeakingExerciseData.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,7 @@ class SpeakingExerciseData extends ExerciseData {
       subtype: json['subtype'],
       instruction: json['instruction'],
       targetText: data['target_text'],
+      audioUrl: data['audio_url'],
       minConfidence: scoring['min_confidence'],
       maxRecordSeconds: data['max_record_seconds'],
     );
@@ -39,6 +42,7 @@ class SpeakingExerciseData extends ExerciseData {
         'target_text': targetText,
         'scoring': {'min_confidence': minConfidence},
         'max_record_seconds': maxRecordSeconds,
+        if (audioUrl != null) 'audio_url': audioUrl, // Added optional field
       },
     };
   }

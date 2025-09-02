@@ -6,6 +6,8 @@ import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
 import 'dart:math';
 
+import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
+
 class ListeningExercise extends ExerciseWidget {
   @override
   final ListeningExerciseData exerciseData;
@@ -872,34 +874,9 @@ class _OmitWordChooseState extends State<OmitWordChoose> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Source text bubble
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(DesignSpacing.lg),
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: DesignColors.backgroundBorder),
-          ),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.volume_up_rounded,
-                color: DesignColors.primary,
-                size: 21,
-              ),
-              const SizedBox(width: DesignSpacing.md),
-              Expanded(
-                child: Text(
-                  widget.exerciseData.displayText!,
-                  style: const TextStyle(
-                    color: DesignColors.textPrimary,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ],
-          ),
+        TextBubbleWidget(
+          text: widget.exerciseData.displayText!,
+          audioUrl: widget.exerciseData.audioUrl,
         ),
         const SizedBox(height: DesignSpacing.xl),
 
@@ -939,7 +916,9 @@ class _OmitWordChooseState extends State<OmitWordChoose> {
                   spacing: 8,
                   children: [
                     Icon(Icons.volume_up_rounded, color: DesignColors.primary),
-                    Image.asset('assets/images/waveform (${randInts[index]}).png'),
+                    Image.asset(
+                      'assets/images/waveform (${randInts[index]}).png',
+                    ),
                   ],
                 ),
               ),

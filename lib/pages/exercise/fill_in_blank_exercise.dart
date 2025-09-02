@@ -3,6 +3,7 @@ import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/fill_in_blank_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
+import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
 
 class FillInBlankExercise extends ExerciseWidget {
   @override
@@ -76,19 +77,7 @@ class _FillInBlankExerciseState extends State<FillInBlankExercise> {
 
   List<Widget> _buildExerciseContent(List<String> options) {
     return [
-      Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(DesignSpacing.lg),
-        decoration: BoxDecoration(
-          color: DesignColors.backgroundCard,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: DesignColors.backgroundBorder),
-        ),
-        child: Text(
-          widget.exerciseData.sentenceWithPlaceholders,
-          style: const TextStyle(color: DesignColors.textPrimary, fontSize: 16),
-        ),
-      ),
+      TextBubbleWidget(text: widget.exerciseData.sentenceWithPlaceholders),
       const SizedBox(height: DesignSpacing.xxxl * 2),
 
       // Choices

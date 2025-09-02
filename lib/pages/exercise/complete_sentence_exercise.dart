@@ -3,6 +3,7 @@ import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/complete_sentence_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
+import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
 
 class CompleteSentenceExercise extends ExerciseWidget {
   @override
@@ -210,22 +211,7 @@ class _GivenTextWidgetState extends State<GivenTextWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(DesignSpacing.lg),
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: DesignColors.backgroundBorder),
-          ),
-          child: Text(
-            widget.data.targetSentence,
-            style: const TextStyle(
-              color: DesignColors.textPrimary,
-              fontSize: 16,
-            ),
-          ),
-        ),
+        TextBubbleWidget(text: widget.data.targetSentence),
         const SizedBox(height: DesignSpacing.xl),
 
         // Sentence with inline text field
@@ -353,22 +339,7 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(DesignSpacing.lg),
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: DesignColors.backgroundBorder),
-          ),
-          child: Text(
-            widget.data.targetSentence,
-            style: const TextStyle(
-              color: DesignColors.textPrimary,
-              fontSize: 16,
-            ),
-          ),
-        ),
+        TextBubbleWidget(text: widget.data.targetSentence),
         const SizedBox(height: DesignSpacing.xl),
 
         // Sentence with blanks and selected words
