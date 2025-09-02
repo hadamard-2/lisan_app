@@ -3,6 +3,7 @@ import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/translation_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
+import 'package:lisan_app/widgets/exercise/free_text_widget.dart';
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
 
 class TranslationExercise extends ExerciseWidget {
@@ -68,7 +69,7 @@ class _TranslationExerciseState extends State<TranslationExercise> {
               onAnswerChanged: widget.onAnswerChanged,
             )
           else
-            FreeTextWidget(
+            FreeTextTranslationExerciseContent(
               exerciseData: widget.exerciseData,
               onAnswerChanged: widget.onAnswerChanged,
             ),
@@ -165,7 +166,7 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextBubbleWidget(text: data.sourceText, audioUrl: data.sourceAudio,),
+        TextBubbleWidget(text: data.sourceText, audioUrl: data.sourceAudio),
         const SizedBox(height: DesignSpacing.xl),
 
         // Selected blocks area
@@ -287,21 +288,23 @@ class AvailableBlock {
   AvailableBlock({required this.text, this.isSelected = false});
 }
 
-class FreeTextWidget extends StatefulWidget {
+class FreeTextTranslationExerciseContent extends StatefulWidget {
   final TranslationExerciseData exerciseData;
   final Function(String answer) onAnswerChanged;
 
-  const FreeTextWidget({
+  const FreeTextTranslationExerciseContent({
     super.key,
     required this.exerciseData,
     required this.onAnswerChanged,
   });
 
   @override
-  State<FreeTextWidget> createState() => _FreeTextWidgetState();
+  State<FreeTextTranslationExerciseContent> createState() =>
+      _FreeTextTranslationExerciseContentState();
 }
 
-class _FreeTextWidgetState extends State<FreeTextWidget> {
+class _FreeTextTranslationExerciseContentState
+    extends State<FreeTextTranslationExerciseContent> {
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -330,32 +333,9 @@ class _FreeTextWidgetState extends State<FreeTextWidget> {
       children: [
         TextBubbleWidget(text: widget.exerciseData.sourceText),
         const SizedBox(height: DesignSpacing.xl),
-
-        // Text input area
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: DesignColors.backgroundBorder),
-          ),
-          child: TextField(
-            controller: _controller,
-            maxLines: 8,
-            style: const TextStyle(
-              color: DesignColors.textPrimary,
-              fontSize: 16,
-            ),
-            decoration: const InputDecoration(
-              hintText: 'Type your translation here...',
-              hintStyle: TextStyle(
-                color: DesignColors.textTertiary,
-                fontSize: 16,
-              ),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.all(DesignSpacing.lg),
-            ),
-          ),
+        FreeTextWidget(
+          textEditingController: _controller,
+          hintText: 'Type your translation here...',
         ),
       ],
     );

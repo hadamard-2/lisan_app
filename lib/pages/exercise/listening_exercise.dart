@@ -4,6 +4,7 @@ import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/listening_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
+import 'package:lisan_app/widgets/exercise/free_text_widget.dart';
 import 'dart:math';
 
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
@@ -83,7 +84,7 @@ class _ListeningExerciseState extends State<ListeningExercise> {
           onAnswerChanged: widget.onAnswerChanged,
         );
       case 'free_text':
-        return FreeTextWidget(
+        return FreeTextListeningExerciseContent(
           exerciseData: widget.exerciseData,
           onAnswerChanged: widget.onAnswerChanged,
         );
@@ -326,21 +327,23 @@ class AvailableBlock {
   AvailableBlock({required this.text, this.isSelected = false});
 }
 
-class FreeTextWidget extends StatefulWidget {
+class FreeTextListeningExerciseContent extends StatefulWidget {
   final ListeningExerciseData exerciseData;
   final Function(String answer) onAnswerChanged;
 
-  const FreeTextWidget({
+  const FreeTextListeningExerciseContent({
     super.key,
     required this.exerciseData,
     required this.onAnswerChanged,
   });
 
   @override
-  State<FreeTextWidget> createState() => _FreeTextWidgetState();
+  State<FreeTextListeningExerciseContent> createState() =>
+      _FreeTextListeningExerciseContentState();
 }
 
-class _FreeTextWidgetState extends State<FreeTextWidget> {
+class _FreeTextListeningExerciseContentState
+    extends State<FreeTextListeningExerciseContent> {
   final TextEditingController _controller = TextEditingController();
   PlaybackSpeed playbackSpeed = PlaybackSpeed.slow;
 
@@ -369,6 +372,7 @@ class _FreeTextWidgetState extends State<FreeTextWidget> {
     final audioUrl = data.audioUrl;
 
     return Column(
+      spacing: DesignSpacing.xl,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         VoiceBubbleWidget(
@@ -387,33 +391,9 @@ class _FreeTextWidgetState extends State<FreeTextWidget> {
             });
           },
         ),
-        const SizedBox(height: DesignSpacing.xl),
-
-        // Text input area
-        Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: DesignColors.backgroundBorder),
-          ),
-          child: TextField(
-            controller: _controller,
-            maxLines: 8,
-            style: const TextStyle(
-              color: DesignColors.textPrimary,
-              fontSize: 16,
-            ),
-            decoration: const InputDecoration(
-              hintText: 'Type your sentence here...',
-              hintStyle: TextStyle(
-                color: DesignColors.textTertiary,
-                fontSize: 16,
-              ),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.all(DesignSpacing.lg),
-            ),
-          ),
+        FreeTextWidget(
+          textEditingController: _controller,
+          hintText: 'Type the Amharic you hear',
         ),
       ],
     );
