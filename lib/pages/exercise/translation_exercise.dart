@@ -3,6 +3,7 @@ import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/translation_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
+import 'package:lisan_app/widgets/exercise/block_build_widget.dart';
 import 'package:lisan_app/widgets/exercise/free_text_widget.dart';
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
 
@@ -64,7 +65,7 @@ class _TranslationExerciseState extends State<TranslationExercise> {
 
           // Render appropriate subtype
           if (subtype == 'block_build')
-            BlockBuildWidget(
+            BlockBuildExerciseContent(
               exerciseData: widget.exerciseData,
               onAnswerChanged: widget.onAnswerChanged,
             )
@@ -79,19 +80,20 @@ class _TranslationExerciseState extends State<TranslationExercise> {
   }
 }
 
-class BlockBuildWidget extends StatefulWidget {
+class BlockBuildExerciseContent extends StatefulWidget {
   final TranslationExerciseData exerciseData;
   final Function(String answer) onAnswerChanged;
-  const BlockBuildWidget({
+  const BlockBuildExerciseContent({
     super.key,
     required this.exerciseData,
     required this.onAnswerChanged,
   });
   @override
-  State<BlockBuildWidget> createState() => _BlockBuildWidgetState();
+  State<BlockBuildExerciseContent> createState() =>
+      _BlockBuildExerciseContentState();
 }
 
-class _BlockBuildWidgetState extends State<BlockBuildWidget>
+class _BlockBuildExerciseContentState extends State<BlockBuildExerciseContent>
     with TickerProviderStateMixin {
   List<String> selectedBlocks = [];
   List<AvailableBlock> availableBlocks = [];
@@ -164,128 +166,18 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget>
     final data = widget.exerciseData;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: DesignSpacing.xl,
       children: [
         TextBubbleWidget(text: data.sourceText, audioUrl: data.sourceAudio),
-        const SizedBox(height: DesignSpacing.xl),
-
-        // Selected blocks area
-        Container(
-          width: double.infinity,
-          height: 160,
-          padding: const EdgeInsets.all(DesignSpacing.md),
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: DesignColors.backgroundBorder),
-          ),
-          child: selectedBlocks.isEmpty
-              ? const Center(
-                  child: Text(
-                    'Tap blocks below to build your translation',
-                    style: TextStyle(
-                      color: DesignColors.textTertiary,
-                      fontSize: 14,
-                    ),
-                  ),
-                )
-              : Wrap(
-                  spacing: DesignSpacing.sm,
-                  runSpacing: DesignSpacing.sm,
-                  children: selectedBlocks.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final block = entry.value;
-                    return AnimatedScale(
-                      scale: 1.0,
-                      duration: const Duration(milliseconds: 200),
-                      child: GestureDetector(
-                        onTap: () => _deselectBlock(block, index),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: DesignSpacing.md,
-                            vertical: DesignSpacing.sm,
-                          ),
-                          decoration: BoxDecoration(
-                            color: DesignColors.primary.withAlpha(
-                              (0.2 * 255).toInt(),
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            block,
-                            style: const TextStyle(
-                              color: DesignColors.primary,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-        ),
-        const SizedBox(height: DesignSpacing.xl),
-
-        // Available blocks
-        Wrap(
-          spacing: DesignSpacing.sm,
-          runSpacing: DesignSpacing.sm,
-          children: availableBlocks.map((block) {
-            return AnimatedScale(
-              scale: 1.0,
-              duration: const Duration(milliseconds: 200),
-              child: GestureDetector(
-                onTap: block.isSelected ? null : () => _selectBlock(block.text),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: DesignSpacing.md,
-                    vertical: DesignSpacing.sm,
-                  ),
-                  decoration: BoxDecoration(
-                    color: block.isSelected
-                        ? DesignColors.backgroundCard.withAlpha(
-                            (0.5 * 255).toInt(),
-                          )
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: block.isSelected
-                          ? DesignColors.backgroundBorder.withAlpha(
-                              (0.5 * 255).toInt(),
-                            )
-                          : DesignColors.backgroundBorder,
-                    ),
-                  ),
-                  child: block.isSelected
-                      ? Text(
-                          block.text,
-                          style: TextStyle(
-                            color: DesignColors.textTertiary,
-                            fontSize: 16,
-                          ),
-                        )
-                      : Text(
-                          block.text,
-                          style: const TextStyle(
-                            color: DesignColors.textPrimary,
-                            fontSize: 16,
-                          ),
-                        ),
-                ),
-              ),
-            );
-          }).toList(),
+        BlockBuildWidget(
+          selectedBlocks: selectedBlocks,
+          availableBlocks: availableBlocks,
+          onSelectedBlockTap: _deselectBlock,
+          onAvailableBlockTap: _selectBlock,
         ),
       ],
     );
   }
-}
-
-class AvailableBlock {
-  final String text;
-  bool isSelected;
-
-  AvailableBlock({required this.text, this.isSelected = false});
 }
 
 class FreeTextTranslationExerciseContent extends StatefulWidget {
