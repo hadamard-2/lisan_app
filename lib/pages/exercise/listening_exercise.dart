@@ -7,6 +7,7 @@ import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
 import 'dart:math';
 
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
+import 'package:lisan_app/widgets/exercise/voice_bubble_widget.dart';
 
 class ListeningExercise extends ExerciseWidget {
   @override
@@ -99,8 +100,6 @@ class _ListeningExerciseState extends State<ListeningExercise> {
   }
 }
 
-enum PlaybackSpeed { slow, normal }
-
 class BlockBuildWidget extends StatefulWidget {
   final ListeningExerciseData exerciseData;
   final Function(String answer) onAnswerChanged;
@@ -118,7 +117,7 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget>
   List<String> selectedBlocks = [];
   List<AvailableBlock> availableBlocks = [];
   late AnimationController _animationController;
-  PlaybackSpeed speed = PlaybackSpeed.normal;
+  PlaybackSpeed playbackSpeed = PlaybackSpeed.normal;
 
   @override
   void initState() {
@@ -190,111 +189,21 @@ class _BlockBuildWidgetState extends State<BlockBuildWidget>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Voice playback
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: DesignColors.backgroundCard,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: DesignColors.backgroundBorder),
-              ),
-              padding: const EdgeInsets.all(DesignSpacing.sm),
-              child: IconButton(
-                splashColor: Colors.transparent,
-                icon: Icon(
-                  Icons.volume_up_rounded,
-                  color: DesignColors.primary,
-                  size: 36,
-                ),
-                onPressed: () {
-                  print('Playing voice');
-                },
-              ),
-            ),
-            const SizedBox(width: DesignSpacing.md),
-            SizedBox(
-              width: 70,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: DesignSpacing.sm,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        speed = PlaybackSpeed.slow;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: speed == PlaybackSpeed.slow
-                            ? DesignColors.primary.withAlpha(30)
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: speed == PlaybackSpeed.slow
-                              ? DesignColors.primary
-                              : DesignColors.backgroundBorder,
-                        ),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'Slow',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: speed == PlaybackSpeed.slow
-                              ? DesignColors.primary
-                              : DesignColors.textSecondary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        speed = PlaybackSpeed.normal;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: speed == PlaybackSpeed.normal
-                            ? DesignColors.primary.withAlpha(30)
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: speed == PlaybackSpeed.normal
-                              ? DesignColors.primary
-                              : DesignColors.backgroundBorder,
-                        ),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'Normal',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: speed == PlaybackSpeed.normal
-                              ? DesignColors.primary
-                              : DesignColors.textSecondary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        VoiceBubbleWidget(
+          audioUrl: widget.exerciseData.audioUrl,
+          playbackSpeed: playbackSpeed,
+          onPlaybackButtonPressed: () {
+            print('Playing voice');
+          },
+          onSpeedButtonPressed: () {
+            setState(() {
+              if (playbackSpeed == PlaybackSpeed.normal) {
+                playbackSpeed = PlaybackSpeed.slow;
+              } else {
+                playbackSpeed = PlaybackSpeed.normal;
+              }
+            });
+          },
         ),
         const SizedBox(height: DesignSpacing.xl),
 
@@ -433,7 +342,7 @@ class FreeTextWidget extends StatefulWidget {
 
 class _FreeTextWidgetState extends State<FreeTextWidget> {
   final TextEditingController _controller = TextEditingController();
-  PlaybackSpeed speed = PlaybackSpeed.slow;
+  PlaybackSpeed playbackSpeed = PlaybackSpeed.slow;
 
   @override
   void initState() {
@@ -462,111 +371,21 @@ class _FreeTextWidgetState extends State<FreeTextWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Voice playback
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: DesignColors.backgroundCard,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: DesignColors.backgroundBorder),
-              ),
-              padding: const EdgeInsets.all(DesignSpacing.sm),
-              child: IconButton(
-                splashColor: Colors.transparent,
-                icon: Icon(
-                  Icons.volume_up_rounded,
-                  color: DesignColors.primary,
-                  size: 36,
-                ),
-                onPressed: () {
-                  print('Playing voice');
-                },
-              ),
-            ),
-            const SizedBox(width: DesignSpacing.md),
-            SizedBox(
-              width: 70,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: DesignSpacing.sm,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        speed = PlaybackSpeed.slow;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: speed == PlaybackSpeed.slow
-                            ? DesignColors.primary.withAlpha(30)
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: speed == PlaybackSpeed.slow
-                              ? DesignColors.primary
-                              : DesignColors.backgroundBorder,
-                        ),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'Slow',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: speed == PlaybackSpeed.slow
-                              ? DesignColors.primary
-                              : DesignColors.textSecondary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        speed = PlaybackSpeed.normal;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: speed == PlaybackSpeed.normal
-                            ? DesignColors.primary.withAlpha(30)
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: speed == PlaybackSpeed.normal
-                              ? DesignColors.primary
-                              : DesignColors.backgroundBorder,
-                        ),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'Normal',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: speed == PlaybackSpeed.normal
-                              ? DesignColors.primary
-                              : DesignColors.textSecondary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        VoiceBubbleWidget(
+          audioUrl: widget.exerciseData.audioUrl,
+          playbackSpeed: playbackSpeed,
+          onPlaybackButtonPressed: () {
+            print('Playing voice');
+          },
+          onSpeedButtonPressed: () {
+            setState(() {
+              if (playbackSpeed == PlaybackSpeed.normal) {
+                playbackSpeed = PlaybackSpeed.slow;
+              } else {
+                playbackSpeed = PlaybackSpeed.normal;
+              }
+            });
+          },
         ),
         const SizedBox(height: DesignSpacing.xl),
 
@@ -617,7 +436,7 @@ class GivenTextWidget extends StatefulWidget {
 
 class _GivenTextWidgetState extends State<GivenTextWidget> {
   late TextEditingController _controller;
-  PlaybackSpeed speed = PlaybackSpeed.normal;
+  PlaybackSpeed playbackSpeed = PlaybackSpeed.normal;
 
   @override
   void initState() {
@@ -715,110 +534,21 @@ class _GivenTextWidgetState extends State<GivenTextWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: DesignColors.backgroundCard,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: DesignColors.backgroundBorder),
-              ),
-              padding: const EdgeInsets.all(DesignSpacing.sm),
-              child: IconButton(
-                splashColor: Colors.transparent,
-                icon: Icon(
-                  Icons.volume_up_rounded,
-                  color: DesignColors.primary,
-                  size: 36,
-                ),
-                onPressed: () {
-                  print('Playing voice');
-                },
-              ),
-            ),
-            const SizedBox(width: DesignSpacing.md),
-            SizedBox(
-              width: 70,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: DesignSpacing.sm,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        speed = PlaybackSpeed.slow;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: speed == PlaybackSpeed.slow
-                            ? DesignColors.primary.withAlpha(30)
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: speed == PlaybackSpeed.slow
-                              ? DesignColors.primary
-                              : DesignColors.backgroundBorder,
-                        ),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'Slow',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: speed == PlaybackSpeed.slow
-                              ? DesignColors.primary
-                              : DesignColors.textSecondary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        speed = PlaybackSpeed.normal;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: speed == PlaybackSpeed.normal
-                            ? DesignColors.primary.withAlpha(30)
-                            : Colors.transparent,
-                        border: Border.all(
-                          color: speed == PlaybackSpeed.normal
-                              ? DesignColors.primary
-                              : DesignColors.backgroundBorder,
-                        ),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'Normal',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: speed == PlaybackSpeed.normal
-                              ? DesignColors.primary
-                              : DesignColors.textSecondary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        VoiceBubbleWidget(
+          audioUrl: widget.exerciseData.audioUrl,
+          playbackSpeed: playbackSpeed,
+          onPlaybackButtonPressed: () {
+            print('Playing voice');
+          },
+          onSpeedButtonPressed: () {
+            setState(() {
+              if (playbackSpeed == PlaybackSpeed.normal) {
+                playbackSpeed = PlaybackSpeed.slow;
+              } else {
+                playbackSpeed = PlaybackSpeed.normal;
+              }
+            });
+          },
         ),
         const SizedBox(height: DesignSpacing.xl),
 
