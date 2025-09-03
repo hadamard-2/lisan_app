@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
-import 'package:lisan_app/models/fill_in_blank_data.dart';
+import 'package:lisan_app/models/fill_in_blank_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/instruction_text.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
@@ -10,7 +10,7 @@ import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
 class FillInBlankExercise extends ExerciseWidget {
   @override
   final FillInBlankExerciseData exerciseData;
-  final Function(String) onAnswerChanged;
+  final Function(int) onAnswerChanged;
 
   const FillInBlankExercise({
     super.key,
@@ -25,7 +25,7 @@ class FillInBlankExercise extends ExerciseWidget {
   @override
   ExerciseWidget copyWith({
     FillInBlankExerciseData? exerciseData,
-    Function(String)? onAnswerChanged,
+    Function(int)? onAnswerChanged,
     bool? isRequeued,
     Key? key,
   }) {
@@ -69,9 +69,9 @@ class _FillInBlankExerciseState extends State<FillInBlankExercise> {
     );
   }
 
-  List<Widget> _buildExerciseContent(List<String> options) {
+  List<Widget> _buildExerciseContent(List<Map<String, dynamic>> options) {
     return [
-      TextBubbleWidget(text: widget.exerciseData.sentenceWithPlaceholders),
+      TextBubbleWidget(text: widget.exerciseData.displayText),
       const SizedBox(height: DesignSpacing.xxxl * 2),
       TextChoicesWidget(
         options: options,
@@ -81,7 +81,7 @@ class _FillInBlankExerciseState extends State<FillInBlankExercise> {
             _selectedOptionIndex = index;
           });
 
-          widget.onAnswerChanged(options[index]);
+          widget.onAnswerChanged(options[index]['id']);
         },
       ),
     ];

@@ -1,17 +1,17 @@
 import 'package:lisan_app/models/exercise_data.dart';
 
 class FillInBlankExerciseData extends ExerciseData {
-  final String sentenceWithPlaceholders;
-  final List<String> options;
-  final List<String> correctAnswers;
+  final String displayText;
+  final List<Map<String, dynamic>> options;
+  final int correctOptionId;
 
   FillInBlankExerciseData({
     required super.id,
     required super.type,
     required super.instruction,
-    required this.sentenceWithPlaceholders,
+    required this.displayText,
     required this.options,
-    required this.correctAnswers,
+    required this.correctOptionId,
   }) : super(subtype: null);
 
   factory FillInBlankExerciseData.fromJson(Map<String, dynamic> json) {
@@ -20,9 +20,9 @@ class FillInBlankExerciseData extends ExerciseData {
       id: json['id'],
       type: json['type'],
       instruction: json['instruction'],
-      sentenceWithPlaceholders: data['sentence_with_placeholders'],
-      options: List<String>.from(data['options']),
-      correctAnswers: List<String>.from(data['correct_answers']),
+      displayText: data['display_text'],
+      options: List<Map<String, dynamic>>.from(data['options']),
+      correctOptionId: data['correct_option_id'],
     );
   }
 
@@ -32,9 +32,9 @@ class FillInBlankExerciseData extends ExerciseData {
       'type': type,
       'instruction': instruction,
       'data': {
-        'sentence_with_placeholders': sentenceWithPlaceholders,
+        'display_text': displayText,
         'options': options,
-        'correct_answers': correctAnswers,
+        'correct_option_id': correctOptionId,
       },
     };
   }

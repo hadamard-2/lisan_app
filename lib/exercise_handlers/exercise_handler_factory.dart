@@ -8,7 +8,7 @@ import 'package:lisan_app/models/exercise_result.dart';
 import 'package:lisan_app/models/listening_exercise_data.dart';
 import 'package:lisan_app/models/translation_exercise_data.dart';
 import 'package:lisan_app/models/complete_sentence_exercise_data.dart';
-import 'package:lisan_app/models/fill_in_blank_data.dart';
+import 'package:lisan_app/models/fill_in_blank_exercise_data.dart';
 import 'package:lisan_app/models/speaking_exercise_data.dart';
 
 class ExerciseHandlerFactory {

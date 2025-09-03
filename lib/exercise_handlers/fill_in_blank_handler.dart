@@ -1,5 +1,5 @@
 import 'package:lisan_app/models/exercise_result.dart';
-import 'package:lisan_app/models/fill_in_blank_data.dart';
+import 'package:lisan_app/models/fill_in_blank_exercise_data.dart';
 
 class FillInBlankHandler implements ExerciseHandler {
   final FillInBlankExerciseData exerciseData;
@@ -20,23 +20,33 @@ class FillInBlankHandler implements ExerciseHandler {
   }
 
   bool _validate(dynamic userAnswer) {
-    if (userAnswer.toString().isEmpty) return false;
-
-    final userAnswerSplit = userAnswer.toString().split(' ... ');
-    print('userAnswerSplit: $userAnswerSplit');
-
-    String finalUserAnswer = exerciseData.sentenceWithPlaceholders;
-    for (int i = 0; i < userAnswerSplit.length; i++) {
-      finalUserAnswer = finalUserAnswer.replaceFirst(
-        '____',
-        userAnswerSplit[i],
-      );
-    }
-
-    return exerciseData.correctAnswers.contains(finalUserAnswer);
+    return exerciseData.correctOptionId == userAnswer;
   }
 
   String _getCorrectAnswer() {
-    return exerciseData.correctAnswers.first;
+    try {
+      final correctOption = exerciseData.options.firstWhere(
+        (option) => option['id'] == exerciseData.correctOptionId,
+      );
+
+      final correctText = correctOption['text'] ?? '';
+      String result = exerciseData.displayText;
+
+      if (correctText.contains('...')) {
+        // Handle multiple blanks (e.g., "እሷ ... አትክልት")
+        final parts = correctText.split(' ... ');
+        for (String part in parts) {
+          result = result.replaceFirst('____', part);
+        }
+      } else {
+        // Handle single blank
+        result = result.replaceFirst('____', correctText);
+      }
+
+      return result;
+    } catch (e) {
+      // Handle case where correct option is not found
+      return exerciseData.displayText;
+    }
   }
 }

@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/design/theme.dart';
 
 class TextChoicesWidget extends StatelessWidget {
-  final List<String> options;
+  final List<Map<String, dynamic>> options;
   final int selectedOptionIndex;
   final Function(int) onOptionSelect;
 
@@ -41,7 +41,7 @@ class TextChoicesWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              options[index],
+              options[index]['text'],
               style: GoogleFonts.notoSansEthiopic(
                 color: DesignColors.textPrimary,
                 fontSize: 16,
