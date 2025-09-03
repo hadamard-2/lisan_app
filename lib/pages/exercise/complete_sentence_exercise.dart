@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/complete_sentence_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
+import 'package:lisan_app/pages/exercise/partial_free_text_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
 
@@ -76,43 +77,39 @@ class _CompleteSentenceExerciseState extends State<CompleteSentenceExercise> {
 
   Widget _buildExerciseContent() {
     switch (widget.exerciseData.subtype) {
-      case 'given_start':
-      case 'given_end':
-        return GivenTextWidget(
+      case 'partial_free_text':
+        return PartialFreeTextExerciseContent(
           data: widget.exerciseData,
           onAnswerChanged: _updateAnswer,
         );
-      case 'select_from_blocks':
-        return SelectFromBlocksWidget(
+      case 'block_build':
+        return PartialBlockBuildExerciseContent(
           data: widget.exerciseData,
           onAnswerChanged: _updateAnswer,
         );
       default:
-        return const Center(
-          child: Text(
-            'Unknown exercise subtype',
-            style: TextStyle(color: DesignColors.error),
-          ),
-        );
+        throw Exception('Unknown exercise subtype');
     }
   }
 }
 
-class GivenTextWidget extends StatefulWidget {
+class PartialFreeTextExerciseContent extends StatefulWidget {
   final CompleteSentenceExerciseData data;
   final Function(String) onAnswerChanged;
 
-  const GivenTextWidget({
+  const PartialFreeTextExerciseContent({
     super.key,
     required this.data,
     required this.onAnswerChanged,
   });
 
   @override
-  State<GivenTextWidget> createState() => _GivenTextWidgetState();
+  State<PartialFreeTextExerciseContent> createState() =>
+      _PartialFreeTextExerciseContentState();
 }
 
-class _GivenTextWidgetState extends State<GivenTextWidget> {
+class _PartialFreeTextExerciseContentState
+    extends State<PartialFreeTextExerciseContent> {
   late TextEditingController _controller;
 
   @override
@@ -134,100 +131,23 @@ class _GivenTextWidgetState extends State<GivenTextWidget> {
     final providedText = widget.data.providedText!;
     final userInput = _controller.text;
 
-    // Find the position of the blank (represented by ____) in the provided text
-    if (providedText.contains('____')) {
-      return providedText.replaceAll('____', userInput);
+    if (!providedText.contains('____')) {
+      throw Exception('Could not find blanks when building sentence widgets');
     }
 
-    // Fallback for backward compatibility with start/end positioning
-    return widget.data.subtype == 'given_start'
-        ? '$providedText $userInput'
-        : '$userInput $providedText';
-  }
-
-  List<Widget> _buildSentenceWidgets() {
-    final providedText = widget.data.providedText!;
-
-    // Check if the provided text contains a blank marker
-    if (providedText.contains('____')) {
-      return _buildSentenceWithInlineBlank(providedText);
-    }
-
-    throw Exception('Could not find blanks when building sentence widgets');
-  }
-
-  List<Widget> _buildSentenceWithInlineBlank(String providedText) {
-    final parts = providedText.split('____');
-    final widgets = <Widget>[];
-
-    for (int i = 0; i < parts.length; i++) {
-      // Add text part before the blank
-      if (parts[i].isNotEmpty) {
-        widgets.add(
-          Text(
-            parts[i],
-            style: const TextStyle(
-              color: DesignColors.textPrimary,
-              fontSize: 16,
-            ),
-          ),
-        );
-      }
-
-      // Add text field for the blank (except after the last part)
-      if (i < parts.length - 1) {
-        widgets.add(
-          SizedBox(
-            width: 80, // Adjustable width
-            child: TextField(
-              controller: _controller,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: DesignColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.only(top: 12, bottom: 10),
-                isDense: true,
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: DesignColors.backgroundBorder),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: DesignColors.primary),
-                ),
-              ),
-            ),
-          ),
-        );
-      }
-    }
-
-    return widgets;
+    return providedText.replaceAll('____', userInput);
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: DesignSpacing.xl,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextBubbleWidget(text: widget.data.targetSentence),
-        const SizedBox(height: DesignSpacing.xl),
-
-        // Sentence with inline text field
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(DesignSpacing.lg),
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: DesignColors.backgroundBorder),
-          ),
-          child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 8,
-            children: _buildSentenceWidgets(),
-          ),
+        PartialFreeTextWidget(
+          partialText: widget.data.providedText!,
+          textEditingController: _controller,
         ),
       ],
     );
@@ -235,20 +155,22 @@ class _GivenTextWidgetState extends State<GivenTextWidget> {
 }
 
 // Select from blocks subtype widget
-class SelectFromBlocksWidget extends StatefulWidget {
+class PartialBlockBuildExerciseContent extends StatefulWidget {
   final CompleteSentenceExerciseData data;
   final Function(String) onAnswerChanged;
 
-  const SelectFromBlocksWidget({
+  const PartialBlockBuildExerciseContent({
     super.key,
     required this.data,
     required this.onAnswerChanged,
   });
   @override
-  State<SelectFromBlocksWidget> createState() => _SelectFromBlocksWidgetState();
+  State<PartialBlockBuildExerciseContent> createState() =>
+      _PartialBlockBuildExerciseContentState();
 }
 
-class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
+class _PartialBlockBuildExerciseContentState
+    extends State<PartialBlockBuildExerciseContent> {
   List<String?> selectedBlocks = [];
   List<AvailableBlock> availableBlocks = [];
 
@@ -342,7 +264,7 @@ class _SelectFromBlocksWidgetState extends State<SelectFromBlocksWidget> {
         TextBubbleWidget(text: widget.data.targetSentence),
         const SizedBox(height: DesignSpacing.xl),
 
-        // Sentence with blanks and selected words
+        // Selected word blocks
         SizedBox(
           height: 200,
           child: Container(

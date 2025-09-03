@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/listening_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
+import 'package:lisan_app/pages/exercise/partial_free_text_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
 import 'package:lisan_app/widgets/exercise/block_build_widget.dart';
 import 'package:lisan_app/widgets/exercise/free_text_widget.dart';
@@ -75,12 +76,12 @@ class _ListeningExerciseState extends State<ListeningExercise> {
   Widget _renderSubtypeWidget() {
     switch (widget.exerciseData.subtype) {
       case 'omit_word_choose':
-        return OmitWordChoose(
+        return OmitWordChooseExerciseContent(
           exerciseData: widget.exerciseData,
           onAnswerChanged: widget.onAnswerChanged,
         );
       case 'omit_word_type':
-        return GivenTextWidget(
+        return PartialFreeTextExerciseContent(
           exerciseData: widget.exerciseData,
           onAnswerChanged: widget.onAnswerChanged,
         );
@@ -289,21 +290,21 @@ class _FreeTextListeningExerciseContentState
   }
 }
 
-class GivenTextWidget extends StatefulWidget {
+class PartialFreeTextExerciseContent extends StatefulWidget {
   final ListeningExerciseData exerciseData;
   final Function(String) onAnswerChanged;
 
-  const GivenTextWidget({
+  const PartialFreeTextExerciseContent({
     super.key,
     required this.exerciseData,
     required this.onAnswerChanged,
   });
 
   @override
-  State<GivenTextWidget> createState() => _GivenTextWidgetState();
+  State<PartialFreeTextExerciseContent> createState() => _PartialFreeTextExerciseContentState();
 }
 
-class _GivenTextWidgetState extends State<GivenTextWidget> {
+class _PartialFreeTextExerciseContentState extends State<PartialFreeTextExerciseContent> {
   late TextEditingController _controller;
   PlaybackSpeed playbackSpeed = PlaybackSpeed.normal;
 
@@ -326,81 +327,17 @@ class _GivenTextWidgetState extends State<GivenTextWidget> {
     final providedText = widget.exerciseData.displayText!;
     final userInput = _controller.text;
 
-    // Find the position of the blank (represented by ____) in the provided text
-    if (providedText.contains('____')) {
-      return providedText.replaceAll('____', userInput);
+    if (!providedText.contains('____')) {
+      throw Exception('Could not find blanks when building sentence widgets');
     }
 
-    // Fallback for backward compatibility with start/end positioning
-    return widget.exerciseData.subtype == 'given_start'
-        ? '$providedText $userInput'
-        : '$userInput $providedText';
-  }
-
-  List<Widget> _buildSentenceWidgets() {
-    final providedText = widget.exerciseData.displayText!;
-
-    // Check if the provided text contains a blank marker
-    if (providedText.contains('____')) {
-      return _buildSentenceWithInlineBlank(providedText);
-    }
-
-    throw Exception('Could not find blanks when building sentence widgets');
-  }
-
-  List<Widget> _buildSentenceWithInlineBlank(String providedText) {
-    final parts = providedText.split('____');
-    final widgets = <Widget>[];
-
-    for (int i = 0; i < parts.length; i++) {
-      // Add text part before the blank
-      if (parts[i].isNotEmpty) {
-        widgets.add(
-          Text(
-            parts[i],
-            style: GoogleFonts.notoSansEthiopic(
-              color: DesignColors.textPrimary,
-              fontSize: 16,
-            ),
-          ),
-        );
-      }
-
-      // Add text field for the blank (except after the last part)
-      if (i < parts.length - 1) {
-        widgets.add(
-          SizedBox(
-            width: 80, // Adjustable width
-            child: TextField(
-              controller: _controller,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: DesignColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.only(top: 12, bottom: 10),
-                isDense: true,
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: DesignColors.backgroundBorder),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: DesignColors.primary),
-                ),
-              ),
-            ),
-          ),
-        );
-      }
-    }
-
-    return widgets;
+    return providedText.replaceAll('____', userInput);
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: DesignSpacing.xl,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         VoiceBubbleWidget(
@@ -419,43 +356,30 @@ class _GivenTextWidgetState extends State<GivenTextWidget> {
             });
           },
         ),
-        const SizedBox(height: DesignSpacing.xl),
-
-        // Sentence with inline text field
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(DesignSpacing.lg),
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: DesignColors.backgroundBorder),
-          ),
-          child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 8,
-            children: _buildSentenceWidgets(),
-          ),
+        PartialFreeTextWidget(
+          partialText: widget.exerciseData.displayText!, 
+          textEditingController: _controller,
         ),
       ],
     );
   }
 }
 
-class OmitWordChoose extends StatefulWidget {
+class OmitWordChooseExerciseContent extends StatefulWidget {
   final ListeningExerciseData exerciseData;
   final Function(String answer) onAnswerChanged;
 
-  const OmitWordChoose({
+  const OmitWordChooseExerciseContent({
     super.key,
     required this.exerciseData,
     required this.onAnswerChanged,
   });
 
   @override
-  State<OmitWordChoose> createState() => _OmitWordChooseState();
+  State<OmitWordChooseExerciseContent> createState() => _OmitWordChooseExerciseContentState();
 }
 
-class _OmitWordChooseState extends State<OmitWordChoose> {
+class _OmitWordChooseExerciseContentState extends State<OmitWordChooseExerciseContent> {
   int _selectedOptionIndex = -1;
   List<int> randInts = [];
 
