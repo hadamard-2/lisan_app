@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/fill_in_blank_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
+import 'package:lisan_app/pages/exercise/instruction_text.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
 import 'package:lisan_app/widgets/exercise/text_choices_widget.dart';
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
@@ -59,15 +60,7 @@ class _FillInBlankExerciseState extends State<FillInBlankExercise> {
         children: [
           if (widget.isRequeued) PreviousMistakeIndicator(),
 
-          // Instruction text
-          Text(
-            instruction,
-            style: const TextStyle(
-              color: DesignColors.textPrimary,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          InstructionText(instruction: instruction),
           const SizedBox(height: DesignSpacing.lg),
 
           ..._buildExerciseContent(options),

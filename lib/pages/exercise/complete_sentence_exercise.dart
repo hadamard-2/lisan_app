@@ -3,6 +3,7 @@ import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/available_block.dart';
 import 'package:lisan_app/models/complete_sentence_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
+import 'package:lisan_app/pages/exercise/instruction_text.dart';
 import 'package:lisan_app/pages/exercise/partial_block_build_widget.dart';
 import 'package:lisan_app/pages/exercise/partial_free_text_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
@@ -55,29 +56,21 @@ class _CompleteSentenceExerciseState extends State<CompleteSentenceExercise> {
     return Container(
       padding: const EdgeInsets.all(DesignSpacing.md),
       child: Column(
+        spacing: DesignSpacing.xl,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.isRequeued) PreviousMistakeIndicator(),
-
-          // Instruction text
-          Text(
-            widget.exerciseData.instruction,
-            style: const TextStyle(
-              color: DesignColors.textPrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: DesignSpacing.xl),
-
+          
+          InstructionText(instruction: widget.exerciseData.instruction),
+          
           // Exercise content based on subtype
-          _buildExerciseContent(),
+          _renderExerciseContent(),
         ],
       ),
     );
   }
 
-  Widget _buildExerciseContent() {
+  Widget _renderExerciseContent() {
     switch (widget.exerciseData.subtype) {
       case 'partial_free_text':
         return PartialFreeTextExerciseContent(

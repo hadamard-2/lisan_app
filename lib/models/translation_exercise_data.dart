@@ -1,24 +1,20 @@
 import 'package:lisan_app/models/exercise_data.dart';
 
 class TranslationExerciseData extends ExerciseData {
-  String sourceText;
-  String? sourceAudio;
-  String sourceLang;
-  String targetLang;
+  String promptText;
+  String? promptAudioUrl;
   List<String>? blocks; // for block build subtype
-  List<String> correctAnswers;
+  String correctAnswer;
 
   TranslationExerciseData.blockBuild({
     required super.id,
     required super.type,
     required super.subtype,
     required super.instruction,
-    required this.sourceText,
-    this.sourceAudio,
-    required this.sourceLang,
-    required this.targetLang,
+    required this.promptText,
+    this.promptAudioUrl,
     required this.blocks,
-    required this.correctAnswers,
+    required this.correctAnswer,
   });
 
   TranslationExerciseData.freeText({
@@ -26,11 +22,9 @@ class TranslationExerciseData extends ExerciseData {
     required super.type,
     required super.subtype,
     required super.instruction,
-    required this.sourceText,
-    this.sourceAudio,
-    required this.sourceLang,
-    required this.targetLang,
-    required this.correctAnswers,
+    required this.promptText,
+    this.promptAudioUrl,
+    required this.correctAnswer,
   });
 
   factory TranslationExerciseData.fromJson(Map<String, dynamic> json) {
@@ -41,34 +35,28 @@ class TranslationExerciseData extends ExerciseData {
             type: json['type'],
             subtype: json['subtype'],
             instruction: json['instruction'],
-            sourceText: data['source_text'],
-            sourceAudio: data['source_audio'] as String?,
-            sourceLang: data['source_lang'],
-            targetLang: data['target_lang'],
+            promptText: data['source_text'],
+            promptAudioUrl: data['source_audio'] as String?,
             blocks: List<String>.from(data['blocks'] ?? []),
-            correctAnswers: List<String>.from(data['correct_answers']),
+            correctAnswer: data['correct_answers'],
           )
         : TranslationExerciseData.freeText(
             id: json['id'],
             type: json['type'],
             subtype: json['subtype'],
             instruction: json['instruction'],
-            sourceText: data['source_text'],
-            sourceAudio: data['source_audio'] as String?,
-            sourceLang: data['source_lang'],
-            targetLang: data['target_lang'],
-            correctAnswers: List<String>.from(data['correct_answers']),
+            promptText: data['source_text'],
+            promptAudioUrl: data['source_audio'] as String?,
+            correctAnswer: data['correct_answers'],
           );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
-      'source_text': sourceText,
-      'source_lang': sourceLang,
-      'target_lang': targetLang,
-      'correct_answers': correctAnswers,
+      'source_text': promptText,
+      'correct_answers': correctAnswer,
     };
-    if (sourceAudio != null) data['source_audio'] = sourceAudio;
+    if (promptAudioUrl != null) data['source_audio'] = promptAudioUrl;
     if (blocks != null) data['blocks'] = blocks;
     return {
       'id': id,

@@ -3,6 +3,7 @@ import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/available_block.dart';
 import 'package:lisan_app/models/translation_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
+import 'package:lisan_app/pages/exercise/instruction_text.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
 import 'package:lisan_app/widgets/exercise/block_build_widget.dart';
 import 'package:lisan_app/widgets/exercise/free_text_widget.dart';
@@ -42,42 +43,40 @@ class TranslationExercise extends ExerciseWidget {
 class _TranslationExerciseState extends State<TranslationExercise> {
   @override
   Widget build(BuildContext context) {
-    final subtype = widget.exerciseData.subtype;
-    final instruction = widget.exerciseData.instruction;
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(DesignSpacing.md),
       child: Column(
+        spacing: DesignSpacing.xl,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.isRequeued) PreviousMistakeIndicator(),
 
-          // Instruction text
-          Text(
-            instruction,
-            style: const TextStyle(
-              color: DesignColors.textPrimary,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: DesignSpacing.xl),
+          InstructionText(instruction: widget.exerciseData.instruction),
 
-          // Render appropriate subtype
-          if (subtype == 'block_build')
-            BlockBuildExerciseContent(
-              exerciseData: widget.exerciseData,
-              onAnswerChanged: widget.onAnswerChanged,
-            )
-          else
-            FreeTextTranslationExerciseContent(
-              exerciseData: widget.exerciseData,
-              onAnswerChanged: widget.onAnswerChanged,
-            ),
+          _renderExerciseContent(),
         ],
       ),
     );
+  }
+
+  Widget _renderExerciseContent() {
+    switch (widget.exerciseData.subtype) {
+      case 'block_build':
+        return BlockBuildExerciseContent(
+          exerciseData: widget.exerciseData,
+          onAnswerChanged: widget.onAnswerChanged,
+        );
+      case 'free_text':
+        return FreeTextTranslationExerciseContent(
+          exerciseData: widget.exerciseData,
+          onAnswerChanged: widget.onAnswerChanged,
+        );
+      default:
+        throw Exception(
+          'There\'s no subtype by the name ${widget.exerciseData.subtype} for Translation Exercise',
+        );
+    }
   }
 }
 
@@ -169,7 +168,7 @@ class _BlockBuildExerciseContentState extends State<BlockBuildExerciseContent>
     return Column(
       spacing: DesignSpacing.xl,
       children: [
-        TextBubbleWidget(text: data.sourceText, audioUrl: data.sourceAudio),
+        TextBubbleWidget(text: data.promptText, audioUrl: data.promptAudioUrl),
         BlockBuildWidget(
           selectedBlocks: selectedBlocks,
           availableBlocks: availableBlocks,
@@ -224,7 +223,7 @@ class _FreeTextTranslationExerciseContentState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextBubbleWidget(text: widget.exerciseData.sourceText),
+        TextBubbleWidget(text: widget.exerciseData.promptText),
         const SizedBox(height: DesignSpacing.xl),
         FreeTextWidget(
           textEditingController: _controller,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/speaking_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
+import 'package:lisan_app/pages/exercise/instruction_text.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
 import 'package:lisan_app/widgets/exercise/voice_input_widget.dart';
@@ -40,8 +41,6 @@ class SpeakingExercise extends ExerciseWidget {
 class _SpeakingExerciseState extends State<SpeakingExercise> {
   @override
   Widget build(BuildContext context) {
-    final instruction = widget.exerciseData.instruction;
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(DesignSpacing.md),
@@ -51,26 +50,21 @@ class _SpeakingExerciseState extends State<SpeakingExercise> {
         children: [
           if (widget.isRequeued) PreviousMistakeIndicator(),
 
-          // Instruction text
-          Text(
-            instruction,
-            style: const TextStyle(
-              color: DesignColors.textPrimary,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          InstructionText(instruction: widget.exerciseData.instruction),
 
-          // Exercise content
-          TextBubbleWidget(
-            text: widget.exerciseData.targetText,
-            audioUrl: widget.exerciseData.audioUrl,
-          ),
-          VoiceInputWidget(
-            onTap: () => print('recording voice'),
-          ),
+          ..._renderExerciseContent(),
         ],
       ),
     );
+  }
+
+  List<Widget> _renderExerciseContent() {
+    return [
+      TextBubbleWidget(
+        text: widget.exerciseData.targetText,
+        audioUrl: widget.exerciseData.audioUrl,
+      ),
+      VoiceInputWidget(onTap: () => print('recording voice')),
+    ];
   }
 }

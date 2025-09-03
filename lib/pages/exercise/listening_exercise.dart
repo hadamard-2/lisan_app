@@ -5,6 +5,7 @@ import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/available_block.dart';
 import 'package:lisan_app/models/listening_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
+import 'package:lisan_app/pages/exercise/instruction_text.dart';
 import 'package:lisan_app/pages/exercise/partial_free_text_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart'
 ;
@@ -58,24 +59,16 @@ class _ListeningExerciseState extends State<ListeningExercise> {
         children: [
           if (widget.isRequeued) PreviousMistakeIndicator(),
 
-          // Instruction text
-          Text(
-            instruction,
-            style: const TextStyle(
-              color: DesignColors.textPrimary,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          InstructionText(instruction: instruction),
           const SizedBox(height: DesignSpacing.xl),
 
-          _renderSubtypeWidget(),
+          _renderExerciseContent(),
         ],
       ),
     );
   }
 
-  Widget _renderSubtypeWidget() {
+  Widget _renderExerciseContent() {
     switch (widget.exerciseData.subtype) {
       case 'omit_word_choose':
         return OmitWordChooseExerciseContent(
