@@ -1,76 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/design/theme.dart';
-
-class AvailableBlock {
-  final String text;
-  bool isSelected;
-
-  AvailableBlock({required this.text, this.isSelected = false});
-}
-
-class Block extends StatelessWidget {
-  final String text;
-  final VoidCallback? onTap;
-  final bool isSelected;
-  final bool isInSelectedArea;
-
-  const Block({
-    super.key,
-    required this.text,
-    this.onTap,
-    this.isSelected = false,
-    this.isInSelectedArea = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    Color backgroundColor;
-    Color textColor;
-    Color borderColor;
-
-    if (isInSelectedArea) {
-      backgroundColor = DesignColors.primary.withAlpha((0.2 * 255).toInt());
-      textColor = DesignColors.primary;
-      borderColor = Colors.transparent;
-    } else if (isSelected) {
-      backgroundColor = DesignColors.backgroundCard.withAlpha(
-        (0.5 * 255).toInt(),
-      );
-      textColor = DesignColors.textTertiary;
-      borderColor = DesignColors.backgroundBorder.withAlpha(
-        (0.5 * 255).toInt(),
-      );
-    } else {
-      backgroundColor = Colors.transparent;
-      textColor = DesignColors.textPrimary;
-      borderColor = DesignColors.backgroundBorder;
-    }
-
-    return AnimatedScale(
-      scale: 1.0,
-      duration: const Duration(milliseconds: 200),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: DesignSpacing.md,
-            vertical: DesignSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(8),
-            border: isInSelectedArea ? null : Border.all(color: borderColor),
-          ),
-          child: Text(
-            text,
-            style: GoogleFonts.notoSansEthiopic(color: textColor, fontSize: 16),
-          ),
-        ),
-      ),
-    );
-  }
-}
+import 'package:lisan_app/models/available_block.dart';
+import 'package:lisan_app/widgets/exercise/block.dart';
 
 class BlockBuildWidget extends StatelessWidget {
   final List<String> selectedBlocks;
