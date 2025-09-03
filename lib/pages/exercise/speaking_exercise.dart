@@ -4,6 +4,7 @@ import 'package:lisan_app/models/speaking_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
+import 'package:lisan_app/widgets/exercise/voice_input_widget.dart';
 
 class SpeakingExercise extends ExerciseWidget {
   @override
@@ -45,6 +46,7 @@ class _SpeakingExerciseState extends State<SpeakingExercise> {
       width: double.infinity,
       padding: const EdgeInsets.all(DesignSpacing.md),
       child: Column(
+        spacing: DesignSpacing.xl,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.isRequeued) PreviousMistakeIndicator(),
@@ -58,47 +60,17 @@ class _SpeakingExerciseState extends State<SpeakingExercise> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: DesignSpacing.xl),
 
-          ..._buildExerciseContent(),
+          // Exercise content
+          TextBubbleWidget(
+            text: widget.exerciseData.targetText,
+            audioUrl: widget.exerciseData.audioUrl,
+          ),
+          VoiceInputWidget(
+            onTap: () => print('recording voice'),
+          ),
         ],
       ),
     );
-  }
-
-  List<Widget> _buildExerciseContent() {
-    return [
-      TextBubbleWidget(
-        text: widget.exerciseData.targetText,
-        audioUrl: widget.exerciseData.audioUrl,
-      ),
-      const SizedBox(height: DesignSpacing.xl),
-
-      GestureDetector(
-        onTap: () {},
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsetsGeometry.symmetric(vertical: DesignSpacing.lg),
-          decoration: BoxDecoration(
-            border: Border.all(width: 2, color: DesignColors.backgroundBorder),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: DesignSpacing.sm,
-            children: [
-              Icon(Icons.mic_rounded, color: DesignColors.primary),
-              Text(
-                'TAP TO SPEAK',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: DesignColors.primary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ];
   }
 }
