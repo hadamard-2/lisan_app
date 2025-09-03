@@ -1,20 +1,19 @@
 import 'package:lisan_app/models/exercise_data.dart';
 
 class CompleteSentenceExerciseData extends ExerciseData {
-  final String targetSentence;
-  String? providedText; // for partial_free_text subtype
-  String? displayWithBlanks; // for partial_build_block subtype
+  final String referenceText;
+  String displayText; // for partial_free_text subtype
   List<String>? blocks; // for partial_build_block subtype
-  final List<String> correctAnswers;
+  final String correctAnswer;
 
   CompleteSentenceExerciseData.partialFreeText({
     required super.id,
     required super.type,
     required super.subtype,
     required super.instruction,
-    required this.targetSentence,
-    required this.providedText,
-    required this.correctAnswers,
+    required this.referenceText,
+    required this.displayText,
+    required this.correctAnswer,
   });
 
   CompleteSentenceExerciseData.partialBlockBuild({
@@ -22,10 +21,10 @@ class CompleteSentenceExerciseData extends ExerciseData {
     required super.type,
     required super.subtype,
     required super.instruction,
-    required this.targetSentence,
-    required this.displayWithBlanks,
+    required this.referenceText,
+    required this.displayText,
     required this.blocks,
-    required this.correctAnswers,
+    required this.correctAnswer,
   });
 
   factory CompleteSentenceExerciseData.fromJson(Map<String, dynamic> json) {
@@ -37,9 +36,9 @@ class CompleteSentenceExerciseData extends ExerciseData {
         type: json['type'],
         subtype: subtype,
         instruction: json['instruction'],
-        targetSentence: data['target_sentence'],
-        providedText: data['provided_text'],
-        correctAnswers: List<String>.from(data['correct_answers']),
+        referenceText: data['reference_text'],
+        displayText: data['display_text'],
+        correctAnswer: data['correct_answer'],
       );
     } else if (subtype == 'partial_block_build') {
       return CompleteSentenceExerciseData.partialBlockBuild(
@@ -47,10 +46,10 @@ class CompleteSentenceExerciseData extends ExerciseData {
         type: json['type'],
         subtype: subtype,
         instruction: json['instruction'],
-        targetSentence: data['target_sentence'],
-        displayWithBlanks: data['display_with_blanks'],
+        referenceText: data['reference_text'],
+        displayText: data['display_text'],
         blocks: List<String>.from(data['blocks'] ?? []),
-        correctAnswers: List<String>.from(data['correct_answers']),
+        correctAnswer: data['correct_answer'],
       );
     } else {
       throw UnsupportedError('Unknown subtype: $subtype');
@@ -59,13 +58,10 @@ class CompleteSentenceExerciseData extends ExerciseData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
-      'target_sentence': targetSentence,
-      'correct_answers': correctAnswers,
+      'reference_text': referenceText,
+      'display_text': displayText,
+      'correct_answer': correctAnswer,
     };
-    if (providedText != null) data['provided_text'] = providedText;
-    if (displayWithBlanks != null) {
-      data['display_with_blanks'] = displayWithBlanks;
-    }
     if (blocks != null) data['blocks'] = blocks;
     return {
       'id': id,

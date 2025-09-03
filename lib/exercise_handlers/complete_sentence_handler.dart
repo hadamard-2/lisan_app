@@ -1,5 +1,6 @@
 import 'package:lisan_app/models/complete_sentence_exercise_data.dart';
 import 'package:lisan_app/models/exercise_result.dart';
+import 'package:lisan_app/utils/text_similarity.dart';
 
 class CompleteSentenceHandler implements ExerciseHandler {
   final CompleteSentenceExerciseData exerciseData;
@@ -8,31 +9,29 @@ class CompleteSentenceHandler implements ExerciseHandler {
 
   @override
   ExerciseResult validateAndGetFeedback(dynamic userAnswer) {
-    final isCorrect = _validate(userAnswer);
+    final trimmedAnswer = userAnswer.toString().trim();
 
-    return ExerciseResult(
-      isCorrect: isCorrect,
-      feedbackMessage: isCorrect
-          ? 'Great job!'
-          : 'Mistakes are lessons in disguise.',
-      correctAnswer: _getCorrectAnswer(),
+    // Check similarity with the correct answer
+    final similarity = TextSimilarity.calculateSimilarity(
+      trimmedAnswer,
+      exerciseData.correctAnswer,
     );
-  }
 
-  bool _validate(dynamic userAnswer) {
-    if (userAnswer == null || userAnswer.toString().trim().isEmpty) {
-      return false;
+    if (similarity >= 9.0) {
+      return ExerciseResult(
+        isCorrect: true,
+        feedbackMessage: 'Great job!',
+        correctAnswer: exerciseData.correctAnswer,
+      );
     }
 
-    final correctAnswers = exerciseData.correctAnswers;
-    final userAnswerLower = userAnswer.toString().toLowerCase().trim();
-
-    return correctAnswers.any(
-      (correctAnswer) =>
-          correctAnswer.toString().toLowerCase().trim() == userAnswerLower,
+    // Default feedback for incorrect answers
+    return ExerciseResult(
+      isCorrect: false,
+      feedbackMessage: trimmedAnswer.isEmpty
+          ? 'Please complete the sentence.'
+          : 'Not quite right. Try again!',
+      correctAnswer: exerciseData.correctAnswer,
     );
   }
-
-  // for user display in feedback modal bottom sheet
-  String _getCorrectAnswer() => exerciseData.correctAnswers.first;
 }

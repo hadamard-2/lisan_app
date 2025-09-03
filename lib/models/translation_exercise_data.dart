@@ -35,28 +35,28 @@ class TranslationExerciseData extends ExerciseData {
             type: json['type'],
             subtype: json['subtype'],
             instruction: json['instruction'],
-            promptText: data['source_text'],
-            promptAudioUrl: data['source_audio'] as String?,
+            promptText: data['promptText'],
+            promptAudioUrl: data['prompt_audio_url'] as String?,
             blocks: List<String>.from(data['blocks'] ?? []),
-            correctAnswer: data['correct_answers'],
+            correctAnswer: data['correct_answer'],
           )
         : TranslationExerciseData.freeText(
             id: json['id'],
             type: json['type'],
             subtype: json['subtype'],
             instruction: json['instruction'],
-            promptText: data['source_text'],
-            promptAudioUrl: data['source_audio'] as String?,
-            correctAnswer: data['correct_answers'],
+            promptText: data['promptText'],
+            promptAudioUrl: data['prompt_audio_url'] as String?,
+            correctAnswer: data['correct_answer'],
           );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
-      'source_text': promptText,
-      'correct_answers': correctAnswer,
+      'promptText': promptText,
+      'correct_answer': correctAnswer,
     };
-    if (promptAudioUrl != null) data['source_audio'] = promptAudioUrl;
+    if (promptAudioUrl != null) data['prompt_audio_url'] = promptAudioUrl;
     if (blocks != null) data['blocks'] = blocks;
     return {
       'id': id,

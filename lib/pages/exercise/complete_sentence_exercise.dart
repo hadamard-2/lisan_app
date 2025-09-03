@@ -60,9 +60,9 @@ class _CompleteSentenceExerciseState extends State<CompleteSentenceExercise> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.isRequeued) PreviousMistakeIndicator(),
-          
+
           InstructionText(instruction: widget.exerciseData.instruction),
-          
+
           // Exercise content based on subtype
           _renderExerciseContent(),
         ],
@@ -123,7 +123,7 @@ class _PartialFreeTextExerciseContentState
   }
 
   String _buildFullAnswer() {
-    final providedText = widget.data.providedText!;
+    final providedText = widget.data.displayText;
     final userInput = _controller.text;
 
     if (!providedText.contains('____')) {
@@ -139,9 +139,9 @@ class _PartialFreeTextExerciseContentState
       spacing: DesignSpacing.xl,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextBubbleWidget(text: widget.data.targetSentence),
+        TextBubbleWidget(text: widget.data.referenceText),
         PartialFreeTextWidget(
-          partialText: widget.data.providedText!,
+          partialText: widget.data.displayText,
           textEditingController: _controller,
         ),
       ],
@@ -175,7 +175,7 @@ class _PartialBlockBuildExerciseContentState
     _initializeAvailableBlocks();
 
     // Initialize selectedBlocks with nulls based on the number of blanks
-    String displayText = widget.data.displayWithBlanks!;
+    String displayText = widget.data.displayText;
     int blankCount = displayText
         .split(' ')
         .where((elem) => elem == '____')
@@ -237,7 +237,7 @@ class _PartialBlockBuildExerciseContentState
   }
 
   void _updateAnswer() {
-    String displayText = widget.data.displayWithBlanks!;
+    String displayText = widget.data.displayText;
     List<String> parts = displayText.split('____');
     String fullAnswer = '';
 
@@ -257,16 +257,15 @@ class _PartialBlockBuildExerciseContentState
       spacing: DesignSpacing.xl,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextBubbleWidget(text: widget.data.targetSentence),
+        TextBubbleWidget(text: widget.data.referenceText),
         PartialBlockBuildWidget(
-          textWithBlanks: widget.data.displayWithBlanks!, 
-          selectedBlocks: selectedBlocks, 
-          availableBlocks: availableBlocks, 
-          onSelectedBlockTap: _deselectBlock, 
+          textWithBlanks: widget.data.displayText,
+          selectedBlocks: selectedBlocks,
+          availableBlocks: availableBlocks,
+          onSelectedBlockTap: _deselectBlock,
           onAvailableBlockTap: _selectBlock,
         ),
       ],
     );
   }
 }
-
