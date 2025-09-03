@@ -3,6 +3,7 @@ import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/fill_in_blank_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
+import 'package:lisan_app/widgets/exercise/text_choices_widget.dart';
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
 
 class FillInBlankExercise extends ExerciseWidget {
@@ -79,46 +80,15 @@ class _FillInBlankExerciseState extends State<FillInBlankExercise> {
     return [
       TextBubbleWidget(text: widget.exerciseData.sentenceWithPlaceholders),
       const SizedBox(height: DesignSpacing.xxxl * 2),
+      TextChoicesWidget(
+        options: options,
+        selectedOptionIndex: _selectedOptionIndex,
+        onOptionSelect: (index) {
+          setState(() {
+            _selectedOptionIndex = index;
+          });
 
-      // Choices
-      ListView.builder(
-        shrinkWrap: true,
-        itemCount: options.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedOptionIndex = index;
-              });
-
-              widget.onAnswerChanged(options[index]);
-            },
-            child: Container(
-              width: double.infinity,
-              height: 60,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.all(DesignSpacing.md),
-              margin: const EdgeInsets.only(bottom: DesignSpacing.sm),
-              decoration: BoxDecoration(
-                color: _selectedOptionIndex == index
-                    ? DesignColors.primary.withAlpha((0.1 * 255).toInt())
-                    : Colors.transparent,
-                border: Border.all(
-                  color: _selectedOptionIndex == index
-                      ? DesignColors.primary
-                      : DesignColors.backgroundBorder,
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                options[index],
-                style: const TextStyle(
-                  color: DesignColors.textPrimary,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          );
+          widget.onAnswerChanged(options[index]);
         },
       ),
     ];

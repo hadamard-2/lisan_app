@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+
 import 'package:lisan_app/design/theme.dart';
+
 import 'package:lisan_app/models/available_block.dart';
 import 'package:lisan_app/models/listening_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/partial_free_text_widget.dart';
-import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
+import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart'
+;
+import 'package:lisan_app/widgets/exercise/audio_choices_widget.dart';
 import 'package:lisan_app/widgets/exercise/block_build_widget.dart';
 import 'package:lisan_app/widgets/exercise/free_text_widget.dart';
-import 'dart:math';
-
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
 import 'package:lisan_app/widgets/exercise/voice_bubble_widget.dart';
 
@@ -301,10 +303,12 @@ class PartialFreeTextExerciseContent extends StatefulWidget {
   });
 
   @override
-  State<PartialFreeTextExerciseContent> createState() => _PartialFreeTextExerciseContentState();
+  State<PartialFreeTextExerciseContent> createState() =>
+      _PartialFreeTextExerciseContentState();
 }
 
-class _PartialFreeTextExerciseContentState extends State<PartialFreeTextExerciseContent> {
+class _PartialFreeTextExerciseContentState
+    extends State<PartialFreeTextExerciseContent> {
   late TextEditingController _controller;
   PlaybackSpeed playbackSpeed = PlaybackSpeed.normal;
 
@@ -357,7 +361,7 @@ class _PartialFreeTextExerciseContentState extends State<PartialFreeTextExercise
           },
         ),
         PartialFreeTextWidget(
-          partialText: widget.exerciseData.displayText!, 
+          partialText: widget.exerciseData.displayText!,
           textEditingController: _controller,
         ),
       ],
@@ -376,75 +380,33 @@ class OmitWordChooseExerciseContent extends StatefulWidget {
   });
 
   @override
-  State<OmitWordChooseExerciseContent> createState() => _OmitWordChooseExerciseContentState();
+  State<OmitWordChooseExerciseContent> createState() =>
+      _OmitWordChooseExerciseContentState();
 }
 
-class _OmitWordChooseExerciseContentState extends State<OmitWordChooseExerciseContent> {
+class _OmitWordChooseExerciseContentState
+    extends State<OmitWordChooseExerciseContent> {
   int _selectedOptionIndex = -1;
-  List<int> randInts = [];
-
-  @override
-  void initState() {
-    super.initState();
-
-    var random = Random();
-    for (int i = 0; i < 2; i++) {
-      randInts.add(1 + random.nextInt(7));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: DesignSpacing.xl,
       children: [
         TextBubbleWidget(
           text: widget.exerciseData.displayText!,
           audioUrl: widget.exerciseData.audioUrl,
         ),
-        const SizedBox(height: DesignSpacing.xl),
 
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: widget.exerciseData.options!.length,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedOptionIndex = index;
-                });
+        AudioChoicesWidget(
+          options: widget.exerciseData.options!,
+          selectedOptionIndex: _selectedOptionIndex,
+          onOptionSelect: (index) {
+            setState(() {
+              _selectedOptionIndex = index;
+            });
 
-                widget.onAnswerChanged(
-                  widget.exerciseData.options![index]['id'].toString(),
-                );
-              },
-              child: Container(
-                width: double.infinity,
-                height: 60,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.all(DesignSpacing.md),
-                margin: const EdgeInsets.only(bottom: DesignSpacing.sm),
-                decoration: BoxDecoration(
-                  color: _selectedOptionIndex == index
-                      ? DesignColors.primary.withAlpha((0.05 * 255).toInt())
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: _selectedOptionIndex == index
-                        ? DesignColors.primary
-                        : DesignColors.backgroundBorder,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 8,
-                  children: [
-                    Icon(Icons.volume_up_rounded, color: DesignColors.primary),
-                    Image.asset(
-                      'assets/images/waveform (${randInts[index]}).png',
-                    ),
-                  ],
-                ),
-              ),
+            widget.onAnswerChanged(
+              widget.exerciseData.options![index]['id'].toString(),
             );
           },
         ),
