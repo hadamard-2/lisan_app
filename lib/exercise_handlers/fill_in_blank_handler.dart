@@ -7,16 +7,16 @@ class FillInBlankHandler implements ExerciseHandler {
   FillInBlankHandler(this.exerciseData);
 
   @override
-  ExerciseResult validateAndGetFeedback(dynamic userAnswer) {
+  Future<ExerciseResult> validateAndGetFeedback(dynamic userAnswer) {
     final isCorrect = _validate(userAnswer);
 
-    return ExerciseResult(
+    return Future.value(ExerciseResult(
       isCorrect: isCorrect,
       feedbackMessage: isCorrect
           ? 'Excellent! You selected the correct word(s).'
           : 'Mistakes are lessons in disguise.',
       correctAnswer: _getCorrectAnswer(),
-    );
+    ));
   }
 
   bool _validate(dynamic userAnswer) {

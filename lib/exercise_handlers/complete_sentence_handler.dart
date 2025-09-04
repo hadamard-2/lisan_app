@@ -8,7 +8,7 @@ class CompleteSentenceHandler implements ExerciseHandler {
   CompleteSentenceHandler(this.exerciseData);
 
   @override
-  ExerciseResult validateAndGetFeedback(dynamic userAnswer) {
+  Future<ExerciseResult> validateAndGetFeedback(dynamic userAnswer) {
     final trimmedAnswer = userAnswer.toString().trim();
 
     // Check similarity with the correct answer
@@ -18,20 +18,20 @@ class CompleteSentenceHandler implements ExerciseHandler {
     );
 
     if (similarity >= 9.0) {
-      return ExerciseResult(
+      return Future.value(ExerciseResult(
         isCorrect: true,
         feedbackMessage: 'Great job!',
         correctAnswer: exerciseData.correctAnswer,
-      );
+      ));
     }
 
     // Default feedback for incorrect answers
-    return ExerciseResult(
+    return Future.value(ExerciseResult(
       isCorrect: false,
       feedbackMessage: trimmedAnswer.isEmpty
           ? 'Please complete the sentence.'
           : 'Not quite right. Try again!',
       correctAnswer: exerciseData.correctAnswer,
-    );
+    ));
   }
 }

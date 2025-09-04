@@ -11,5 +11,5 @@ class ExerciseResult {
 }
 
 abstract class ExerciseHandler {
-  ExerciseResult validateAndGetFeedback(dynamic userAnswer);
+  Future<ExerciseResult> validateAndGetFeedback(dynamic userAnswer);
 }

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'package:lisan_app/exercise_handlers/exercise_handler_factory.dart';
+
 import 'package:lisan_app/models/exercise_result.dart';
 import 'package:lisan_app/models/complete_sentence_exercise_data.dart';
-import 'package:lisan_app/models/fill_in_blank_data.dart';
+import 'package:lisan_app/models/fill_in_blank_exercise_data.dart';
 import 'package:lisan_app/models/listening_exercise_data.dart';
 import 'package:lisan_app/models/speaking_exercise_data.dart';
 import 'package:lisan_app/models/translation_exercise_data.dart';
+
 import 'package:lisan_app/pages/exercise/fill_in_blank_exercise.dart';
 
 import 'package:lisan_app/pages/exercise/lesson_template.dart';
@@ -52,6 +55,7 @@ class _MyAppState extends State<MyApp> {
     //   "instruction": "Translate this sentence",
     //   "data": {
     //     "source_text": "The cat is sleeping under the table.",
+    //     "source_audio": "yellow",
     //     "source_lang": "en",
     //     "target_lang": "fr",
     //     "blocks": ["dort", "sous", "Le", "la", "table", "chat"],
@@ -74,18 +78,18 @@ class _MyAppState extends State<MyApp> {
     // {
     //   "id": "cs_001",
     //   "type": "complete_sentence",
-    //   "subtype": "given_start",
+    //   "subtype": "partial_free_text",
     //   "instruction": "Complete the sentence",
     //   "data": {
     //     "target_sentence": "Hier je suis allé au magasin",
-    //     "provided_text": "Yesterday I went to",
+    //     "provided_text": "Yesterday I went to ____",
     //     "correct_answers": ["Yesterday I went to the store"],
     //   },
     // },
     // {
     //   "id": "cs_002",
     //   "type": "complete_sentence",
-    //   "subtype": "given_end",
+    //   "subtype": "partial_free_text",
     //   "instruction": "Complete the sentence",
     //   "data": {
     //     "target_sentence": "La pizza est ma nourriture préférée",
@@ -96,7 +100,7 @@ class _MyAppState extends State<MyApp> {
     // {
     //   "id": "cs_003",
     //   "type": "complete_sentence",
-    //   "subtype": "select_from_blocks",
+    //   "subtype": "partial_block_build",
     //   "instruction": "Complete the sentence",
     //   "data": {
     //     "target_sentence": "Le soleil brille dans le ciel",
@@ -129,30 +133,18 @@ class _MyAppState extends State<MyApp> {
     //     "correct_answers": ["Il est allé à l'école"],
     //   },
     // },
+    {
+      "id": "sp_001",
+      "type": "speaking",
+      "instruction": "Speak this sentence",
+      "data": {
+        "target_text": "ሰላም እንዴት ነህ?",
+        "audio_url": "https://cdn.example.com/audio/sp_001.mp3",
+        "scoring": {"min_confidence": 0.7},
+        "max_record_seconds": 8,
+      },
+    },
     // {
-    //   "id": "sp_001",
-    //   "type": "speaking",
-    //   "instruction": "Speak this sentence",
-    //   "data": {
-    //     "target_text": "ሰላም እንዴት ነህ?",
-    //     "reference_audio_url": "https://cdn.example.com/audio/sp_001.mp3",
-    //     "scoring": {"min_confidence": 0.7},
-    //     "max_record_seconds": 8,
-    //   },
-    // },
-    // {
-    //   "id": "ls_001",
-    //   "type": "listening",
-    //   "subtype": "omit_word",
-    //   "instruction": "Listen and choose the correct missing word.",
-    //   "data": {
-    //     "audio_url": "https://cdn.example.com/audio/ls_001.mp3",
-    //     "display_text": "እሱ ____ እየጠጣ ነው።",
-    //     "options": ["ነጭ", "ነጋ"],
-    //     "correct_answers": ["ነጭ"]
-    //   }
-    // }
-    //     {
     //   "id": "ls_001",
     //   "type": "listening",
     //   "subtype": "omit_word_choose",
@@ -161,19 +153,19 @@ class _MyAppState extends State<MyApp> {
     //     "audio_url": "https://cdn.example.com/audio/ls_001.mp3",
     //     "display_text": "እሱ ____ እየጠጣ ነው።",
     //     "options": [
-    // 	    {
-    // 		    "id": 1,
-    // 		    "audio_url": "https://cdn.example.com/audio/ls_001_1.mp3",
-    // 		    "text": "ነጭ"
-    // 		},
-    // 		{
-    // 			"id": 2,
-    // 			"audio_url": "https://cdn.example.com/audio/ls_001_2.mp3",
-    // 			"text": "ነጋ"
-    // 		}
-    // 	],
-    //     "correct_option_id": 1
-    //   }
+    //       {
+    //         "id": 1,
+    //         "audio_url": "https://cdn.example.com/audio/ls_001_1.mp3",
+    //         "text": "ነጭ",
+    //       },
+    //       {
+    //         "id": 2,
+    //         "audio_url": "https://cdn.example.com/audio/ls_001_2.mp3",
+    //         "text": "ነጋ",
+    //       },
+    //     ],
+    //     "correct_option_id": 1,
+    //   },
     // },
     // {
     //   "id": "ls_001",
@@ -221,7 +213,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _onFillInBlankAnswerChanged(String exerciseId, String answer) {
+  void _onFillInBlankAnswerChanged(String exerciseId, int answer) {
     setState(() {
       exerciseAnswers[exerciseId] = answer;
     });
@@ -311,22 +303,22 @@ class _MyAppState extends State<MyApp> {
           MaterialPageRoute(builder: (context) => LessonCompletionPage()),
         ),
 
-        validateAnswer: (String id) {
-          final result = handlers[id]!.validateAndGetFeedback(
+        validateAnswer: (String id) async {
+          final result = await handlers[id]!.validateAndGetFeedback(
             exerciseAnswers[id],
           );
           return result.isCorrect;
         },
 
-        getFeedbackMessage: (String id) {
-          final result = handlers[id]!.validateAndGetFeedback(
+        getFeedbackMessage: (String id) async {
+          final result = await handlers[id]!.validateAndGetFeedback(
             exerciseAnswers[id],
           );
           return result.feedbackMessage;
         },
 
-        getCorrectAnswer: (String id) {
-          final result = handlers[id]!.validateAndGetFeedback(
+        getCorrectAnswer: (String id) async {
+          final result = await handlers[id]!.validateAndGetFeedback(
             exerciseAnswers[id],
           );
           return result.correctAnswer;

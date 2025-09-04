@@ -20,9 +20,9 @@ class LessonTemplate extends StatefulWidget {
   final VoidCallback? onVoiceBasedExercise;
 
   // Per-exercise data (functions that take current exercise index)
-  final String? Function(String id)? getFeedbackMessage;
-  final String? Function(String id)? getCorrectAnswer;
-  final bool Function(String id)? validateAnswer; // Returns true if correct
+  final Future<String?> Function(String id)? getFeedbackMessage;
+  final Future<String?> Function(String id)? getCorrectAnswer;
+  final Future<bool> Function(String id)? validateAnswer; // Returns true if correct
 
   const LessonTemplate({
     super.key,
@@ -120,10 +120,10 @@ class _LessonTemplateState extends State<LessonTemplate>
 
   ExerciseWidget get _currentExercise => _exerciseQueue[_currentExerciseIndex];
 
-  String? get _currentFeedbackMessage =>
+  Future<String?>? get _currentFeedbackMessage =>
       widget.getFeedbackMessage?.call(_currentExercise.exerciseData.id);
 
-  String? get _currentCorrectAnswer =>
+  Future<String?>? get _currentCorrectAnswer =>
       widget.getCorrectAnswer?.call(_currentExercise.exerciseData.id);
 
   void _handleCheck() {
@@ -134,12 +134,10 @@ class _LessonTemplateState extends State<LessonTemplate>
     _buttonController.forward();
 
     // Simulate checking delay
-    Future.delayed(const Duration(milliseconds: 1500), () {
+    Future.delayed(const Duration(milliseconds: 1500), () async {
       if (mounted) {
         // Validate answer
-        final isCorrect =
-            widget.validateAnswer?.call(_currentExercise.exerciseData.id) ??
-            true;
+        final isCorrect = await widget.validateAnswer?.call(_currentExercise.exerciseData.id) ?? true;
 
         setState(() {
           _exerciseState = isCorrect
@@ -414,14 +412,22 @@ class _LessonTemplateState extends State<LessonTemplate>
 
                     if (_currentFeedbackMessage != null) ...[
                       const SizedBox(height: DesignSpacing.md),
-                      Text(
-                        _currentFeedbackMessage!,
-                        style: TextStyle(
-                          color: isCorrect
-                              ? DesignColors.success
-                              : DesignColors.textSecondary,
-                          fontSize: 16,
-                        ),
+                      FutureBuilder<String?>(
+                        future: _currentFeedbackMessage!,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data != null) {
+                            return Text(
+                              snapshot.data!,
+                              style: TextStyle(
+                                color: isCorrect
+                                    ? DesignColors.success
+                                    : DesignColors.textSecondary,
+                                fontSize: 16,
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
                       ),
                     ],
 
@@ -436,12 +442,20 @@ class _LessonTemplateState extends State<LessonTemplate>
                         ),
                       ),
                       const SizedBox(height: DesignSpacing.xs),
-                      Text(
-                        _currentCorrectAnswer!,
-                        style: const TextStyle(
-                          color: DesignColors.success,
-                          fontSize: 16,
-                        ),
+                      FutureBuilder<String?>(
+                        future: _currentCorrectAnswer!,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data != null) {
+                            return Text(
+                              snapshot.data!,
+                              style: const TextStyle(
+                                color: DesignColors.success,
+                                fontSize: 16,
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
                       ),
                     ],
                   ],

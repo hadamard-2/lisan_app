@@ -8,7 +8,7 @@ class TranslationHandler implements ExerciseHandler {
   TranslationHandler(this.exerciseData);
 
   @override
-  ExerciseResult validateAndGetFeedback(dynamic userAnswer) {
+  Future<ExerciseResult> validateAndGetFeedback(dynamic userAnswer) {
     final trimmedAnswer = userAnswer.toString().trim();
     
     // Check similarity with the correct answer
@@ -18,20 +18,20 @@ class TranslationHandler implements ExerciseHandler {
     );
 
     if (similarityPercentage >= 0.9) {
-      return ExerciseResult(
+      return Future.value(ExerciseResult(
         isCorrect: true,
         feedbackMessage: 'Excellent! Your translation is correct.',
         correctAnswer: exerciseData.correctAnswer,
-      );
+      ));
     }
 
     // Default feedback for incorrect answers
-    return ExerciseResult(
+    return Future.value(ExerciseResult(
       isCorrect: false,
       feedbackMessage: trimmedAnswer.isEmpty 
           ? 'Please provide a translation.' 
           : 'Not quite right. Try again!',
       correctAnswer: exerciseData.correctAnswer,
-    );
+    ));
   }
 }

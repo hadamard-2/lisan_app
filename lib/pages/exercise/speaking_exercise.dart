@@ -61,10 +61,14 @@ class _SpeakingExerciseState extends State<SpeakingExercise> {
   List<Widget> _renderExerciseContent() {
     return [
       TextBubbleWidget(
-        text: widget.exerciseData.targetText,
-        audioUrl: widget.exerciseData.audioUrl,
+        text: widget.exerciseData.promptText,
+        audioUrl: widget.exerciseData.promptAudioUrl,
       ),
-      VoiceInputWidget(onTap: () => print('recording voice')),
+      VoiceInputWidget(
+        onRecordingComplete: (audioPath) {
+          widget.onAnswerChanged(audioPath);
+        },
+      ),
     ];
   }
 }

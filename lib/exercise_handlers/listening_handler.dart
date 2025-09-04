@@ -7,14 +7,14 @@ class ListeningHandler implements ExerciseHandler {
   ListeningHandler(this.exerciseData);
 
   @override
-  ExerciseResult validateAndGetFeedback(dynamic userAnswer) {
+  Future<ExerciseResult> validateAndGetFeedback(dynamic userAnswer) {
     final isCorrect = _validate(userAnswer);
 
-    return ExerciseResult(
+    return Future.value(ExerciseResult(
       isCorrect: isCorrect,
       feedbackMessage: _getFeedbackMessage(isCorrect),
       correctAnswer: _getCorrectAnswer(),
-    );
+    ));
   }
 
   bool _validate(dynamic userAnswer) {
