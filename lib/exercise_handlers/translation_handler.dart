@@ -12,12 +12,12 @@ class TranslationHandler implements ExerciseHandler {
     final trimmedAnswer = userAnswer.toString().trim();
     
     // Check similarity with the correct answer
-    final similarityPercentage = TextSimilarity.calculateSimilarity(
+    final similarity = TextSimilarity.calculateSimilarity(
       trimmedAnswer, 
       exerciseData.correctAnswer,
     );
 
-    if (similarityPercentage >= 0.9) {
+    if (similarity >= 90) {
       return Future.value(ExerciseResult(
         isCorrect: true,
         feedbackMessage: 'Excellent! Your translation is correct.',

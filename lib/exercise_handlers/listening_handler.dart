@@ -1,5 +1,6 @@
 import 'package:lisan_app/models/exercise_result.dart';
 import 'package:lisan_app/models/listening_exercise_data.dart';
+import 'package:lisan_app/utils/text_similarity.dart';
 
 class ListeningHandler implements ExerciseHandler {
   final ListeningExerciseData exerciseData;
@@ -10,11 +11,13 @@ class ListeningHandler implements ExerciseHandler {
   Future<ExerciseResult> validateAndGetFeedback(dynamic userAnswer) {
     final isCorrect = _validate(userAnswer);
 
-    return Future.value(ExerciseResult(
-      isCorrect: isCorrect,
-      feedbackMessage: _getFeedbackMessage(isCorrect),
-      correctAnswer: _getCorrectAnswer(),
-    ));
+    return Future.value(
+      ExerciseResult(
+        isCorrect: isCorrect,
+        feedbackMessage: _getFeedbackMessage(isCorrect),
+        correctAnswer: _getCorrectAnswer(),
+      ),
+    );
   }
 
   bool _validate(dynamic userAnswer) {
@@ -23,10 +26,10 @@ class ListeningHandler implements ExerciseHandler {
     final subtype = exerciseData.subtype;
 
     switch (subtype) {
-      case 'omit_word_choose':
+      case 'choose_missing':
         return _validateOptionSelection(userAnswer);
 
-      case 'omit_word_type':
+      case 'type_missing':
         return _validateTypedWord(userAnswer);
 
       case 'free_text':
@@ -46,31 +49,50 @@ class ListeningHandler implements ExerciseHandler {
   }
 
   bool _validateTypedWord(dynamic userAnswer) {
-    final correctAnswers = exerciseData.correctAnswers;
-    final userAnswerNormalized = userAnswer.toString().toLowerCase().trim();
+    if (exerciseData.correctAnswer == null) return false;
 
-    return correctAnswers!.any(
-      (correct) =>
-          correct.toString().toLowerCase().trim() == userAnswerNormalized,
+    final userText = _cleanText(userAnswer.toString());
+    final correctText = _cleanText(exerciseData.correctAnswer!);
+
+    final similarity = TextSimilarity.calculateSimilarity(
+      userText,
+      correctText,
     );
+    return similarity >= 95; // Higher threshold for single words
   }
 
   bool _validateTypedSentence(dynamic userAnswer) {
-    final correctAnswers = exerciseData.correctAnswers;
-    final userAnswerNormalized = userAnswer.toString().toLowerCase().trim();
+    if (exerciseData.correctAnswer == null) return false;
 
-    return correctAnswers!.any(
-      (correct) =>
-          correct.toString().toLowerCase().trim() == userAnswerNormalized,
+    final userText = _cleanText(userAnswer.toString());
+    final correctText = _cleanText(exerciseData.correctAnswer!);
+
+    final similarity = TextSimilarity.calculateSimilarity(
+      userText,
+      correctText,
     );
+    return similarity >= 85; // Medium threshold for sentences
   }
 
   bool _validateBlockSequence(dynamic userAnswer) {
-    if (userAnswer is! List) return false;
+    if (exerciseData.correctAnswer == null) return false;
 
-    final correctAnswer = exerciseData.correctAnswers!.first;
-    final userSequence = userAnswer.join(' ').toLowerCase().trim();
-    return userSequence == correctAnswer.toLowerCase().trim();
+    final userText = _cleanText(userAnswer.toString());
+    final correctText = _cleanText(exerciseData.correctAnswer!);
+
+    return userText == correctText;
+  }
+
+  /// Cleans text by removing punctuation and normalizing whitespace
+  /// Preserves Amharic characters (Unicode range U+1200-U+137F)
+  String _cleanText(String text) {
+    return text
+        .replaceAll(
+          RegExp(r'[^\w\s\u1200-\u137F]'),
+          '',
+        ) // Remove punctuation, keep Amharic and word characters
+        .replaceAll(RegExp(r'\s+'), ' ') // Normalize whitespace
+        .trim();
   }
 
   String _getFeedbackMessage(bool isCorrect) {
@@ -80,16 +102,16 @@ class ListeningHandler implements ExerciseHandler {
 
     final subtype = exerciseData.subtype;
     switch (subtype) {
-      case 'omit_word_choose':
-        return 'Listen again and choose the word that fits best.';
-      case 'omit_word_type':
-        return 'Try typing exactly what you heard.';
+      case 'choose_missing':
+        return 'You chose the incorrect voice to complete the sentence.';
+      case 'type_missing':
+        return 'The word you heard was different from what you typed.';
       case 'free_text':
-        return 'Try typing exactly what you heard.';
+        return 'The sentence you heard was different from what you typed.';
       case 'block_build':
-        return 'Rearrange the blocks to match what you heard.';
+        return 'The blocks needed to be arranged differently to match the audio.';
       default:
-        return 'Listen carefully and try again.';
+        return 'That wasn\'t quite right.';
     }
   }
 
@@ -97,20 +119,17 @@ class ListeningHandler implements ExerciseHandler {
     final subtype = exerciseData.subtype;
 
     switch (subtype) {
-      case 'omit_word_choose':
-        final correctOptionId = exerciseData.correctOptionId;
-        final options = exerciseData.options as List;
-        final correctOption = options.firstWhere((opt) => opt['id'] == correctOptionId);
-        return correctOption['text'];
-
-      case 'omit_word_type':
+      case 'choose_missing':
+        // not sure if it makes sense to display anything here
+        return '';
+      case 'type_missing':
+        return exerciseData.displayText!.replaceFirst(
+          '____',
+          exerciseData.correctAnswer!,
+        );
       case 'free_text':
-        final correctAnswers = exerciseData.correctAnswers;
-        return correctAnswers!.first;
-
       case 'block_build':
-        final correctAnswer = exerciseData.correctAnswers!.first;
-        return correctAnswer;
+        return exerciseData.correctAnswer!;
 
       default:
         return 'No correct answer available';

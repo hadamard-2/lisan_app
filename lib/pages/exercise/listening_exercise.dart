@@ -7,8 +7,7 @@ import 'package:lisan_app/models/listening_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/instruction_text.dart';
 import 'package:lisan_app/pages/exercise/partial_free_text_widget.dart';
-import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart'
-;
+import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
 import 'package:lisan_app/widgets/exercise/audio_choices_widget.dart';
 import 'package:lisan_app/widgets/exercise/block_build_widget.dart';
 import 'package:lisan_app/widgets/exercise/free_text_widget.dart';
@@ -70,13 +69,13 @@ class _ListeningExerciseState extends State<ListeningExercise> {
 
   Widget _renderExerciseContent() {
     switch (widget.exerciseData.subtype) {
-      case 'omit_word_choose':
-        return OmitWordChooseExerciseContent(
+      case 'choose_missing':
+        return ChooseMissingExerciseContent(
           exerciseData: widget.exerciseData,
           onAnswerChanged: widget.onAnswerChanged,
         );
-      case 'omit_word_type':
-        return PartialFreeTextExerciseContent(
+      case 'type_missing':
+        return TypeMissingExerciseContent(
           exerciseData: widget.exerciseData,
           onAnswerChanged: widget.onAnswerChanged,
         );
@@ -186,7 +185,7 @@ class _BlockBuildExerciseContentState extends State<BlockBuildExerciseContent>
       spacing: DesignSpacing.xl,
       children: [
         VoiceBubbleWidget(
-          audioUrl: widget.exerciseData.audioUrl,
+          audioUrl: widget.exerciseData.promptAudioUrl,
           playbackSpeed: playbackSpeed,
           onPlaybackButtonPressed: () {
             print('Playing voice');
@@ -254,14 +253,13 @@ class _FreeTextListeningExerciseContentState
   @override
   Widget build(BuildContext context) {
     final data = widget.exerciseData;
-    final audioUrl = data.audioUrl;
 
     return Column(
       spacing: DesignSpacing.xl,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         VoiceBubbleWidget(
-          audioUrl: widget.exerciseData.audioUrl,
+          audioUrl: widget.exerciseData.promptAudioUrl,
           playbackSpeed: playbackSpeed,
           onPlaybackButtonPressed: () {
             print('Playing voice');
@@ -285,23 +283,23 @@ class _FreeTextListeningExerciseContentState
   }
 }
 
-class PartialFreeTextExerciseContent extends StatefulWidget {
+class TypeMissingExerciseContent extends StatefulWidget {
   final ListeningExerciseData exerciseData;
   final Function(String) onAnswerChanged;
 
-  const PartialFreeTextExerciseContent({
+  const TypeMissingExerciseContent({
     super.key,
     required this.exerciseData,
     required this.onAnswerChanged,
   });
 
   @override
-  State<PartialFreeTextExerciseContent> createState() =>
-      _PartialFreeTextExerciseContentState();
+  State<TypeMissingExerciseContent> createState() =>
+      _TypeMissingExerciseContentState();
 }
 
-class _PartialFreeTextExerciseContentState
-    extends State<PartialFreeTextExerciseContent> {
+class _TypeMissingExerciseContentState
+    extends State<TypeMissingExerciseContent> {
   late TextEditingController _controller;
   PlaybackSpeed playbackSpeed = PlaybackSpeed.normal;
 
@@ -338,7 +336,7 @@ class _PartialFreeTextExerciseContentState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         VoiceBubbleWidget(
-          audioUrl: widget.exerciseData.audioUrl,
+          audioUrl: widget.exerciseData.promptAudioUrl,
           playbackSpeed: playbackSpeed,
           onPlaybackButtonPressed: () {
             print('Playing voice');
@@ -362,23 +360,23 @@ class _PartialFreeTextExerciseContentState
   }
 }
 
-class OmitWordChooseExerciseContent extends StatefulWidget {
+class ChooseMissingExerciseContent extends StatefulWidget {
   final ListeningExerciseData exerciseData;
   final Function(String answer) onAnswerChanged;
 
-  const OmitWordChooseExerciseContent({
+  const ChooseMissingExerciseContent({
     super.key,
     required this.exerciseData,
     required this.onAnswerChanged,
   });
 
   @override
-  State<OmitWordChooseExerciseContent> createState() =>
-      _OmitWordChooseExerciseContentState();
+  State<ChooseMissingExerciseContent> createState() =>
+      _ChooseMissingExerciseContentState();
 }
 
-class _OmitWordChooseExerciseContentState
-    extends State<OmitWordChooseExerciseContent> {
+class _ChooseMissingExerciseContentState
+    extends State<ChooseMissingExerciseContent> {
   int _selectedOptionIndex = -1;
   @override
   Widget build(BuildContext context) {
@@ -387,7 +385,7 @@ class _OmitWordChooseExerciseContentState
       children: [
         TextBubbleWidget(
           text: widget.exerciseData.displayText!,
-          audioUrl: widget.exerciseData.audioUrl,
+          audioUrl: widget.exerciseData.promptAudioUrl,
         ),
 
         AudioChoicesWidget(

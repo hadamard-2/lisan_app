@@ -6,7 +6,6 @@ import 'package:lisan_app/utils/text_similarity.dart';
 
 class SpeakingHandler implements ExerciseHandler {
   final SpeakingExerciseData exerciseData;
-  static const double similarityThreshold = 0.75;
   static const String speechToTextUrl = 'http://localhost:8000/speech-to-text';
 
   late final Dio _dio;
@@ -77,7 +76,7 @@ class SpeakingHandler implements ExerciseHandler {
       cleanedCorrectAnswer,
     );
 
-    return similarity >= (similarityThreshold * 100);
+    return similarity >= 75;
   }
 
   String _cleanText(String text) {

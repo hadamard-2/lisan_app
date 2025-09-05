@@ -17,7 +17,7 @@ class CompleteSentenceHandler implements ExerciseHandler {
       exerciseData.correctAnswer,
     );
 
-    if (similarity >= 9.0) {
+    if (similarity >= 90) {
       return Future.value(ExerciseResult(
         isCorrect: true,
         feedbackMessage: 'Great job!',
