@@ -35,6 +35,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // Track answers for each exercise
   Map<String, dynamic> exerciseAnswers = {};
+  Map<String, ExerciseResult?> exerciseResults = {}; // Add this cache
   late Map<String, ExerciseHandler> handlers;
 
   @override
@@ -99,46 +100,46 @@ class _MyAppState extends State<MyApp> {
     // },
 
     // // --- Fill in Blank ---
-    {
-      "id": "fb_001",
-      "type": "fill_in_blank",
-      "instruction": "Choose the correct word for the blank.",
-      "data": {
-        "display_text": "እኔ ____ እጠጣለሁ።",
-        "options": [
-          {"id": 0, "text": "ውሃ"},
-          {"id": 1, "text": "ሽንኩርት"},
-          {"id": 2, "text": "ወንበር"},
-        ],
-        "correct_option_id": 0,
-      },
-    },
-    {
-      "id": "fb_002",
-      "type": "fill_in_blank",
-      "instruction": "Select the pair that best fits the blanks.",
-      "data": {
-        "display_text": "____ ከገበያ ____ ገዛች።",
-        "options": [
-          {"id": 0, "text": "እሱ ... ቦርሳ"},
-          {"id": 1, "text": "እሷ ... አትክልት"},
-          {"id": 2, "text": "እነሱ ... ወተት"},
-        ],
-        "correct_option_id": 1,
-      },
-    },
-
-    // // --- Speaking ---
     // {
-    //   "id": "sp_001",
-    //   "type": "speaking",
-    //   "instruction": "Speak this sentence aloud",
+    //   "id": "fb_001",
+    //   "type": "fill_in_blank",
+    //   "instruction": "Choose the correct word for the blank.",
     //   "data": {
-    //     "prompt_text": "ሰላም እንዴት ነህ?",
-    //     "prompt_audio_url": "https://cdn.example.com/audio/sp_001.mp3",
-    //     "correct_answer": "ሰላም እንዴት ነህ?",
+    //     "display_text": "እኔ ____ እጠጣለሁ።",
+    //     "options": [
+    //       {"id": 0, "text": "ውሃ"},
+    //       {"id": 1, "text": "ሽንኩርት"},
+    //       {"id": 2, "text": "ወንበር"},
+    //     ],
+    //     "correct_option_id": 0,
     //   },
     // },
+    // {
+    //   "id": "fb_002",
+    //   "type": "fill_in_blank",
+    //   "instruction": "Select the pair that best fits the blanks.",
+    //   "data": {
+    //     "display_text": "____ ከገበያ ____ ገዛች።",
+    //     "options": [
+    //       {"id": 0, "text": "እሱ ... ቦርሳ"},
+    //       {"id": 1, "text": "እሷ ... አትክልት"},
+    //       {"id": 2, "text": "እነሱ ... ወተት"},
+    //     ],
+    //     "correct_option_id": 1,
+    //   },
+    // },
+
+    // // --- Speaking ---
+    {
+      "id": "sp_001",
+      "type": "speaking",
+      "instruction": "Speak this sentence aloud",
+      "data": {
+        "prompt_text": "ሰላም እንዴት ነህ?",
+        "prompt_audio_url": "https://cdn.example.com/audio/sp_001.mp3",
+        "correct_answer": "ሰላም እንዴት ነህ?",
+      },
+    },
 
     // // --- Listening ---
     // {
@@ -301,31 +302,40 @@ class _MyAppState extends State<MyApp> {
         ),
 
         validateAnswer: (String id) async {
-          final result = await handlers[id]!.validateAndGetFeedback(
-            exerciseAnswers[id],
-          );
-          return result.isCorrect;
+          // Only call once and cache the result
+          if (exerciseResults[id] == null) {
+            exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
+              exerciseAnswers[id],
+            );
+          }
+          return exerciseResults[id]!.isCorrect;
         },
 
         getFeedbackMessage: (String id) async {
-          final result = await handlers[id]!.validateAndGetFeedback(
-            exerciseAnswers[id],
-          );
-          return result.feedbackMessage;
+          // Use cached result
+          if (exerciseResults[id] == null) {
+            exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
+              exerciseAnswers[id],
+            );
+          }
+          return exerciseResults[id]!.feedbackMessage;
         },
 
         getCorrectAnswer: (String id) async {
-          final result = await handlers[id]!.validateAndGetFeedback(
-            exerciseAnswers[id],
-          );
-          return result.correctAnswer;
+          // Use cached result
+          if (exerciseResults[id] == null) {
+            exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
+              exerciseAnswers[id],
+            );
+          }
+          return exerciseResults[id]!.correctAnswer;
         },
 
-        // Updated to accept ID
         onExerciseRequeued: (String id) {
           print('Exercise requeued for additional practice');
           setState(() {
             exerciseAnswers.remove(id);
+            exerciseResults.remove(id); // Clear cached result
           });
         },
       ),

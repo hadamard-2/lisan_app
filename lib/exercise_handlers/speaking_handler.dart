@@ -51,19 +51,27 @@ class SpeakingHandler implements ExerciseHandler {
   }
 
   Future<String> _transcribeAudio(String audioFilePath) async {
-    final formData = FormData.fromMap({
-      'audio_file': await MultipartFile.fromFile(
-        audioFilePath,
-        filename: 'recording.wav',
-      ),
-    });
+    try {
+      final formData = FormData.fromMap({
+        'audio_file': await MultipartFile.fromFile(
+          audioFilePath,
+          filename: 'recording.wav',
+        ),
+      });
 
-    final response = await _dio.post(speechToTextUrl, data: formData);
+      final response = await _dio.post(speechToTextUrl, data: formData);
 
-    if (response.statusCode == 200) {
-      return response.data['transcription'] ?? '';
-    } else {
-      throw Exception('Failed to transcribe audio: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        return response.data['transcription'] ?? '';
+      } else {
+        throw Exception('Failed to transcribe audio: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw Exception('Network error during transcription: ${e.message}');
+    } on FileSystemException catch (e) {
+      throw Exception('Audio file error: ${e.message}');
+    } catch (e) {
+      throw Exception('Unexpected error during transcription: $e');
     }
   }
 

@@ -7,10 +7,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 class VoiceInputWidget extends StatefulWidget {
   final Function(String audioFilePath) onRecordingComplete;
 
-  const VoiceInputWidget({
-    super.key,
-    required this.onRecordingComplete,
-  });
+  const VoiceInputWidget({super.key, required this.onRecordingComplete});
 
   @override
   State<VoiceInputWidget> createState() => _VoiceInputWidgetState();
@@ -18,7 +15,7 @@ class VoiceInputWidget extends StatefulWidget {
 
 class _VoiceInputWidgetState extends State<VoiceInputWidget> {
   static const int maxRecordingDurationSeconds = 8;
-  
+
   final AudioRecorder _audioRecorder = AudioRecorder();
   bool _isRecording = false;
   int _recordingDuration = 0;
@@ -40,7 +37,8 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget> {
   Future<void> _startRecording() async {
     // Check connectivity
     final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none) {
+    if (!connectivityResult.contains(ConnectivityResult.mobile) &&
+        !connectivityResult.contains(ConnectivityResult.wifi)) {
       _showOfflineDialog();
       return;
     }
@@ -48,7 +46,8 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget> {
     // Check and request permission
     if (await _audioRecorder.hasPermission()) {
       final tempDir = await getTemporaryDirectory();
-      final audioPath = '${tempDir.path}/recording_${DateTime.now().millisecondsSinceEpoch}.wav';
+      final audioPath =
+          '${tempDir.path}/recording_${DateTime.now().millisecondsSinceEpoch}.wav';
 
       await _audioRecorder.start(
         RecordConfig(
@@ -86,7 +85,7 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget> {
 
   Future<void> _stopRecording() async {
     final audioPath = await _audioRecorder.stop();
-    
+
     setState(() {
       _isRecording = false;
       _recordingDuration = 0;
@@ -102,7 +101,9 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('No Internet Connection'),
-        content: const Text('You need an internet connection to complete speaking exercises.'),
+        content: const Text(
+          'You need an internet connection to complete speaking exercises.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -119,14 +120,18 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget> {
       onTap: _handleTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: DesignSpacing.lg),
+        padding: const EdgeInsets.symmetric(vertical: DesignSpacing.xl),
         decoration: BoxDecoration(
           border: Border.all(
-            width: 2, 
-            color: _isRecording ? DesignColors.primary : DesignColors.backgroundBorder,
+            width: 2,
+            color: _isRecording
+                ? DesignColors.primary
+                : DesignColors.backgroundBorder,
           ),
           borderRadius: BorderRadius.circular(8),
-          color: _isRecording ? DesignColors.primary.withOpacity(0.1) : null,
+          color: _isRecording
+              ? DesignColors.primary.withAlpha((0.1 * 255).toInt())
+              : null,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -137,10 +142,11 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget> {
               color: DesignColors.primary,
             ),
             Text(
-              _isRecording 
-                ? 'RECORDING... ${maxRecordingDurationSeconds - _recordingDuration}s'
-                : 'TAP TO SPEAK',
+              _isRecording
+                  ? 'RECORDING... ${maxRecordingDurationSeconds - _recordingDuration}s'
+                  : 'TAP TO SPEAK',
               style: TextStyle(
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: DesignColors.primary,
               ),
