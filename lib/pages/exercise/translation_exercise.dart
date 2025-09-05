@@ -47,7 +47,7 @@ class _TranslationExerciseState extends State<TranslationExercise> {
       width: double.infinity,
       padding: const EdgeInsets.all(DesignSpacing.md),
       child: Column(
-        spacing: DesignSpacing.xl,
+        spacing: DesignSpacing.xxl,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.isRequeued) PreviousMistakeIndicator(),

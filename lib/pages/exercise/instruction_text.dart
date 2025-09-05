@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 
 class InstructionText extends StatelessWidget {
-  const InstructionText({
-    super.key,
-    required this.instruction,
-  });
+  const InstructionText({super.key, required this.instruction});
 
   final String instruction;
 

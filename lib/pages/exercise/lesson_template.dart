@@ -258,7 +258,7 @@ class _LessonTemplateState extends State<LessonTemplate>
                   child: SlideTransition(
                     position: _exerciseSlideAnimation,
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(DesignSpacing.md),
+                      padding: const EdgeInsets.all(DesignSpacing.sm),
                       child: _currentExercise,
                     ),
                   ),

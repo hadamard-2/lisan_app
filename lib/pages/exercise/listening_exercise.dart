@@ -59,7 +59,7 @@ class _ListeningExerciseState extends State<ListeningExercise> {
           if (widget.isRequeued) PreviousMistakeIndicator(),
 
           InstructionText(instruction: instruction),
-          const SizedBox(height: DesignSpacing.xl),
+          const SizedBox(height: DesignSpacing.xxl),
 
           _renderExerciseContent(),
         ],

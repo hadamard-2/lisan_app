@@ -74,59 +74,59 @@ class _MyAppState extends State<MyApp> {
     // },
 
     // // --- Complete Sentence ---
-    {
-      "id": "cs_001",
-      "type": "complete_sentence",
-      "subtype": "partial_free_text",
-      "instruction": "Complete the sentence",
-      "data": {
-        "reference_text": "She is a doctor.",
-        "display_text": "እሷ ____ ናት።",
-        "correct_answer": "እሷ ሀኪም ናት።",
-      },
-    },
-    {
-      "id": "cs_002",
-      "type": "complete_sentence",
-      "subtype": "partial_block_build",
-      "instruction": "Complete the sentence",
-      "data": {
-        "reference_text": "This beautiful flower smells good.",
-        "display_text": "ይህ ____ አበባ ጥሩ ____ አለው።",
-        "blocks": ["ቆንጆ", "መዓዛ", "ቀለም"],
-        "correct_answer": "ይህ ቆንጆ አበባ ጥሩ መዓዛ አለው",
-      },
-    },
+    // {
+    //   "id": "cs_001",
+    //   "type": "complete_sentence",
+    //   "subtype": "partial_free_text",
+    //   "instruction": "Complete the sentence",
+    //   "data": {
+    //     "reference_text": "She is a doctor.",
+    //     "display_text": "እሷ ____ ናት።",
+    //     "correct_answer": "እሷ ሀኪም ናት።",
+    //   },
+    // },
+    // {
+    //   "id": "cs_002",
+    //   "type": "complete_sentence",
+    //   "subtype": "partial_block_build",
+    //   "instruction": "Complete the sentence",
+    //   "data": {
+    //     "reference_text": "This beautiful flower smells good.",
+    //     "display_text": "ይህ ____ አበባ ጥሩ ____ አለው።",
+    //     "blocks": ["ቆንጆ", "መዓዛ", "ቀለም"],
+    //     "correct_answer": "ይህ ቆንጆ አበባ ጥሩ መዓዛ አለው",
+    //   },
+    // },
 
     // // --- Fill in Blank ---
-    // {
-    //   "id": "fb_001",
-    //   "type": "fill_in_blank",
-    //   "instruction": "Choose the correct word for the blank.",
-    //   "data": {
-    //     "display_text": "እኔ ____ እጠጣለሁ።",
-    //     "options": [
-    //       {"id": 0, "text": "ውሃ"},
-    //       {"id": 1, "text": "ዳቦ"},
-    //       {"id": 2, "text": "ወንበር"},
-    //     ],
-    //     "correct_option_id": 1,
-    //   },
-    // },
-    // {
-    //   "id": "fb_002",
-    //   "type": "fill_in_blank",
-    //   "instruction": "Select the pair that best fits the blanks.",
-    //   "data": {
-    //     "display_text": "____ ከገበያ ____ ገዛች።",
-    //     "options": [
-    //       {"id": 0, "text": "እሱ ... ዳቦ"},
-    //       {"id": 1, "text": "እሷ ... አትክልት"},
-    //       {"id": 2, "text": "እነሱ ... ወተት"},
-    //     ],
-    //     "correct_option_id": 2,
-    //   },
-    // },
+    {
+      "id": "fb_001",
+      "type": "fill_in_blank",
+      "instruction": "Choose the correct word for the blank.",
+      "data": {
+        "display_text": "እኔ ____ እጠጣለሁ።",
+        "options": [
+          {"id": 0, "text": "ውሃ"},
+          {"id": 1, "text": "ሽንኩርት"},
+          {"id": 2, "text": "ወንበር"},
+        ],
+        "correct_option_id": 0,
+      },
+    },
+    {
+      "id": "fb_002",
+      "type": "fill_in_blank",
+      "instruction": "Select the pair that best fits the blanks.",
+      "data": {
+        "display_text": "____ ከገበያ ____ ገዛች።",
+        "options": [
+          {"id": 0, "text": "እሱ ... ቦርሳ"},
+          {"id": 1, "text": "እሷ ... አትክልት"},
+          {"id": 2, "text": "እነሱ ... ወተት"},
+        ],
+        "correct_option_id": 1,
+      },
+    },
 
     // // --- Speaking ---
     // {

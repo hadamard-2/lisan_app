@@ -61,7 +61,7 @@ class _FillInBlankExerciseState extends State<FillInBlankExercise> {
           if (widget.isRequeued) PreviousMistakeIndicator(),
 
           InstructionText(instruction: instruction),
-          const SizedBox(height: DesignSpacing.lg),
+          const SizedBox(height: DesignSpacing.xxl),
 
           ..._buildExerciseContent(options),
         ],
