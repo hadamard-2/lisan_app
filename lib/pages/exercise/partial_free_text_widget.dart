@@ -49,7 +49,7 @@ class PartialFreeTextWidget extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
               decoration: const InputDecoration(
-                contentPadding: EdgeInsets.only(top: 12, bottom: 10),
+                contentPadding: EdgeInsets.only(bottom: 10),
                 isDense: true,
                 border: UnderlineInputBorder(
                   borderSide: BorderSide(color: DesignColors.backgroundBorder),
@@ -73,17 +73,13 @@ class PartialFreeTextWidget extends StatelessWidget {
       height: 200,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(DesignSpacing.md),
+        padding: const EdgeInsets.all(DesignSpacing.lg),
         decoration: BoxDecoration(
           color: DesignColors.backgroundCard,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: DesignColors.backgroundBorder),
         ),
-        child: Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 8,
-          children: _buildSentenceWithInlineBlank(),
-        ),
+        child: Wrap(spacing: 8, children: _buildSentenceWithInlineBlank()),
       ),
     );
   }

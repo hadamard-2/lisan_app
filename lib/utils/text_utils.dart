@@ -1,4 +1,4 @@
-class TextSimilarity {
+class TextUtils {
   /// Calculates the Levenshtein distance between two strings
   static int levenshteinDistance(String s1, String s2) {
     if (s1 == s2) return 0;
@@ -31,6 +31,31 @@ class TextSimilarity {
     }
 
     return matrix[s1.length][s2.length];
+  }
+
+  /// Determines if text is mostly Amharic characters
+  static bool isAmharic(String text, {double threshold = 0.8}) {
+    if (text.isEmpty) return false;
+
+    final runes = text.runes;
+    int total = 0;
+    int amharicCount = 0;
+
+    for (final rune in runes) {
+      // skip spaces and control chars
+      if (rune == 0x20 || rune == 0x0A || rune == 0x0D || rune == 0x09)
+        continue;
+
+      total++;
+
+      // Ethiopic block: U+1200–U+137C
+      if (rune >= 0x1200 && rune <= 0x137C) {
+        amharicCount++;
+      }
+    }
+
+    if (total == 0) return false;
+    return amharicCount / total >= threshold;
   }
 
   /// Normalizes Amharic text by converging similar sounding letters
@@ -72,7 +97,11 @@ class TextSimilarity {
   }
 
   /// Helper method to replace characters from one list with corresponding characters from another
-  static String _replaceCharacters(String text, List<String> from, List<String> to) {
+  static String _replaceCharacters(
+    String text,
+    List<String> from,
+    List<String> to,
+  ) {
     String result = text;
     for (int i = 0; i < from.length && i < to.length; i++) {
       result = result.replaceAll(from[i], to[i]);

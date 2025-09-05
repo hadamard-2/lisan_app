@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:lisan_app/models/exercise_result.dart';
 import 'package:lisan_app/models/speaking_exercise_data.dart';
-import 'package:lisan_app/utils/text_similarity.dart';
+import 'package:lisan_app/utils/text_utils.dart';
 
 class SpeakingHandler implements ExerciseHandler {
   final SpeakingExerciseData exerciseData;
@@ -71,7 +71,7 @@ class SpeakingHandler implements ExerciseHandler {
     final cleanedTranscription = _cleanText(transcribedText);
     final cleanedCorrectAnswer = _cleanText(exerciseData.correctAnswer);
 
-    final similarity = TextSimilarity.calculateSimilarity(
+    final similarity = TextUtils.calculateSimilarity(
       cleanedTranscription,
       cleanedCorrectAnswer,
     );

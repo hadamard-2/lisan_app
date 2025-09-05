@@ -55,48 +55,48 @@ class _MyAppState extends State<MyApp> {
     //   "subtype": "block_build",
     //   "instruction": "Translate this sentence",
     //   "data": {
-    //     "prompt_text": "My brother is taller than my sister.",
-    //     "prompt_audio_url": "https://cdn.example.com/audio/tr_001.mp3",
-    //     "blocks": ["ይረዝማል", "ከእህቴ", "ወንድሜ"],
-    //     "correct_answer": "ወንድሜ ከእህቴ ይረዝማል",
+    //   "prompt_text": "ወንድሜ ከእህቴ ይረዝማል",
+    //   "prompt_audio_url": "https://cdn.example.com/audio/tr_001.mp3",
+    //   "blocks": ["taller", "than", "My", "brother", "sister", "my", "is"],
+    //   "correct_answer": "My brother is taller than my sister",
     //   },
     // },
-    {
-      "id": "tr_002",
-      "type": "translation",
-      "subtype": "free_text",
-      "instruction": "Translate this sentence",
-      "data": {
-        "prompt_text": "I love to read books.",
-        "prompt_audio_url": "https://cdn.example.com/audio/tr_002.mp3",
-        "correct_answer": "መጽሐፍ ማንበብ እወዳለሁ።",
-      },
-    },
+    // {
+    //   "id": "tr_002",
+    //   "type": "translation",
+    //   "subtype": "free_text",
+    //   "instruction": "Translate this sentence",
+    //   "data": {
+    //     "prompt_text": "I love to read books.",
+    //     "prompt_audio_url": "https://cdn.example.com/audio/tr_002.mp3",
+    //     "correct_answer": "መጽሐፍ ማንበብ እወዳለሁ።",
+    //   },
+    // },
 
     // // --- Complete Sentence ---
-    // {
-    //   "id": "cs_001",
-    //   "type": "complete_sentence",
-    //   "subtype": "partial_free_text",
-    //   "instruction": "Complete the sentence",
-    //   "data": {
-    //     "reference_text": "She is a doctor.",
-    //     "display_text": "እሷ ____ ናት።",
-    //     "correct_answer": "ሀኪም",
-    //   },
-    // },
-    // {
-    //   "id": "cs_002",
-    //   "type": "complete_sentence",
-    //   "subtype": "partial_block_build",
-    //   "instruction": "Complete the sentence",
-    //   "data": {
-    //     "reference_text": "This beautiful flower smells good.",
-    //     "display_text": "ይህ ____ አበባ ጥሩ ____ አለው።",
-    //     "blocks": ["ቆንጆ", "መዓዛ", "ቀለም"],
-    //     "correct_answer": "ይህ ቆንጆ አበባ ጥሩ መዓዛ አለው",
-    //   },
-    // },
+    {
+      "id": "cs_001",
+      "type": "complete_sentence",
+      "subtype": "partial_free_text",
+      "instruction": "Complete the sentence",
+      "data": {
+        "reference_text": "She is a doctor.",
+        "display_text": "እሷ ____ ናት።",
+        "correct_answer": "እሷ ሀኪም ናት።",
+      },
+    },
+    {
+      "id": "cs_002",
+      "type": "complete_sentence",
+      "subtype": "partial_block_build",
+      "instruction": "Complete the sentence",
+      "data": {
+        "reference_text": "This beautiful flower smells good.",
+        "display_text": "ይህ ____ አበባ ጥሩ ____ አለው።",
+        "blocks": ["ቆንጆ", "መዓዛ", "ቀለም"],
+        "correct_answer": "ይህ ቆንጆ አበባ ጥሩ መዓዛ አለው",
+      },
+    },
 
     // // --- Fill in Blank ---
     // {

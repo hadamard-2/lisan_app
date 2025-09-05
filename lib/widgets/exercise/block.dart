@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/design/theme.dart';
+import 'package:lisan_app/utils/text_utils.dart';
 
 class Block extends StatelessWidget {
   final String text;
@@ -52,12 +53,18 @@ class Block extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(8),
-            border: isInSelectedArea ? null : Border.all(color: borderColor),
+            borderRadius: BorderRadius.circular(10),
+            border: isInSelectedArea
+                ? null
+                : Border.all(color: borderColor, width: 2),
           ),
           child: Text(
             text,
-            style: GoogleFonts.notoSansEthiopic(color: textColor, fontSize: 16),
+            style:
+                (TextUtils.isAmharic(text)
+                        ? GoogleFonts.notoSansEthiopic()
+                        : GoogleFonts.rubik())
+                    .copyWith(color: textColor, fontSize: 16),
           ),
         ),
       ),

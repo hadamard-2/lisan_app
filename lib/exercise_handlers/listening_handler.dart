@@ -1,6 +1,6 @@
 import 'package:lisan_app/models/exercise_result.dart';
 import 'package:lisan_app/models/listening_exercise_data.dart';
-import 'package:lisan_app/utils/text_similarity.dart';
+import 'package:lisan_app/utils/text_utils.dart';
 
 class ListeningHandler implements ExerciseHandler {
   final ListeningExerciseData exerciseData;
@@ -54,10 +54,7 @@ class ListeningHandler implements ExerciseHandler {
     final userText = _cleanText(userAnswer.toString());
     final correctText = _cleanText(exerciseData.correctAnswer!);
 
-    final similarity = TextSimilarity.calculateSimilarity(
-      userText,
-      correctText,
-    );
+    final similarity = TextUtils.calculateSimilarity(userText, correctText);
     return similarity >= 95; // Higher threshold for single words
   }
 
@@ -67,10 +64,7 @@ class ListeningHandler implements ExerciseHandler {
     final userText = _cleanText(userAnswer.toString());
     final correctText = _cleanText(exerciseData.correctAnswer!);
 
-    final similarity = TextSimilarity.calculateSimilarity(
-      userText,
-      correctText,
-    );
+    final similarity = TextUtils.calculateSimilarity(userText, correctText);
     return similarity >= 85; // Medium threshold for sentences
   }
 
