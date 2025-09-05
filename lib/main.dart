@@ -49,18 +49,18 @@ class _MyAppState extends State<MyApp> {
   // Exercise data
   final List<Map<String, dynamic>> exerciseData = [
     // --- Direct Translation ---
-    {
-      "id": "tr_001",
-      "type": "translation",
-      "subtype": "block_build",
-      "instruction": "Translate this sentence",
-      "data": {
-        "prompt_text": "My brother is taller than my sister.",
-        "prompt_audio_url": "https://cdn.example.com/audio/tr_001.mp3",
-        "blocks": ["ይረዝማል", "ከእህቴ", "ወንድሜ"],
-        "correct_answer": "ወንድሜ ከእህቴ ይረዝማል",
-      },
-    },
+    // {
+    //   "id": "tr_001",
+    //   "type": "translation",
+    //   "subtype": "block_build",
+    //   "instruction": "Translate this sentence",
+    //   "data": {
+    //     "prompt_text": "My brother is taller than my sister.",
+    //     "prompt_audio_url": "https://cdn.example.com/audio/tr_001.mp3",
+    //     "blocks": ["ይረዝማል", "ከእህቴ", "ወንድሜ"],
+    //     "correct_answer": "ወንድሜ ከእህቴ ይረዝማል",
+    //   },
+    // },
     {
       "id": "tr_002",
       "type": "translation",
@@ -73,129 +73,129 @@ class _MyAppState extends State<MyApp> {
       },
     },
 
-    // --- Complete Sentence ---
-    {
-      "id": "cs_001",
-      "type": "complete_sentence",
-      "subtype": "partial_free_text",
-      "instruction": "Complete the sentence",
-      "data": {
-        "reference_text": "She is a doctor.",
-        "display_text": "እሷ ____ ናት።",
-        "correct_answer": "ሀኪም",
-      },
-    },
-    {
-      "id": "cs_002",
-      "type": "complete_sentence",
-      "subtype": "partial_block_build",
-      "instruction": "Complete the sentence",
-      "data": {
-        "reference_text": "This beautiful flower smells good.",
-        "display_text": "ይህ ____ አበባ ጥሩ ____ አለው።",
-        "blocks": ["ቆንጆ", "መዓዛ", "ቀለም"],
-        "correct_answer": "ይህ ቆንጆ አበባ ጥሩ መዓዛ አለው",
-      },
-    },
+    // // --- Complete Sentence ---
+    // {
+    //   "id": "cs_001",
+    //   "type": "complete_sentence",
+    //   "subtype": "partial_free_text",
+    //   "instruction": "Complete the sentence",
+    //   "data": {
+    //     "reference_text": "She is a doctor.",
+    //     "display_text": "እሷ ____ ናት።",
+    //     "correct_answer": "ሀኪም",
+    //   },
+    // },
+    // {
+    //   "id": "cs_002",
+    //   "type": "complete_sentence",
+    //   "subtype": "partial_block_build",
+    //   "instruction": "Complete the sentence",
+    //   "data": {
+    //     "reference_text": "This beautiful flower smells good.",
+    //     "display_text": "ይህ ____ አበባ ጥሩ ____ አለው።",
+    //     "blocks": ["ቆንጆ", "መዓዛ", "ቀለም"],
+    //     "correct_answer": "ይህ ቆንጆ አበባ ጥሩ መዓዛ አለው",
+    //   },
+    // },
 
-    // --- Fill in Blank ---
-    {
-      "id": "fb_001",
-      "type": "fill_in_blank",
-      "instruction": "Choose the correct word for the blank.",
-      "data": {
-        "display_text": "እኔ ____ እጠጣለሁ።",
-        "options": [
-          {"id": 0, "text": "ውሃ"},
-          {"id": 1, "text": "ዳቦ"},
-          {"id": 2, "text": "ወንበር"},
-        ],
-        "correct_option_id": 1,
-      },
-    },
-    {
-      "id": "fb_002",
-      "type": "fill_in_blank",
-      "instruction": "Select the pair that best fits the blanks.",
-      "data": {
-        "display_text": "____ ከገበያ ____ ገዛች።",
-        "options": [
-          {"id": 0, "text": "እሱ ... ዳቦ"},
-          {"id": 1, "text": "እሷ ... አትክልት"},
-          {"id": 2, "text": "እነሱ ... ወተት"},
-        ],
-        "correct_option_id": 2,
-      },
-    },
+    // // --- Fill in Blank ---
+    // {
+    //   "id": "fb_001",
+    //   "type": "fill_in_blank",
+    //   "instruction": "Choose the correct word for the blank.",
+    //   "data": {
+    //     "display_text": "እኔ ____ እጠጣለሁ።",
+    //     "options": [
+    //       {"id": 0, "text": "ውሃ"},
+    //       {"id": 1, "text": "ዳቦ"},
+    //       {"id": 2, "text": "ወንበር"},
+    //     ],
+    //     "correct_option_id": 1,
+    //   },
+    // },
+    // {
+    //   "id": "fb_002",
+    //   "type": "fill_in_blank",
+    //   "instruction": "Select the pair that best fits the blanks.",
+    //   "data": {
+    //     "display_text": "____ ከገበያ ____ ገዛች።",
+    //     "options": [
+    //       {"id": 0, "text": "እሱ ... ዳቦ"},
+    //       {"id": 1, "text": "እሷ ... አትክልት"},
+    //       {"id": 2, "text": "እነሱ ... ወተት"},
+    //     ],
+    //     "correct_option_id": 2,
+    //   },
+    // },
 
-    // --- Speaking ---
-    {
-      "id": "sp_001",
-      "type": "speaking",
-      "instruction": "Speak this sentence aloud",
-      "data": {
-        "prompt_text": "ሰላም እንዴት ነህ?",
-        "prompt_audio_url": "https://cdn.example.com/audio/sp_001.mp3",
-        "correct_answer": "ሰላም እንዴት ነህ?",
-      },
-    },
+    // // --- Speaking ---
+    // {
+    //   "id": "sp_001",
+    //   "type": "speaking",
+    //   "instruction": "Speak this sentence aloud",
+    //   "data": {
+    //     "prompt_text": "ሰላም እንዴት ነህ?",
+    //     "prompt_audio_url": "https://cdn.example.com/audio/sp_001.mp3",
+    //     "correct_answer": "ሰላም እንዴት ነህ?",
+    //   },
+    // },
 
-    // --- Listening ---
-    {
-      "id": "ls_001",
-      "type": "listening",
-      "subtype": "choose_missing",
-      "instruction": "Listen and choose the correct missing word.",
-      "data": {
-        "prompt_audio_url": "https://cdn.example.com/audio/ls_001.mp3",
-        "display_text": "እሷ ____ ትወዳለች።",
-        "options": [
-          {
-            "id": 0,
-            "option_audio_url": "https://cdn.example.com/audio/ls_001_1.mp3",
-            "text": "ቡና",
-          },
-          {
-            "id": 1,
-            "option_audio_url": "https://cdn.example.com/audio/ls_001_2.mp3",
-            "text": "ሻይ",
-          },
-        ],
-        "correct_option_id": 1,
-      },
-    },
-    {
-      "id": "ls_002",
-      "type": "listening",
-      "subtype": "type_missing",
-      "instruction": "Listen and type the missing word.",
-      "data": {
-        "prompt_audio_url": "https://cdn.example.com/audio/ls_002.mp3",
-        "display_text": "ዛሬ በጣም ____ ነው።",
-        "correct_answer": "ትኩስ",
-      },
-    },
-    {
-      "id": "ls_003",
-      "type": "listening",
-      "subtype": "free_text",
-      "instruction": "Type what you hear",
-      "data": {
-        "prompt_audio_url": "https://cdn.example.com/audio/full_sentence.mp3",
-        "correct_answer": "ከየት ነህ?",
-      },
-    },
-    {
-      "id": "ls_004",
-      "type": "listening",
-      "subtype": "block_build",
-      "instruction": "Tap what you hear",
-      "data": {
-        "prompt_audio_url": "https://cdn.example.com/audio/ls_004.mp3",
-        "blocks": ["እየሄድኩ", "ትምህርት", "ነው", "ቤት"],
-        "correct_answer": "ትምህርት ቤት እየሄድኩ ነው",
-      },
-    },
+    // // --- Listening ---
+    // {
+    //   "id": "ls_001",
+    //   "type": "listening",
+    //   "subtype": "choose_missing",
+    //   "instruction": "Listen and choose the correct missing word.",
+    //   "data": {
+    //     "prompt_audio_url": "https://cdn.example.com/audio/ls_001.mp3",
+    //     "display_text": "እሷ ____ ትወዳለች።",
+    //     "options": [
+    //       {
+    //         "id": 0,
+    //         "option_audio_url": "https://cdn.example.com/audio/ls_001_1.mp3",
+    //         "text": "ቡና",
+    //       },
+    //       {
+    //         "id": 1,
+    //         "option_audio_url": "https://cdn.example.com/audio/ls_001_2.mp3",
+    //         "text": "ሻይ",
+    //       },
+    //     ],
+    //     "correct_option_id": 1,
+    //   },
+    // },
+    // {
+    //   "id": "ls_002",
+    //   "type": "listening",
+    //   "subtype": "type_missing",
+    //   "instruction": "Listen and type the missing word.",
+    //   "data": {
+    //     "prompt_audio_url": "https://cdn.example.com/audio/ls_002.mp3",
+    //     "display_text": "ዛሬ በጣም ____ ነው።",
+    //     "correct_answer": "ትኩስ",
+    //   },
+    // },
+    // {
+    //   "id": "ls_003",
+    //   "type": "listening",
+    //   "subtype": "free_text",
+    //   "instruction": "Type what you hear",
+    //   "data": {
+    //     "prompt_audio_url": "https://cdn.example.com/audio/full_sentence.mp3",
+    //     "correct_answer": "ከየት ነህ?",
+    //   },
+    // },
+    // {
+    //   "id": "ls_004",
+    //   "type": "listening",
+    //   "subtype": "block_build",
+    //   "instruction": "Tap what you hear",
+    //   "data": {
+    //     "prompt_audio_url": "https://cdn.example.com/audio/ls_004.mp3",
+    //     "blocks": ["እየሄድኩ", "ትምህርት", "ነው", "ቤት"],
+    //     "correct_answer": "ትምህርት ቤት እየሄድኩ ነው",
+    //   },
+    // },
   ];
 
   void _onTranslationAnswerChanged(String exerciseId, String answer) {

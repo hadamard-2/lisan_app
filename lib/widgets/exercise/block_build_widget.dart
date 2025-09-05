@@ -25,7 +25,7 @@ class BlockBuildWidget extends StatelessWidget {
         // Selected blocks
         Container(
           width: double.infinity,
-          height: 160,
+          height: 200,
           padding: const EdgeInsets.all(DesignSpacing.md),
           decoration: BoxDecoration(
             color: DesignColors.backgroundCard,

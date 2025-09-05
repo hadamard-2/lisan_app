@@ -35,7 +35,7 @@ class TranslationExerciseData extends ExerciseData {
             type: json['type'],
             subtype: json['subtype'],
             instruction: json['instruction'],
-            promptText: data['promptText'],
+            promptText: data['prompt_text'],
             promptAudioUrl: data['prompt_audio_url'] as String?,
             blocks: List<String>.from(data['blocks'] ?? []),
             correctAnswer: data['correct_answer'],
@@ -45,7 +45,7 @@ class TranslationExerciseData extends ExerciseData {
             type: json['type'],
             subtype: json['subtype'],
             instruction: json['instruction'],
-            promptText: data['promptText'],
+            promptText: data['prompt_text'],
             promptAudioUrl: data['prompt_audio_url'] as String?,
             correctAnswer: data['correct_answer'],
           );
@@ -53,7 +53,7 @@ class TranslationExerciseData extends ExerciseData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
-      'promptText': promptText,
+      'prompt_text': promptText,
       'correct_answer': correctAnswer,
     };
     if (promptAudioUrl != null) data['prompt_audio_url'] = promptAudioUrl;

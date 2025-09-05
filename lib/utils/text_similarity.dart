@@ -33,15 +33,61 @@ class TextSimilarity {
     return matrix[s1.length][s2.length];
   }
 
+  /// Normalizes Amharic text by converging similar sounding letters
+  static String normalizeAmharic(String text) {
+    if (text.isEmpty) return text;
+
+    String normalized = text;
+
+    // H sounds: ሐ, ኀ -> ሀ
+    final h1 = ["ሐ", "ሑ", "ሒ", "ሓ", "ሔ", "ሕ", "ሖ", "ሗ"];
+    final h2 = ["ሀ", "ሁ", "ሂ", "ሃ", "ሄ", "ህ", "ሆ", "ሗ", "ሗ"];
+    final h3 = ["ኀ", "ኁ", "ኂ", "ኃ", "ኄ", "ኅ", "ኆ", "ኇ", "ኋ"];
+
+    // S sounds: ሠ -> ሰ
+    final s1 = ["ሰ", "ሱ", "ሲ", "ሳ", "ሴ", "ስ", "ሶ", "ሷ"];
+    final s2 = ["ሠ", "ሡ", "ሢ", "ሣ", "ሤ", "ሥ", "ሦ", "ሧ"];
+
+    // Q sounds: ቐ -> ቀ
+    final q1 = ["ቀ", "ቁ", "ቂ", "ቃ", "ቄ", "ቅ", "ቆ", "ቈ", "ቊ", "ቋ", "ቌ", "ቍ"];
+    final q2 = ["ቐ", "ቑ", "ቒ", "ቓ", "ቔ", "ቕ", "ቖ", "ቘ", "ቚ", "ቛ", "ቜ", "ቝ"];
+
+    // A sounds: ዐ -> አ
+    final a1 = ["አ", "ኡ", "ኢ", "ኣ", "ኤ", "እ", "ኦ"];
+    final a2 = ["ዐ", "ዑ", "ዒ", "ዓ", "ዔ", "ዕ", "ዖ"];
+
+    // TS sounds: ፀ -> ጸ
+    final ts1 = ["ጸ", "ጹ", "ጺ", "ጻ", "ጼ", "ጽ", "ጾ", "ጿ"];
+    final ts2 = ["ፀ", "ፁ", "ፂ", "ፃ", "ፄ", "ፅ", "ፆ", "ጿ"];
+
+    // Apply normalizations
+    normalized = _replaceCharacters(normalized, h2, h1);
+    normalized = _replaceCharacters(normalized, h3, h1);
+    normalized = _replaceCharacters(normalized, s2, s1);
+    normalized = _replaceCharacters(normalized, q2, q1);
+    normalized = _replaceCharacters(normalized, a2, a1);
+    normalized = _replaceCharacters(normalized, ts2, ts1);
+
+    return normalized;
+  }
+
+  /// Helper method to replace characters from one list with corresponding characters from another
+  static String _replaceCharacters(String text, List<String> from, List<String> to) {
+    String result = text;
+    for (int i = 0; i < from.length && i < to.length; i++) {
+      result = result.replaceAll(from[i], to[i]);
+    }
+    return result;
+  }
+
   /// Calculate similarity percentage based on Levenshtein distance
   static double calculateSimilarity(String answer, String correct) {
     if (answer.isEmpty && correct.isEmpty) return 100.0;
     if (answer.isEmpty || correct.isEmpty) return 0.0;
 
-    // NOTE - lowercase doesn't make any sense for Amharic, 
-    // so I should instead converge similar sounding letters (fidel) in the future
-    final str1 = answer.toLowerCase();
-    final str2 = correct.toLowerCase();
+    // Normalize Amharic text instead of using lowercase
+    final str1 = normalizeAmharic(answer);
+    final str2 = normalizeAmharic(correct);
 
     final distance = levenshteinDistance(str1, str2);
     final maxLength = [

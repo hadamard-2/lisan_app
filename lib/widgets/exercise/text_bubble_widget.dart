@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/design/theme.dart';
+import 'package:lisan_app/utils/language_detection.dart';
 
 class TextBubbleWidget extends StatelessWidget {
   final String text;
@@ -34,10 +35,11 @@ class TextBubbleWidget extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: GoogleFonts.notoSansEthiopic(
-                color: DesignColors.textPrimary,
-                fontSize: 16,
-              ),
+              style:
+                  (isMostlyAmharic(text)
+                          ? GoogleFonts.notoSansEthiopic()
+                          : GoogleFonts.rubik())
+                      .copyWith(color: DesignColors.textPrimary, fontSize: 16),
             ),
           ),
         ],
