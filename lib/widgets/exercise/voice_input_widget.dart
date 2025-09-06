@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:record/record.dart';
@@ -6,8 +7,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class VoiceInputWidget extends StatefulWidget {
   final Function(String audioFilePath) onRecordingComplete;
+  final int maxRetries; // <-- new
 
-  const VoiceInputWidget({super.key, required this.onRecordingComplete});
+  const VoiceInputWidget({
+    super.key,
+    required this.onRecordingComplete,
+    this.maxRetries = 2, // default to 2 retries
+  });
 
   @override
   State<VoiceInputWidget> createState() => _VoiceInputWidgetState();
@@ -15,10 +21,12 @@ class VoiceInputWidget extends StatefulWidget {
 
 class _VoiceInputWidgetState extends State<VoiceInputWidget> {
   static const int maxRecordingDurationSeconds = 8;
-
   final AudioRecorder _audioRecorder = AudioRecorder();
+
   bool _isRecording = false;
   int _recordingDuration = 0;
+  int _retryCount = 0; // <-- track retries
+  String? _lastAudioPath;
 
   @override
   void dispose() {
@@ -30,11 +38,24 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget> {
     if (_isRecording) {
       await _stopRecording();
     } else {
+      // enforce retry limit
+      if (_retryCount >= widget.maxRetries) {
+        _showLimitDialog();
+        return;
+      }
+      _retryCount++;
       await _startRecording();
     }
   }
 
   Future<void> _startRecording() async {
+    // delete previous file
+    if (_lastAudioPath != null) {
+      final old = File(_lastAudioPath!);
+      if (await old.exists()) await old.delete();
+      _lastAudioPath = null;
+    }
+
     // Check connectivity
     final connectivityResult = await Connectivity().checkConnectivity();
     if (!connectivityResult.contains(ConnectivityResult.mobile) &&
@@ -46,23 +67,20 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget> {
     // Check and request permission
     if (await _audioRecorder.hasPermission()) {
       final tempDir = await getTemporaryDirectory();
-      final audioPath =
+      final newPath =
           '${tempDir.path}/recording_${DateTime.now().millisecondsSinceEpoch}.wav';
-
       await _audioRecorder.start(
         RecordConfig(
           encoder: AudioEncoder.wav,
           sampleRate: 44100,
           bitRate: 128000,
         ),
-        path: audioPath,
+        path: newPath,
       );
-
       setState(() {
         _isRecording = true;
         _recordingDuration = 0;
       });
-
       _startTimer();
     }
   }
@@ -84,16 +102,33 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget> {
   }
 
   Future<void> _stopRecording() async {
-    final audioPath = await _audioRecorder.stop();
-
+    final path = await _audioRecorder.stop();
     setState(() {
       _isRecording = false;
       _recordingDuration = 0;
     });
-
-    if (audioPath != null) {
-      widget.onRecordingComplete(audioPath);
+    if (path != null) {
+      _lastAudioPath = path;
+      widget.onRecordingComplete(path);
     }
+  }
+
+  void _showLimitDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Retry Limit Reached'),
+        content: Text(
+          'You can only re-record up to ${widget.maxRetries} times.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showOfflineDialog() {
@@ -120,7 +155,7 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget> {
       onTap: _handleTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: DesignSpacing.xl),
+        padding: const EdgeInsets.symmetric(vertical: DesignSpacing.lg),
         decoration: BoxDecoration(
           border: Border.all(
             width: 2,
