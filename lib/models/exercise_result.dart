@@ -1,7 +1,7 @@
 class ExerciseResult {
   final bool isCorrect;
   final String feedbackMessage;
-  final String correctAnswer;
+  final String? correctAnswer;
 
   ExerciseResult({
     required this.isCorrect,

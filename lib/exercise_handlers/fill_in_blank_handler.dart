@@ -13,8 +13,8 @@ class FillInBlankHandler implements ExerciseHandler {
     return Future.value(ExerciseResult(
       isCorrect: isCorrect,
       feedbackMessage: isCorrect
-          ? 'Excellent! You selected the correct word(s).'
-          : 'Mistakes are lessons in disguise.',
+          ? 'Excellent! You selected the correct choice.'
+          : 'You made an incorrect choice.',
       correctAnswer: _getCorrectAnswer(),
     ));
   }

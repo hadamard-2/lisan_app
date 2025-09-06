@@ -26,7 +26,7 @@ class _TextBubbleWidgetState extends State<TextBubbleWidget> {
   Future<void> _init() async {
     try {
       // await _player.setUrl(widget.audioUrl!);
-      await _player.setAsset('assets/sample_voices/amharic_voice.m4a');
+      await _player.setAsset(widget.audioUrl!);
       _player.play();
     } catch (e) {
       debugPrint("Error loading audio: $e");

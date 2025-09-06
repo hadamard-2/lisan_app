@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
 
   // Exercise data
   final List<Map<String, dynamic>> exerciseData = [
-    // --- Direct Translation ---
+    // // --- Direct Translation ---
     // {
     //   "id": "tr_001",
     //   "type": "translation",
@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
     //   "instruction": "Translate this sentence",
     //   "data": {
     //   "prompt_text": "ወንድሜ ከእህቴ ይረዝማል",
-    //   "prompt_audio_url": "https://cdn.example.com/audio/tr_001.mp3",
+    //   "prompt_audio_url": "assets/sample_voices/tr_001.wav",
     //   "blocks": ["taller", "than", "My", "brother", "sister", "my", "is"],
     //   "correct_answer": "My brother is taller than my sister",
     //   },
@@ -69,7 +69,6 @@ class _MyAppState extends State<MyApp> {
     //   "instruction": "Translate this sentence",
     //   "data": {
     //     "prompt_text": "I love to read books.",
-    //     "prompt_audio_url": "https://cdn.example.com/audio/tr_002.mp3",
     //     "correct_answer": "መጽሐፍ ማንበብ እወዳለሁ።",
     //   },
     // },
@@ -130,73 +129,73 @@ class _MyAppState extends State<MyApp> {
     // },
 
     // // --- Speaking ---
-    {
-      "id": "sp_001",
-      "type": "speaking",
-      "instruction": "Speak this sentence aloud",
-      "data": {
-        "prompt_text": "ሰላም እንዴት ነህ?",
-        "prompt_audio_url": "https://cdn.example.com/audio/sp_001.mp3",
-        "correct_answer": "ሰላም እንዴት ነህ?",
-      },
-    },
+    // {
+    //   "id": "sp_001",
+    //   "type": "speaking",
+    //   "instruction": "Speak this sentence aloud",
+    //   "data": {
+    //     "prompt_text": "ሰላም እንዴት ነህ?",
+    //     "prompt_audio_url": "assets/sample_voices/sp_001.wav",
+    //     "correct_answer": "ሰላም እንዴት ነህ?",
+    //   },
+    // },
 
     // // --- Listening ---
-    // {
-    //   "id": "ls_001",
-    //   "type": "listening",
-    //   "subtype": "choose_missing",
-    //   "instruction": "Listen and choose the correct missing word.",
-    //   "data": {
-    //     "prompt_audio_url": "https://cdn.example.com/audio/ls_001.mp3",
-    //     "display_text": "እሷ ____ ትወዳለች።",
-    //     "options": [
-    //       {
-    //         "id": 0,
-    //         "option_audio_url": "https://cdn.example.com/audio/ls_001_1.mp3",
-    //         "text": "ቡና",
-    //       },
-    //       {
-    //         "id": 1,
-    //         "option_audio_url": "https://cdn.example.com/audio/ls_001_2.mp3",
-    //         "text": "ሻይ",
-    //       },
-    //     ],
-    //     "correct_option_id": 1,
-    //   },
-    // },
-    // {
-    //   "id": "ls_002",
-    //   "type": "listening",
-    //   "subtype": "type_missing",
-    //   "instruction": "Listen and type the missing word.",
-    //   "data": {
-    //     "prompt_audio_url": "https://cdn.example.com/audio/ls_002.mp3",
-    //     "display_text": "ዛሬ በጣም ____ ነው።",
-    //     "correct_answer": "ትኩስ",
-    //   },
-    // },
-    // {
-    //   "id": "ls_003",
-    //   "type": "listening",
-    //   "subtype": "free_text",
-    //   "instruction": "Type what you hear",
-    //   "data": {
-    //     "prompt_audio_url": "https://cdn.example.com/audio/full_sentence.mp3",
-    //     "correct_answer": "ከየት ነህ?",
-    //   },
-    // },
-    // {
-    //   "id": "ls_004",
-    //   "type": "listening",
-    //   "subtype": "block_build",
-    //   "instruction": "Tap what you hear",
-    //   "data": {
-    //     "prompt_audio_url": "https://cdn.example.com/audio/ls_004.mp3",
-    //     "blocks": ["እየሄድኩ", "ትምህርት", "ነው", "ቤት"],
-    //     "correct_answer": "ትምህርት ቤት እየሄድኩ ነው",
-    //   },
-    // },
+    {
+      "id": "ls_001",
+      "type": "listening",
+      "subtype": "choose_missing",
+      "instruction": "Listen and choose the correct missing word.",
+      "data": {
+        "prompt_audio_url": "assets/sample_voices/ls_001.wav",
+        "display_text": "እሷ ____ ትወዳለች።",
+        "options": [
+          {
+            "id": 0,
+            "option_audio_url": "assets/sample_voices/ls_001_1.wav",
+            "text": "ቡና",
+          },
+          {
+            "id": 1,
+            "option_audio_url": "assets/sample_voices/ls_001_2.wav",
+            "text": "ቃና",
+          },
+        ],
+        "correct_option_id": 0,
+      },
+    },
+    {
+      "id": "ls_002",
+      "type": "listening",
+      "subtype": "type_missing",
+      "instruction": "Listen and type the missing word.",
+      "data": {
+        "prompt_audio_url": "assets/sample_voices/ls_002.wav",
+        "display_text": "ዛሬ በጣም ____ ነው።",
+        "correct_answer": "ሞቃታማ",
+      },
+    },
+    {
+      "id": "ls_003",
+      "type": "listening",
+      "subtype": "free_text",
+      "instruction": "Type what you hear",
+      "data": {
+        "prompt_audio_url": "assets/sample_voices/ls_003.wav",
+        "correct_answer": "የት ነው ያለኸው አሁን?",
+      },
+    },
+    {
+      "id": "ls_004",
+      "type": "listening",
+      "subtype": "block_build",
+      "instruction": "Tap what you hear",
+      "data": {
+        "prompt_audio_url": "assets/sample_voices/ls_004.wav",
+        "blocks": ["እየሄድኩ", "ትምህርት", "ነው", "ቤት"],
+        "correct_answer": "ትምህርት ቤት እየሄድኩ ነው",
+      },
+    },
   ];
 
   void _onTranslationAnswerChanged(String exerciseId, String answer) {

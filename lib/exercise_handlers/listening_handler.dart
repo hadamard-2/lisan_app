@@ -45,7 +45,7 @@ class ListeningHandler implements ExerciseHandler {
 
   bool _validateOptionSelection(dynamic userAnswer) {
     final correctOptionId = exerciseData.correctOptionId;
-    return userAnswer == correctOptionId;
+    return int.tryParse(userAnswer) == correctOptionId;
   }
 
   bool _validateTypedWord(dynamic userAnswer) {
@@ -109,24 +109,21 @@ class ListeningHandler implements ExerciseHandler {
     }
   }
 
-  String _getCorrectAnswer() {
+  String? _getCorrectAnswer() {
     final subtype = exerciseData.subtype;
 
     switch (subtype) {
-      case 'choose_missing':
-        // not sure if it makes sense to display anything here
-        return '';
       case 'type_missing':
-        return exerciseData.displayText!.replaceFirst(
+        final fullCorrectAnswer = exerciseData.displayText!.replaceFirst(
           '____',
           exerciseData.correctAnswer!,
         );
+        return fullCorrectAnswer;
       case 'free_text':
       case 'block_build':
         return exerciseData.correctAnswer!;
-
       default:
-        return 'No correct answer available';
+        return null;
     }
   }
 }

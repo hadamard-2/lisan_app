@@ -8,7 +8,7 @@ import 'package:lisan_app/pages/exercise/exercise_widget.dart';
 import 'package:lisan_app/pages/exercise/instruction_text.dart';
 import 'package:lisan_app/pages/exercise/partial_free_text_widget.dart';
 import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
-import 'package:lisan_app/widgets/exercise/audio_choices_widget.dart';
+import 'package:lisan_app/widgets/exercise/voice_choices_widget.dart';
 import 'package:lisan_app/widgets/exercise/block_build_widget.dart';
 import 'package:lisan_app/widgets/exercise/free_text_widget.dart';
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
@@ -187,9 +187,6 @@ class _BlockBuildExerciseContentState extends State<BlockBuildExerciseContent>
         VoiceBubbleWidget(
           audioUrl: widget.exerciseData.promptAudioUrl,
           playbackSpeed: playbackSpeed,
-          onPlaybackButtonPressed: () {
-            print('Playing voice');
-          },
           onSpeedButtonPressed: () {
             setState(() {
               if (playbackSpeed == PlaybackSpeed.normal) {
@@ -229,7 +226,7 @@ class FreeTextListeningExerciseContent extends StatefulWidget {
 class _FreeTextListeningExerciseContentState
     extends State<FreeTextListeningExerciseContent> {
   final TextEditingController _controller = TextEditingController();
-  PlaybackSpeed playbackSpeed = PlaybackSpeed.slow;
+  PlaybackSpeed playbackSpeed = PlaybackSpeed.normal;
 
   @override
   void initState() {
@@ -252,8 +249,6 @@ class _FreeTextListeningExerciseContentState
 
   @override
   Widget build(BuildContext context) {
-    final data = widget.exerciseData;
-
     return Column(
       spacing: DesignSpacing.xl,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,9 +256,6 @@ class _FreeTextListeningExerciseContentState
         VoiceBubbleWidget(
           audioUrl: widget.exerciseData.promptAudioUrl,
           playbackSpeed: playbackSpeed,
-          onPlaybackButtonPressed: () {
-            print('Playing voice');
-          },
           onSpeedButtonPressed: () {
             setState(() {
               if (playbackSpeed == PlaybackSpeed.normal) {
@@ -308,7 +300,7 @@ class _TypeMissingExerciseContentState
     super.initState();
     _controller = TextEditingController();
     _controller.addListener(() {
-      widget.onAnswerChanged(_buildFullAnswer());
+      widget.onAnswerChanged(_controller.text);
     });
   }
 
@@ -316,17 +308,6 @@ class _TypeMissingExerciseContentState
   void dispose() {
     _controller.dispose();
     super.dispose();
-  }
-
-  String _buildFullAnswer() {
-    final providedText = widget.exerciseData.displayText!;
-    final userInput = _controller.text;
-
-    if (!providedText.contains('____')) {
-      throw Exception('Could not find blanks when building sentence widgets');
-    }
-
-    return providedText.replaceAll('____', userInput);
   }
 
   @override
@@ -338,9 +319,6 @@ class _TypeMissingExerciseContentState
         VoiceBubbleWidget(
           audioUrl: widget.exerciseData.promptAudioUrl,
           playbackSpeed: playbackSpeed,
-          onPlaybackButtonPressed: () {
-            print('Playing voice');
-          },
           onSpeedButtonPressed: () {
             setState(() {
               if (playbackSpeed == PlaybackSpeed.normal) {
@@ -378,6 +356,13 @@ class ChooseMissingExerciseContent extends StatefulWidget {
 class _ChooseMissingExerciseContentState
     extends State<ChooseMissingExerciseContent> {
   int _selectedOptionIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.exerciseData.options!.shuffle();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -388,7 +373,7 @@ class _ChooseMissingExerciseContentState
           audioUrl: widget.exerciseData.promptAudioUrl,
         ),
 
-        AudioChoicesWidget(
+        VoiceChoicesWidget(
           options: widget.exerciseData.options!,
           selectedOptionIndex: _selectedOptionIndex,
           onOptionSelect: (index) {
