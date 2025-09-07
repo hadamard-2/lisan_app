@@ -25,11 +25,13 @@ class FeedbackPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (exerciseState != ExerciseState.correct &&
-        exerciseState != ExerciseState.incorrect) {
+        exerciseState != ExerciseState.incorrect &&
+        exerciseState != ExerciseState.skipped) {
       return const SizedBox.shrink();
     }
 
     final isCorrect = exerciseState == ExerciseState.correct;
+    final isSkipped = exerciseState == ExerciseState.skipped;
 
     return Positioned(
       left: 0,
@@ -69,19 +71,29 @@ class FeedbackPanel extends StatelessWidget {
                     Row(
                       children: [
                         Icon(
-                          isCorrect ? Icons.check_circle_rounded : Icons.cancel,
-                          color: isCorrect
-                              ? DesignColors.success
-                              : DesignColors.error,
+                          isSkipped
+                              ? Icons.skip_next_rounded
+                              : (isCorrect
+                                    ? Icons.check_circle_rounded
+                                    : Icons.cancel),
+                          color: isSkipped
+                              ? DesignColors.attention
+                              : (isCorrect
+                                    ? DesignColors.success
+                                    : DesignColors.error),
                           size: 24,
                         ),
                         const SizedBox(width: DesignSpacing.sm),
                         Text(
-                          isCorrect ? 'Nicely done.' : 'Incorrect',
+                          isSkipped
+                              ? 'Skipped'
+                              : (isCorrect ? 'Nicely done.' : 'Incorrect'),
                           style: TextStyle(
-                            color: isCorrect
-                                ? DesignColors.success
-                                : DesignColors.error,
+                            color: isSkipped
+                                ? DesignColors.attention
+                                : (isCorrect
+                                      ? DesignColors.success
+                                      : DesignColors.error),
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),

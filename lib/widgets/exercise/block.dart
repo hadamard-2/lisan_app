@@ -24,14 +24,14 @@ class Block extends StatelessWidget {
     Color borderColor;
 
     if (isInSelectedArea) {
-      backgroundColor = DesignColors.primary.withAlpha((0.2 * 255).toInt());
-      textColor = DesignColors.primaryLight;
-      borderColor = Colors.transparent;
+      backgroundColor = DesignColors.backgroundDark;
+      textColor = DesignColors.textPrimary;
+      borderColor = DesignColors.backgroundBorder;
     } else if (isSelected) {
       backgroundColor = DesignColors.backgroundCard.withAlpha(
         (0.5 * 255).toInt(),
       );
-      textColor = DesignColors.textTertiary;
+      textColor = Colors.transparent;
       borderColor = DesignColors.backgroundBorder.withAlpha(
         (0.5 * 255).toInt(),
       );
@@ -54,9 +54,7 @@ class Block extends StatelessWidget {
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(10),
-            border: isInSelectedArea
-                ? null
-                : Border.all(color: borderColor, width: 2),
+            border: Border.all(color: borderColor, width: 2),
           ),
           child: Text(
             text,
@@ -64,7 +62,11 @@ class Block extends StatelessWidget {
                 (TextUtils.isAmharic(text)
                         ? GoogleFonts.notoSansEthiopic()
                         : GoogleFonts.rubik())
-                    .copyWith(color: textColor, fontSize: 16),
+                    .copyWith(
+                      color: textColor,
+                      fontSize: 16,
+                      // fontWeight: FontWeight.w500,
+                    ),
           ),
         ),
       ),

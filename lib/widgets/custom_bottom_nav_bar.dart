@@ -28,7 +28,7 @@ class CustomBottomNavBar extends StatelessWidget {
               size: 32,
               fill: isSelected ? 1 : 0,
               color: isSelected
-                  ? DesignColors.primaryLight
+                  ? DesignColors.primary
                   : DesignColors.textTertiary.withAlpha((0.5 * 255).toInt()),
             ),
             SizedBox(height: 6),

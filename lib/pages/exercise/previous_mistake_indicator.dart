@@ -6,17 +6,21 @@ class PreviousMistakeIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Icon(Icons.repeat_rounded, color: Colors.orange),
-        SizedBox(width: DesignSpacing.sm),
-        Text(
-          'PREVIOUS MISTAKE',
-          style: const TextStyle(
-            color: Colors.orange,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
+        Row(
+          children: [
+            Icon(Icons.repeat_rounded, color: DesignColors.attention),
+            SizedBox(width: DesignSpacing.sm),
+            Text(
+              'PREVIOUS MISTAKE',
+              style: TextStyle(
+                color: DesignColors.attention,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
         SizedBox(height: DesignSpacing.lg),
       ],

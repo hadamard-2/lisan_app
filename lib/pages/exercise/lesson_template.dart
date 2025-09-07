@@ -49,6 +49,7 @@ class _LessonTemplateState extends State<LessonTemplate>
   int _currentExerciseIndex = 0;
   int _totalExercisesCompleted = 0;
   late int _remainingHearts;
+  Set<String> _skippedTypes = {};
 
   late AnimationController _feedbackController;
   late AnimationController _buttonController;
@@ -115,22 +116,38 @@ class _LessonTemplateState extends State<LessonTemplate>
 
   ExerciseWidget get _currentExercise => _exerciseQueue[_currentExerciseIndex];
 
-/// Only fetch once we’ve moved out of the initial state.
-Future<String?>? get _currentFeedbackMessage {
-  if (_exerciseState != ExerciseState.correct &&
-      _exerciseState != ExerciseState.incorrect) {
-    return null;
-  }
-  return widget.getFeedbackMessage
-      ?.call(_currentExercise.exerciseData.id);
-}
+  /// Only fetch once we’ve moved out of the initial state.
+  Future<String?>? get _currentFeedbackMessage {
+    if (_exerciseState == ExerciseState.skipped) {
+      final exerciseType = _currentExercise.exerciseData.type;
+      return Future.value(
+        "We'll skip ${exerciseType == 'listening' ? 'listening' : 'speaking'} for this lesson.",
+      );
+    }
 
-/// Only fetch the “correct answer” when we’re showing incorrect feedback.
-Future<String?>? get _currentCorrectAnswer {
-  if (_exerciseState != ExerciseState.incorrect) return null;
-  return widget.getCorrectAnswer
-      ?.call(_currentExercise.exerciseData.id);
-}
+    if (_exerciseState != ExerciseState.correct &&
+        _exerciseState != ExerciseState.incorrect) {
+      return null;
+    }
+    return widget.getFeedbackMessage?.call(_currentExercise.exerciseData.id);
+  }
+
+  /// Only fetch the “correct answer” when we’re showing incorrect feedback.
+  Future<String?>? get _currentCorrectAnswer {
+    if (_exerciseState != ExerciseState.incorrect) return null;
+    return widget.getCorrectAnswer?.call(_currentExercise.exerciseData.id);
+  }
+
+  void _handleSkip() {
+    final exerciseType = _currentExercise.exerciseData.type;
+
+    setState(() {
+      _exerciseState = ExerciseState.skipped;
+      _skippedTypes.add(exerciseType);
+    });
+
+    _feedbackController.forward();
+  }
 
   void _handleCheck() {
     setState(() {
@@ -166,6 +183,7 @@ Future<String?>? get _currentCorrectAnswer {
     _buttonController.reverse();
 
     final wasCorrect = _exerciseState == ExerciseState.correct;
+    final wasSkipped = _exerciseState == ExerciseState.skipped;
 
     if (_remainingHearts <= 0) {
       widget.onExit?.call();
@@ -173,8 +191,21 @@ Future<String?>? get _currentCorrectAnswer {
       return;
     }
 
+    // Handle skipped exercises - filter out future exercises of this type
+    if (wasSkipped) {
+      final skippedType = _currentExercise.exerciseData.type;
+
+      // Remove all future exercises of the skipped type
+      _exerciseQueue = [
+        ..._exerciseQueue.sublist(0, _currentExerciseIndex + 1),
+        ..._exerciseQueue
+            .sublist(_currentExerciseIndex + 1)
+            .where((exercise) => exercise.exerciseData.type != skippedType),
+      ];
+    }
+
     // Handle incorrect answer re-queueing
-    if (!wasCorrect && widget.requeueIncorrectAnswers) {
+    if (!wasCorrect && !wasSkipped && widget.requeueIncorrectAnswers) {
       final exerciseId = _currentExercise.exerciseData.id;
 
       final requeuedExercise = _currentExercise.copyWith(
@@ -235,6 +266,8 @@ Future<String?>? get _currentCorrectAnswer {
         return DesignColors.success;
       case ExerciseState.incorrect:
         return DesignColors.error;
+      case ExerciseState.skipped:
+        return DesignColors.attention;
     }
   }
 
@@ -245,6 +278,7 @@ Future<String?>? get _currentCorrectAnswer {
       case ExerciseState.checking:
         return 'CHECKING...';
       case ExerciseState.correct:
+      case ExerciseState.skipped:
         return _currentExerciseIndex == _exerciseQueue.length - 1
             ? 'DONE'
             : 'CONTINUE';
@@ -285,6 +319,7 @@ Future<String?>? get _currentCorrectAnswer {
                   exerciseState: _exerciseState,
                   buttonAnimation: _buttonAnimation,
                   handleCheck: _handleCheck,
+                  handleSkip: _handleSkip,
                   buttonText: _getButtonText(),
                   buttonColor: _getButtonColor(),
                 ),

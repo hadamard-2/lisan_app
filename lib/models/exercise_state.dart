@@ -1,1 +1,1 @@
-enum ExerciseState { initial, checking, correct, incorrect }
+enum ExerciseState { initial, checking, correct, incorrect, skipped }

@@ -7,6 +7,7 @@ class LessonControls extends StatelessWidget {
   final ExerciseState exerciseState;
   final Listenable buttonAnimation;
   final VoidCallback handleCheck;
+  final VoidCallback? handleSkip;
   final String buttonText;
   final Color buttonColor;
 
@@ -16,6 +17,7 @@ class LessonControls extends StatelessWidget {
     required this.exerciseState,
     required this.buttonAnimation,
     required this.handleCheck,
+    this.handleSkip,
     required this.buttonText,
     required this.buttonColor,
   });
@@ -38,8 +40,8 @@ class LessonControls extends StatelessWidget {
         spacing: DesignSpacing.md,
         children: [
           if (skipText.isNotEmpty && exerciseState == ExerciseState.initial)
-            TextButton(
-              onPressed: () {},
+            GestureDetector(
+              onTap: handleSkip,
               child: Text(
                 skipText,
                 style: TextStyle(
@@ -51,7 +53,8 @@ class LessonControls extends StatelessWidget {
 
           // Main Action Button (only show when no feedback)
           if (exerciseState != ExerciseState.correct &&
-              exerciseState != ExerciseState.incorrect)
+              exerciseState != ExerciseState.incorrect &&
+              exerciseState != ExerciseState.skipped)
             AnimatedBuilder(
               animation: buttonAnimation,
               builder: (context, child) {

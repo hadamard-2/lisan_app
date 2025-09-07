@@ -47,128 +47,130 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: DesignColors.backgroundDark,
-      body: Padding(
-        padding: EdgeInsets.all(DesignSpacing.lg),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            // Character illustration placeholder
-            Container(
-              height: 120,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: DesignColors.backgroundCard,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.celebration_rounded,
-                  color: DesignColors.primary,
-                  size: 60,
-                ),
-              ),
-            ),
-
-            SizedBox(height: DesignSpacing.lg),
-
-            // Title
-            SlideTransition(
-              position: _slideAnimation,
-              child: Text(
-                "0 mistakes!",
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: DesignColors.primary,
-                ),
-              ),
-            ),
-
-            SizedBox(height: DesignSpacing.md),
-
-            // Subtitle
-            SlideTransition(
-              position: _slideAnimation,
-              child: Text(
-                "Scientists should study your big,\nbeautiful brain.",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: DesignColors.textSecondary,
-                ),
-              ),
-            ),
-
-            SizedBox(height: DesignSpacing.xxl),
-
-            // Stats Row
-            SlideTransition(
-              position: _slideAnimation,
-              child: Row(
-                spacing: DesignSpacing.md,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: _buildStatCard(
-                      icon: Icons.star_rounded,
-                      label: "TOTAL XP",
-                      value: "40",
-                      color: DesignColors.primary,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildStatCard(
-                      icon: Icons.check_circle_rounded,
-                      label: "AMAZING",
-                      value: "100%",
-                      color: DesignColors.success,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildStatCard(
-                      icon: Icons.access_time_rounded,
-                      label: "COMMITTED",
-                      value: "6:30",
-                      color: Colors.blue,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            SizedBox(height: DesignSpacing.xxxl * 2),
-
-            // Claim XP Button
-            SlideTransition(
-              position: _slideAnimation,
-              child: SizedBox(
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(DesignSpacing.lg),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              // Character illustration placeholder
+              Container(
+                height: 120,
                 width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Handle claim XP action
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightBlue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
+                decoration: BoxDecoration(
+                  color: DesignColors.backgroundCard,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.celebration_rounded,
+                    color: DesignColors.primary,
+                    size: 60,
                   ),
-                  child: Text(
-                    "CLAIM XP",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: DesignColors.backgroundDark,
+                ),
+              ),
+
+              SizedBox(height: DesignSpacing.lg),
+
+              // Title
+              SlideTransition(
+                position: _slideAnimation,
+                child: Text(
+                  "0 mistakes!",
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: DesignColors.primary,
+                  ),
+                ),
+              ),
+
+              SizedBox(height: DesignSpacing.md),
+
+              // Subtitle
+              SlideTransition(
+                position: _slideAnimation,
+                child: Text(
+                  "Scientists should study your big,\nbeautiful brain.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: DesignColors.textSecondary,
+                  ),
+                ),
+              ),
+
+              SizedBox(height: DesignSpacing.xxl),
+
+              // Stats Row
+              SlideTransition(
+                position: _slideAnimation,
+                child: Row(
+                  spacing: DesignSpacing.md,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: _buildStatCard(
+                        icon: Icons.star_rounded,
+                        label: "TOTAL XP",
+                        value: "40",
+                        color: DesignColors.primary,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: _buildStatCard(
+                        icon: Icons.check_circle_rounded,
+                        label: "AMAZING",
+                        value: "100%",
+                        color: DesignColors.success,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: _buildStatCard(
+                        icon: Icons.access_time_rounded,
+                        label: "COMMITTED",
+                        value: "6:30",
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: DesignSpacing.xxxl * 2),
+
+              // Claim XP Button
+              SlideTransition(
+                position: _slideAnimation,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Handle claim XP action
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.lightBlue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      "CLAIM XP",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: DesignColors.backgroundDark,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -64,7 +64,7 @@ class TextUtils {
 
     String normalized = text;
 
-    // H sounds: ሐ, ኀ -> ሀ
+    // H sounds: ሀ, ኀ -> ሐ
     final h1 = ["ሐ", "ሑ", "ሒ", "ሓ", "ሔ", "ሕ", "ሖ", "ሗ"];
     final h2 = ["ሀ", "ሁ", "ሂ", "ሃ", "ሄ", "ህ", "ሆ", "ሗ", "ሗ"];
     final h3 = ["ኀ", "ኁ", "ኂ", "ኃ", "ኄ", "ኅ", "ኆ", "ኇ", "ኋ"];
@@ -92,6 +92,9 @@ class TextUtils {
     normalized = _replaceCharacters(normalized, q2, q1);
     normalized = _replaceCharacters(normalized, a2, a1);
     normalized = _replaceCharacters(normalized, ts2, ts1);
+
+    normalized = normalized.replaceAll('ሓ', 'ሐ');
+    normalized = normalized.replaceAll('ኣ', 'አ');
 
     return normalized;
   }
