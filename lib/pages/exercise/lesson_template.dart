@@ -10,7 +10,6 @@ class LessonTemplate extends StatefulWidget {
   final int hearts;
   final bool isVoiceBased;
   final bool requeueIncorrectAnswers;
-  final int maxRequeues;
 
   // Callbacks
   final VoidCallback? onExit;
@@ -22,7 +21,7 @@ class LessonTemplate extends StatefulWidget {
   // Per-exercise data (functions that take current exercise index)
   final Future<String?> Function(String id)? getFeedbackMessage;
   final Future<String?> Function(String id)? getCorrectAnswer;
-  final Future<bool> Function(String id)? validateAnswer; // Returns true if correct
+  final Future<bool> Function(String id)? validateAnswer;
 
   const LessonTemplate({
     super.key,
@@ -32,7 +31,6 @@ class LessonTemplate extends StatefulWidget {
     this.hearts = 5,
     this.isVoiceBased = false,
     this.requeueIncorrectAnswers = true,
-    this.maxRequeues = 1,
     this.onExit,
     this.onExerciseComplete,
     this.onExerciseRequeued,
@@ -50,10 +48,9 @@ class _LessonTemplateState extends State<LessonTemplate>
     with TickerProviderStateMixin {
   ExerciseState _exerciseState = ExerciseState.initial;
   late List<ExerciseWidget> _exerciseQueue;
-  // Track how many times each exercise has been requeued
-  late List<int> _requeueCount;
   int _currentExerciseIndex = 0;
   int _totalExercisesCompleted = 0;
+  late int _remainingHearts;
 
   late AnimationController _feedbackController;
   late AnimationController _buttonController;
@@ -68,7 +65,7 @@ class _LessonTemplateState extends State<LessonTemplate>
 
     // Initialize exercise queue and requeue tracking
     _exerciseQueue = List<ExerciseWidget>.from(widget.exercises);
-    _requeueCount = List<int>.filled(widget.exercises.length, 0);
+    _remainingHearts = widget.hearts;
 
     // Initialize animation controllers
     _feedbackController = AnimationController(
@@ -137,12 +134,18 @@ class _LessonTemplateState extends State<LessonTemplate>
     Future.delayed(const Duration(milliseconds: 1500), () async {
       if (mounted) {
         // Validate answer
-        final isCorrect = await widget.validateAnswer?.call(_currentExercise.exerciseData.id) ?? true;
+        final isCorrect =
+            await widget.validateAnswer?.call(
+              _currentExercise.exerciseData.id,
+            ) ??
+            true;
 
         setState(() {
           _exerciseState = isCorrect
               ? ExerciseState.correct
               : ExerciseState.incorrect;
+
+          if (!isCorrect) _remainingHearts--;
         });
         _feedbackController.forward();
       }
@@ -155,22 +158,23 @@ class _LessonTemplateState extends State<LessonTemplate>
 
     final wasCorrect = _exerciseState == ExerciseState.correct;
 
+    if (_remainingHearts <= 0) {
+      widget.onExit?.call();
+      Navigator.of(context).pop();
+      return;
+    }
+
     // Handle incorrect answer re-queueing
     if (!wasCorrect && widget.requeueIncorrectAnswers) {
-      final exerciseId = _currentExercise
-          .exerciseData
-          .id; // Access ID via the unified property
-      // Note: Since we're using IDs, we don't need _requeueCount anymore (or track per ID if needed)
-      // For simplicity, assume requeuing is allowed without a count limit per ID
+      final exerciseId = _currentExercise.exerciseData.id;
+
       final requeuedExercise = _currentExercise.copyWith(
         isRequeued: true,
         key: UniqueKey(),
       );
 
       _exerciseQueue.add(requeuedExercise);
-      widget.onExerciseRequeued?.call(
-        exerciseId,
-      ); // Pass ID instead of the widget
+      widget.onExerciseRequeued?.call(exerciseId);
     }
 
     _totalExercisesCompleted++;
@@ -330,7 +334,7 @@ class _LessonTemplateState extends State<LessonTemplate>
               ),
 
               Text(
-                '${widget.hearts}',
+                '$_remainingHearts',
                 style: const TextStyle(
                   color: DesignColors.textPrimary,
                   fontSize: 18,
@@ -499,7 +503,6 @@ class _LessonTemplateState extends State<LessonTemplate>
 
   Widget _buildBottomSection() {
     String skipText = '';
-    print(_currentExercise.exerciseData.type);
     switch (_currentExercise.exerciseData.type) {
       case 'speaking':
         skipText = 'CAN\'T SPEAK NOW';
