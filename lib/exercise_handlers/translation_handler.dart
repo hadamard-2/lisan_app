@@ -17,6 +17,9 @@ class TranslationHandler implements ExerciseHandler {
       exerciseData.correctAnswer,
     );
 
+    print('trimmed user answer: $trimmedAnswer');
+    print('correct: ${exerciseData.correctAnswer}');
+
     if (similarity >= 90) {
       return Future.value(
         ExerciseResult(

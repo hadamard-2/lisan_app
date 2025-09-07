@@ -43,7 +43,7 @@ class _TextBubbleWidgetState extends State<TextBubbleWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DesignSpacing.lg),
+      padding: const EdgeInsets.all(DesignSpacing.md),
       decoration: BoxDecoration(
         color: DesignColors.backgroundCard,
         borderRadius: BorderRadius.circular(16),
@@ -56,15 +56,11 @@ class _TextBubbleWidgetState extends State<TextBubbleWidget> {
             IconButton(
               splashColor: Colors.transparent,
               hoverColor: Colors.transparent,
-              // highlightColor: Colors.transparent,
-              onPressed: () async {
-                print('playing voice');
-                await _init();
-              },
+              onPressed: () async => await _init(),
               icon: Icon(
                 Icons.volume_up_rounded,
                 color: DesignColors.primary,
-                size: 30,
+                size: 28,
               ),
             ),
           Expanded(

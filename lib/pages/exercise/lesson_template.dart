@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
-
-enum ExerciseState { initial, checking, correct, incorrect }
+import 'package:lisan_app/pages/exercise/feedback_panel.dart';
+import 'package:lisan_app/pages/exercise/lesson_controls.dart';
+import 'package:lisan_app/pages/exercise/lesson_top_bar.dart';
+import 'package:lisan_app/models/exercise_state.dart';
 
 class LessonTemplate extends StatefulWidget {
   final List<Widget> exercises;
   final double? initialProgress; // Optional: override auto-calculated progress
   final int hearts;
-  final bool isVoiceBased;
   final bool requeueIncorrectAnswers;
 
   // Callbacks
@@ -16,7 +17,6 @@ class LessonTemplate extends StatefulWidget {
   final Function(BuildContext context) onLessonCompletion;
   final Function(int currentIndex, int totalRemaining)? onExerciseComplete;
   final Function(String id)? onExerciseRequeued;
-  final VoidCallback? onVoiceBasedExercise;
 
   // Per-exercise data (functions that take current exercise index)
   final Future<String?> Function(String id)? getFeedbackMessage;
@@ -29,12 +29,10 @@ class LessonTemplate extends StatefulWidget {
     required this.onLessonCompletion,
     this.initialProgress,
     this.hearts = 5,
-    this.isVoiceBased = false,
     this.requeueIncorrectAnswers = true,
     this.onExit,
     this.onExerciseComplete,
     this.onExerciseRequeued,
-    this.onVoiceBasedExercise,
     this.getFeedbackMessage,
     this.getCorrectAnswer,
     this.validateAnswer,
@@ -117,11 +115,22 @@ class _LessonTemplateState extends State<LessonTemplate>
 
   ExerciseWidget get _currentExercise => _exerciseQueue[_currentExerciseIndex];
 
-  Future<String?>? get _currentFeedbackMessage =>
-      widget.getFeedbackMessage?.call(_currentExercise.exerciseData.id);
+/// Only fetch once we’ve moved out of the initial state.
+Future<String?>? get _currentFeedbackMessage {
+  if (_exerciseState != ExerciseState.correct &&
+      _exerciseState != ExerciseState.incorrect) {
+    return null;
+  }
+  return widget.getFeedbackMessage
+      ?.call(_currentExercise.exerciseData.id);
+}
 
-  Future<String?>? get _currentCorrectAnswer =>
-      widget.getCorrectAnswer?.call(_currentExercise.exerciseData.id);
+/// Only fetch the “correct answer” when we’re showing incorrect feedback.
+Future<String?>? get _currentCorrectAnswer {
+  if (_exerciseState != ExerciseState.incorrect) return null;
+  return widget.getCorrectAnswer
+      ?.call(_currentExercise.exerciseData.id);
+}
 
   void _handleCheck() {
     setState(() {
@@ -254,8 +263,11 @@ class _LessonTemplateState extends State<LessonTemplate>
             // Main Content
             Column(
               children: [
-                // Top Bar
-                _buildTopBar(),
+                LessonTopBar(
+                  onExit: widget.onExit,
+                  progress: _progress,
+                  remainingHearts: _remainingHearts,
+                ),
 
                 // Main Content (Scrollable with transition animation)
                 Expanded(
@@ -268,317 +280,29 @@ class _LessonTemplateState extends State<LessonTemplate>
                   ),
                 ),
 
-                // Bottom Section
-                _buildBottomSection(),
+                LessonControls(
+                  exerciseType: _currentExercise.exerciseData.type,
+                  exerciseState: _exerciseState,
+                  buttonAnimation: _buttonAnimation,
+                  handleCheck: _handleCheck,
+                  buttonText: _getButtonText(),
+                  buttonColor: _getButtonColor(),
+                ),
               ],
             ),
 
-            // Feedback Overlay
-            _buildFeedbackOverlay(),
+            FeedbackPanel(
+              exerciseState: _exerciseState,
+              currentFeedbackMessage: _currentFeedbackMessage,
+              currentCorrectAnswer: _currentCorrectAnswer,
+              handleContinue: _handleContinue,
+              feedbackSlideAnimation: _feedbackSlideAnimation,
+              buttonText: _getButtonText(),
+              buttonColor: _getButtonColor(),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  Widget _buildTopBar() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(
-        DesignSpacing.md,
-        DesignSpacing.lg,
-        DesignSpacing.lg,
-        0,
-      ),
-      child: Row(
-        spacing: DesignSpacing.md,
-        children: [
-          // Exit Button
-          GestureDetector(
-            onTap: widget.onExit,
-            child: const Icon(
-              Icons.close_rounded,
-              color: DesignColors.textSecondary,
-              size: 27,
-            ),
-          ),
-
-          // Progress Bar
-          Expanded(
-            child: Container(
-              height: 14,
-              decoration: BoxDecoration(
-                color: DesignColors.backgroundBorder,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: FractionallySizedBox(
-                alignment: Alignment.centerLeft,
-                widthFactor: _progress,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: DesignColors.primary,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // Hearts Counter
-          Row(
-            spacing: DesignSpacing.xs,
-            children: [
-              const Icon(
-                Icons.favorite_rounded,
-                color: DesignColors.error,
-                size: 24,
-              ),
-
-              Text(
-                '$_remainingHearts',
-                style: const TextStyle(
-                  color: DesignColors.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFeedbackOverlay() {
-    if (_exerciseState != ExerciseState.correct &&
-        _exerciseState != ExerciseState.incorrect) {
-      return const SizedBox.shrink();
-    }
-
-    final isCorrect = _exerciseState == ExerciseState.correct;
-
-    return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: SlideTransition(
-        position: _feedbackSlideAnimation,
-        child: Container(
-          decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-            ),
-            border: Border(
-              top: BorderSide(color: DesignColors.backgroundBorder, width: 2),
-              left: BorderSide(color: DesignColors.backgroundBorder, width: 2),
-              right: BorderSide(color: DesignColors.backgroundBorder, width: 2),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha((0.2 * 255).toInt()),
-                blurRadius: 20,
-                offset: const Offset(0, -4),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Feedback Content
-              Container(
-                padding: const EdgeInsets.all(DesignSpacing.lg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          isCorrect ? Icons.check_circle_rounded : Icons.cancel,
-                          color: isCorrect
-                              ? DesignColors.success
-                              : DesignColors.error,
-                          size: 24,
-                        ),
-                        const SizedBox(width: DesignSpacing.sm),
-                        Text(
-                          isCorrect ? 'Nicely done.' : 'Incorrect',
-                          style: TextStyle(
-                            color: isCorrect
-                                ? DesignColors.success
-                                : DesignColors.error,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    if (_currentFeedbackMessage != null) ...[
-                      const SizedBox(height: DesignSpacing.md),
-                      FutureBuilder<String?>(
-                        future: _currentFeedbackMessage!,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData && snapshot.data != null) {
-                            return Text(
-                              snapshot.data!,
-                              style: TextStyle(
-                                color: isCorrect
-                                    ? DesignColors.success
-                                    : DesignColors.textSecondary,
-                                fontSize: 16,
-                              ),
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                    ],
-
-                    if (!isCorrect && _currentCorrectAnswer != null) ...[
-                      const SizedBox(height: DesignSpacing.md),
-                      Text(
-                        'Correct Answer:',
-                        style: const TextStyle(
-                          color: DesignColors.textPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: DesignSpacing.xs),
-                      FutureBuilder<String?>(
-                        future: _currentCorrectAnswer!,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData && snapshot.data != null) {
-                            return Text(
-                              snapshot.data!,
-                              style: const TextStyle(
-                                color: DesignColors.success,
-                                fontSize: 16,
-                              ),
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-
-              // Button Section
-              Container(
-                padding: const EdgeInsets.all(DesignSpacing.md),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _handleContinue,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _getButtonColor(),
-                      foregroundColor: DesignColors.backgroundDark,
-                      elevation: 8,
-                      shadowColor: _getButtonColor().withAlpha(76),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      _getButtonText(),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomSection() {
-    String skipText = '';
-    switch (_currentExercise.exerciseData.type) {
-      case 'speaking':
-        skipText = 'CAN\'T SPEAK NOW';
-        break;
-      case 'listening':
-        skipText = 'CAN\'T LISTEN NOW';
-        break;
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(DesignSpacing.md),
-      child: Column(
-        spacing: DesignSpacing.md,
-        children: [
-          if (skipText.isNotEmpty && _exerciseState == ExerciseState.initial)
-            TextButton(
-              // onPressed: widget.onVoiceBasedExercise,
-              onPressed: skipVoiceBasedExercises,
-              child: Text(
-                skipText,
-                style: TextStyle(
-                  color: DesignColors.textTertiary,
-                  fontSize: 15,
-                ),
-              ),
-            ),
-
-          // Main Action Button (only show when no feedback)
-          if (_exerciseState != ExerciseState.correct &&
-              _exerciseState != ExerciseState.incorrect)
-            AnimatedBuilder(
-              animation: _buttonAnimation,
-              builder: (context, child) {
-                return SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _exerciseState == ExerciseState.checking
-                        ? null
-                        : _handleCheck,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: _getButtonColor(),
-                      foregroundColor: DesignColors.backgroundDark,
-                      elevation: 8,
-                      shadowColor: _getButtonColor().withAlpha(76),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: _exerciseState == ExerciseState.checking
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(
-                            _getButtonText(),
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                  ),
-                );
-              },
-            ),
-        ],
-      ),
-    );
-  }
-
-  // skips voice based exercise for the rest of the lesson
-  void skipVoiceBasedExercises() {
-    // show feedback overlay with
-    // text: "We'll skip ${exerciseType} for this lesson."
-    // button: "CONTINUE"
   }
 }
