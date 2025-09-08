@@ -43,8 +43,8 @@ class BlockBuildWidget extends StatelessWidget {
                   ),
                 )
               : Wrap(
-                  spacing: DesignSpacing.sm,
-                  runSpacing: DesignSpacing.sm,
+                  spacing: DesignSpacing.xs,
+                  runSpacing: DesignSpacing.xs,
                   children: selectedBlocks.asMap().entries.map((entry) {
                     final index = entry.key;
                     final block = entry.value;

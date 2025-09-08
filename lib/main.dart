@@ -35,7 +35,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   // Track answers for each exercise
   Map<String, dynamic> exerciseAnswers = {};
-  Map<String, ExerciseResult?> exerciseResults = {}; // Add this cache
+  Map<String, ExerciseResult?> exerciseResults = {};
   late Map<String, ExerciseHandler> handlers;
 
   @override
@@ -49,98 +49,98 @@ class _MyAppState extends State<MyApp> {
 
   // Exercise data
   final List<Map<String, dynamic>> exerciseData = [
-    // // --- Direct Translation ---
-    // {
-    //   "id": "tr_001",
-    //   "type": "translation",
-    //   "subtype": "block_build",
-    //   "instruction": "Translate this sentence",
-    //   "data": {
-    //   "prompt_text": "ወንድሜ ከእህቴ ይረዝማል",
-    //   "prompt_audio_url": "assets/sample_voices/tr_001.wav",
-    //   "blocks": ["taller", "than", "My", "brother", "sister", "my", "is"],
-    //   "correct_answer": "My brother is taller than my sister",
-    //   },
-    // },
-    // {
-    //   "id": "tr_002",
-    //   "type": "translation",
-    //   "subtype": "free_text",
-    //   "instruction": "Translate this sentence",
-    //   "data": {
-    //     "prompt_text": "I love to read books.",
-    //     "correct_answer": "መጽሐፍ ማንበብ እወዳለሁ።",
-    //   },
-    // },
+    // --- Direct Translation ---
+    {
+      "id": "tr_001",
+      "type": "translation",
+      "subtype": "block_build",
+      "instruction": "Translate this sentence",
+      "data": {
+        "prompt_text": "ወንድሜ ከእህቴ ይረዝማል",
+        "prompt_audio_url": "assets/sample_voices/tr_001.wav",
+        "blocks": ["taller", "than", "My", "brother", "sister", "my", "is"],
+        "correct_answer": "My brother is taller than my sister",
+      },
+    },
+    {
+      "id": "tr_002",
+      "type": "translation",
+      "subtype": "free_text",
+      "instruction": "Translate this sentence",
+      "data": {
+        "prompt_text": "I love to read books.",
+        "correct_answer": "መጽሐፍ ማንበብ እወዳለሁ።",
+      },
+    },
 
-    // // --- Complete Sentence ---
-    // {
-    //   "id": "cs_001",
-    //   "type": "complete_sentence",
-    //   "subtype": "partial_free_text",
-    //   "instruction": "Complete the sentence",
-    //   "data": {
-    //     "reference_text": "She is a doctor.",
-    //     "display_text": "እሷ ____ ናት።",
-    //     "correct_answer": "እሷ ሀኪም ናት።",
-    //   },
-    // },
-    // {
-    //   "id": "cs_002",
-    //   "type": "complete_sentence",
-    //   "subtype": "partial_block_build",
-    //   "instruction": "Complete the sentence",
-    //   "data": {
-    //     "reference_text": "This beautiful flower smells good.",
-    //     "display_text": "ይህ ____ አበባ ጥሩ ____ አለው።",
-    //     "blocks": ["ቆንጆ", "መዓዛ", "ቀለም"],
-    //     "correct_answer": "ይህ ቆንጆ አበባ ጥሩ መዓዛ አለው",
-    //   },
-    // },
+    // --- Complete Sentence ---
+    {
+      "id": "cs_001",
+      "type": "complete_sentence",
+      "subtype": "partial_free_text",
+      "instruction": "Complete the sentence",
+      "data": {
+        "reference_text": "She is a doctor.",
+        "display_text": "እሷ ____ ናት።",
+        "correct_answer": "እሷ ሀኪም ናት።",
+      },
+    },
+    {
+      "id": "cs_002",
+      "type": "complete_sentence",
+      "subtype": "partial_block_build",
+      "instruction": "Complete the sentence",
+      "data": {
+        "reference_text": "This beautiful flower smells good.",
+        "display_text": "ይህ ____ አበባ ጥሩ ____ አለው።",
+        "blocks": ["ቆንጆ", "መዓዛ", "ቀለም"],
+        "correct_answer": "ይህ ቆንጆ አበባ ጥሩ መዓዛ አለው",
+      },
+    },
 
-    // // --- Fill in Blank ---
-    // {
-    //   "id": "fb_001",
-    //   "type": "fill_in_blank",
-    //   "instruction": "Choose the correct word for the blank.",
-    //   "data": {
-    //     "display_text": "እኔ ____ እጠጣለሁ።",
-    //     "options": [
-    //       {"id": 0, "text": "ውሃ"},
-    //       {"id": 1, "text": "ሽንኩርት"},
-    //       {"id": 2, "text": "ወንበር"},
-    //     ],
-    //     "correct_option_id": 0,
-    //   },
-    // },
-    // {
-    //   "id": "fb_002",
-    //   "type": "fill_in_blank",
-    //   "instruction": "Select the pair that best fits the blanks.",
-    //   "data": {
-    //     "display_text": "____ ከገበያ ____ ገዛች።",
-    //     "options": [
-    //       {"id": 0, "text": "እሱ ... ቦርሳ"},
-    //       {"id": 1, "text": "እሷ ... አትክልት"},
-    //       {"id": 2, "text": "እነሱ ... ወተት"},
-    //     ],
-    //     "correct_option_id": 1,
-    //   },
-    // },
+    // --- Fill in Blank ---
+    {
+      "id": "fb_001",
+      "type": "fill_in_blank",
+      "instruction": "Choose the correct word for the blank.",
+      "data": {
+        "display_text": "እኔ ____ እጠጣለሁ።",
+        "options": [
+          {"id": 0, "text": "ውሃ"},
+          {"id": 1, "text": "ሽንኩርት"},
+          {"id": 2, "text": "ወንበር"},
+        ],
+        "correct_option_id": 0,
+      },
+    },
+    {
+      "id": "fb_002",
+      "type": "fill_in_blank",
+      "instruction": "Select the pair that best fits the blanks.",
+      "data": {
+        "display_text": "____ ከገበያ ____ ገዛች።",
+        "options": [
+          {"id": 0, "text": "እሱ ... ቦርሳ"},
+          {"id": 1, "text": "እሷ ... አትክልት"},
+          {"id": 2, "text": "እነሱ ... ወተት"},
+        ],
+        "correct_option_id": 1,
+      },
+    },
 
-    // // --- Speaking ---
-    // {
-    //   "id": "sp_001",
-    //   "type": "speaking",
-    //   "instruction": "Speak this sentence aloud",
-    //   "data": {
-    //     "prompt_text": "ሰላም እንዴት ነህ?",
-    //     "prompt_audio_url": "assets/sample_voices/sp_001.wav",
-    //     "correct_answer": "ሰላም እንዴት ነህ?",
-    //   },
-    // },
+    // --- Speaking ---
+    {
+      "id": "sp_001",
+      "type": "speaking",
+      "instruction": "Speak this sentence aloud",
+      "data": {
+        "prompt_text": "ሰላም እንዴት ነህ?",
+        "prompt_audio_url": "assets/sample_voices/sp_001.wav",
+        "correct_answer": "ሰላም እንዴት ነህ?",
+      },
+    },
 
-    // // --- Listening ---
+    // --- Listening ---
     {
       "id": "ls_001",
       "type": "listening",
@@ -295,9 +295,9 @@ class _MyAppState extends State<MyApp> {
           }
         }).toList(),
 
-        onLessonCompletion: (context) => Navigator.push(
+        onLessonCompletion: (context, stats) => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => LessonCompletionPage()),
+          MaterialPageRoute(builder: (context) => LessonCompletionPage(stats: stats)),
         ),
 
         validateAnswer: (String id) async {

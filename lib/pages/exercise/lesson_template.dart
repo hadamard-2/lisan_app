@@ -5,6 +5,7 @@ import 'package:lisan_app/pages/exercise/feedback_panel.dart';
 import 'package:lisan_app/pages/exercise/lesson_controls.dart';
 import 'package:lisan_app/pages/exercise/lesson_top_bar.dart';
 import 'package:lisan_app/models/exercise_state.dart';
+import 'package:lisan_app/models/lesson_stats.dart';
 
 class LessonTemplate extends StatefulWidget {
   final List<Widget> exercises;
@@ -14,7 +15,8 @@ class LessonTemplate extends StatefulWidget {
 
   // Callbacks
   final VoidCallback? onExit;
-  final Function(BuildContext context) onLessonCompletion;
+  final void Function(BuildContext context, LessonStats stats)
+  onLessonCompletion;
   final Function(int currentIndex, int totalRemaining)? onExerciseComplete;
   final Function(String id)? onExerciseRequeued;
 
@@ -49,7 +51,12 @@ class _LessonTemplateState extends State<LessonTemplate>
   int _currentExerciseIndex = 0;
   int _totalExercisesCompleted = 0;
   late int _remainingHearts;
-  Set<String> _skippedTypes = {};
+  final Set<String> _skippedTypes = {};
+
+  // Stats tracking
+  late DateTime _startTime;
+  final List<String> _correctIds = [];
+  int _skippedCount = 0;
 
   late AnimationController _feedbackController;
   late AnimationController _buttonController;
@@ -61,6 +68,9 @@ class _LessonTemplateState extends State<LessonTemplate>
   @override
   void initState() {
     super.initState();
+
+    // Initialize stats tracking
+    _startTime = DateTime.now();
 
     // Initialize exercise queue and requeue tracking
     _exerciseQueue = List<ExerciseWidget>.from(widget.exercises);
@@ -185,6 +195,14 @@ class _LessonTemplateState extends State<LessonTemplate>
     final wasCorrect = _exerciseState == ExerciseState.correct;
     final wasSkipped = _exerciseState == ExerciseState.skipped;
 
+    // Update stats
+    if (wasCorrect && !_currentExercise.isRequeued) {
+      _correctIds.add(_currentExercise.exerciseData.id);
+    }
+    if (wasSkipped) {
+      _skippedCount++;
+    }
+
     if (_remainingHearts <= 0) {
       widget.onExit?.call();
       Navigator.of(context).pop();
@@ -230,10 +248,20 @@ class _LessonTemplateState extends State<LessonTemplate>
   void _moveToNextExercise() {
     // Check if this was the last exercise
     if (_currentExerciseIndex == _exerciseQueue.length - 1) {
-      // All exercises completed - trigger completion callback
+      // All exercises completed - calculate stats and trigger completion callback
+      final stats = LessonStats(
+        correctExerciseIds: _correctIds,
+        xp: _correctIds.length * 2,
+        timeTaken: DateTime.now().difference(_startTime),
+        accuracy: (widget.exercises.length - _skippedCount) > 0
+            ? _correctIds.length / (widget.exercises.length - _skippedCount)
+            : 0.0,
+        remainingHearts: _remainingHearts,
+      );
+
       Future.delayed(const Duration(milliseconds: 300), () {
         if (mounted) {
-          widget.onLessonCompletion(context);
+          widget.onLessonCompletion(context, stats);
         }
       });
       return;

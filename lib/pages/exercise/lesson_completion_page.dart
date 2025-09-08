@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
+import 'package:lisan_app/models/lesson_stats.dart';
 
 class LessonCompletionPage extends StatefulWidget {
-  const LessonCompletionPage({super.key});
+  final LessonStats stats;
+
+  const LessonCompletionPage({super.key, required this.stats});
 
   @override
   State<LessonCompletionPage> createState() => _LessonCompletionPageState();
@@ -72,11 +75,11 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
 
               SizedBox(height: DesignSpacing.lg),
 
-              // Title
+              // Title - Dynamic based on accuracy
               SlideTransition(
                 position: _slideAnimation,
                 child: Text(
-                  "0 mistakes!",
+                  _getTitleText(),
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -87,11 +90,11 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
 
               SizedBox(height: DesignSpacing.md),
 
-              // Subtitle
+              // Subtitle - Dynamic based on performance
               SlideTransition(
                 position: _slideAnimation,
                 child: Text(
-                  "Scientists should study your big,\nbeautiful brain.",
+                  _getSubtitleText(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -111,9 +114,9 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
                     Expanded(
                       flex: 1,
                       child: _buildStatCard(
-                        icon: Icons.star_rounded,
+                        icon: Icons.bolt_rounded,
                         label: "TOTAL XP",
-                        value: "40",
+                        value: "${widget.stats.xp}",
                         color: DesignColors.primary,
                       ),
                     ),
@@ -121,8 +124,8 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
                       flex: 1,
                       child: _buildStatCard(
                         icon: Icons.check_circle_rounded,
-                        label: "AMAZING",
-                        value: "100%",
+                        label: "ACCURACY",
+                        value: widget.stats.formattedAccuracy,
                         color: DesignColors.success,
                       ),
                     ),
@@ -130,8 +133,8 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
                       flex: 1,
                       child: _buildStatCard(
                         icon: Icons.access_time_rounded,
-                        label: "COMMITTED",
-                        value: "6:30",
+                        label: "TIME",
+                        value: widget.stats.formattedTime,
                         color: Colors.blue,
                       ),
                     ),
@@ -176,6 +179,28 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
     );
   }
 
+  String _getTitleText() {
+    final accuracy = widget.stats.accuracy;
+    if (accuracy == 1.0) {
+      return "Perfect!";
+    } else if (accuracy >= 0.8) {
+      return "Great job!";
+    } else {
+      return "Good effort!";
+    }
+  }
+
+  String _getSubtitleText() {
+    final accuracy = widget.stats.accuracy;
+    if (accuracy == 1.0) {
+      return "Scientists should study your big,\nbeautiful brain.";
+    } else if (accuracy >= 0.8) {
+      return "You're making excellent progress.\nKeep it up!";
+    } else {
+      return "Every mistake is a step closer\nto mastery.";
+    }
+  }
+
   Widget _buildStatCard({
     required IconData icon,
     required String label,
@@ -199,10 +224,9 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
             ),
           ),
           child: Row(
-            // mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: color, size: 20),
+              Icon(icon, color: color, size: 20, fill: 1,),
               SizedBox(width: DesignSpacing.xs),
               Text(
                 value,
