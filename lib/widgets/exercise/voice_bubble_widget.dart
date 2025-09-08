@@ -29,6 +29,7 @@ class _VoiceBubbleWidgetState extends State<VoiceBubbleWidget> {
   void initState() {
     super.initState();
     _player = AudioPlayer();
+    _playAudio();
 
     // Listen to player state changes
     _player.playerStateStream.listen((playerState) {
@@ -135,7 +136,7 @@ class _VoiceBubbleWidgetState extends State<VoiceBubbleWidget> {
                   widget.playbackSpeed == PlaybackSpeed.normal ? '1x' : '0.75x',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18  ,
+                    fontSize: 18,
                     color: _isLoading || _isPlaying
                         ? DesignColors.textPrimary.withValues(alpha: 0.5)
                         : DesignColors.textPrimary,

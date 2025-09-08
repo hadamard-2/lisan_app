@@ -28,9 +28,9 @@ class BlockBuildWidget extends StatelessWidget {
           height: 200,
           padding: const EdgeInsets.all(DesignSpacing.md),
           decoration: BoxDecoration(
-            color: DesignColors.backgroundCard,
+            color: Colors.transparent,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: DesignColors.backgroundBorder),
+            border: Border.all(width: 2, color: DesignColors.backgroundBorder),
           ),
           child: selectedBlocks.isEmpty
               ? const Center(
@@ -43,8 +43,8 @@ class BlockBuildWidget extends StatelessWidget {
                   ),
                 )
               : Wrap(
-                  spacing: DesignSpacing.xs,
-                  runSpacing: DesignSpacing.xs,
+                  spacing: DesignSpacing.sm,
+                  runSpacing: DesignSpacing.sm,
                   children: selectedBlocks.asMap().entries.map((entry) {
                     final index = entry.key;
                     final block = entry.value;

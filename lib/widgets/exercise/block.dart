@@ -24,9 +24,9 @@ class Block extends StatelessWidget {
     Color borderColor;
 
     if (isInSelectedArea) {
-      backgroundColor = DesignColors.backgroundDark;
-      textColor = DesignColors.textPrimary;
-      borderColor = DesignColors.backgroundBorder;
+      backgroundColor = DesignColors.primary.withValues(alpha: 0.05);
+      textColor = DesignColors.primary;
+      borderColor = DesignColors.primary;
     } else if (isSelected) {
       backgroundColor = DesignColors.backgroundCard.withValues(alpha: 0.5);
       textColor = Colors.transparent;
@@ -58,11 +58,7 @@ class Block extends StatelessWidget {
                 (TextUtils.isAmharic(text)
                         ? GoogleFonts.notoSansEthiopic()
                         : GoogleFonts.rubik())
-                    .copyWith(
-                      color: textColor,
-                      fontSize: 16,
-                      // fontWeight: FontWeight.w500,
-                    ),
+                    .copyWith(color: textColor, fontSize: 17),
           ),
         ),
       ),

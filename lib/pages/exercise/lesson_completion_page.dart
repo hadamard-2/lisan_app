@@ -172,7 +172,7 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
                     Expanded(
                       flex: 1,
                       child: _buildStatCard(
-                        icon: Icons.bolt_rounded,
+                        icon: Icons.star_rounded,
                         label: "TOTAL XP",
                         value: "${widget.stats.xp}",
                         color: DesignColors.primary,
@@ -293,7 +293,7 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: color, size: 20, fill: 1),
+              Icon(icon, color: color, size: 20),
               SizedBox(width: DesignSpacing.xs),
               Text(
                 value,

@@ -21,6 +21,7 @@ class _TextBubbleWidgetState extends State<TextBubbleWidget> {
   void initState() {
     super.initState();
     _player = AudioPlayer();
+    if (widget.audioUrl != null) _init();
   }
 
   Future<void> _init() async {
@@ -43,7 +44,7 @@ class _TextBubbleWidgetState extends State<TextBubbleWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DesignSpacing.md),
+      padding: const EdgeInsets.all(DesignSpacing.lg),
       decoration: BoxDecoration(
         color: DesignColors.backgroundCard,
         borderRadius: BorderRadius.circular(16),
@@ -70,7 +71,7 @@ class _TextBubbleWidgetState extends State<TextBubbleWidget> {
                   (TextUtils.isAmharic(widget.text)
                           ? GoogleFonts.notoSansEthiopic()
                           : GoogleFonts.rubik())
-                      .copyWith(color: DesignColors.textPrimary, fontSize: 16),
+                      .copyWith(color: DesignColors.textPrimary, fontSize: 17),
             ),
           ),
         ],
