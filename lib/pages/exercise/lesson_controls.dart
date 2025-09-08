@@ -69,7 +69,7 @@ class LessonControls extends StatelessWidget {
                       backgroundColor: buttonColor,
                       foregroundColor: DesignColors.backgroundDark,
                       elevation: 8,
-                      shadowColor: buttonColor.withAlpha(76),
+                      shadowColor: buttonColor.withValues(alpha: 0.3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

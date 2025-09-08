@@ -94,7 +94,7 @@ class _VoiceChoicesWidgetState extends State<VoiceChoicesWidget> {
             margin: const EdgeInsets.only(bottom: DesignSpacing.sm),
             decoration: BoxDecoration(
               color: widget.selectedOptionIndex == index
-                  ? DesignColors.primary.withAlpha((0.05 * 255).toInt())
+                  ? DesignColors.primary.withValues(alpha: 0.05)
                   : Colors.transparent,
               border: Border.all(
                 color: widget.selectedOptionIndex == index

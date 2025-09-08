@@ -53,7 +53,7 @@ class FeedbackPanel extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha((0.2 * 255).toInt()),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 20,
                 offset: const Offset(0, -4),
               ),
@@ -165,7 +165,7 @@ class FeedbackPanel extends StatelessWidget {
                       backgroundColor: buttonColor,
                       foregroundColor: DesignColors.backgroundDark,
                       elevation: 8,
-                      shadowColor: buttonColor.withAlpha(76),
+                      shadowColor: buttonColor.withValues(alpha: 0.3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

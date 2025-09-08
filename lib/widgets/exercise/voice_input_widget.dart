@@ -165,7 +165,7 @@ class _VoiceInputWidgetState extends State<VoiceInputWidget> {
           ),
           borderRadius: BorderRadius.circular(8),
           color: _isRecording
-              ? DesignColors.primary.withAlpha((0.1 * 255).toInt())
+              ? DesignColors.primary.withValues(alpha: 0.1)
               : null,
         ),
         child: Row(

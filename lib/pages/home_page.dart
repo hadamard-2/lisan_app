@@ -278,7 +278,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
         boxShadow: [
           BoxShadow(
-            color: currentUnit.color.withAlpha(76),
+            color: currentUnit.color.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -314,7 +314,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withAlpha(51),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(Icons.book_rounded, color: Colors.white, size: 24),
@@ -418,7 +418,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFF1CC06).withAlpha(76),
+              color: const Color(0xFFF1CC06).withValues(alpha: 0.3),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),

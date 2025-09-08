@@ -206,10 +206,10 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
                   vertical: DesignSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: DesignColors.primary.withAlpha((0.1 * 255).toInt()),
+                  color: DesignColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: DesignColors.primary.withAlpha((0.3 * 255).toInt()),
+                    color: DesignColors.primary.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -273,9 +273,8 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
       margin: const EdgeInsets.only(bottom: 40),
       decoration: BoxDecoration(
         color: isCompleted && nextIsUnlocked
-            // ? DesignColors.primaryGold.withAlpha((0.2 * 255).toInt())
             ? DesignColors.backgroundBorder
-            : DesignColors.backgroundBorder.withAlpha((0.3 * 255).toInt()),
+            : DesignColors.backgroundBorder.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(2),
       ),
     );
@@ -300,14 +299,12 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
             decoration: BoxDecoration(
               color: isUnlocked
                   ? color
-                  : DesignColors.backgroundBorder.withAlpha(
-                      (0.3 * 255).toInt(),
-                    ),
+                  : DesignColors.backgroundBorder.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(12),
               boxShadow: isCurrent
                   ? [
                       BoxShadow(
-                        color: color.withAlpha((0.4 * 255).toInt()),
+                        color: color.withValues(alpha: 0.4),
                         blurRadius: 12,
                         spreadRadius: 3,
                       ),
@@ -315,7 +312,7 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
                   : isUnlocked
                   ? [
                       BoxShadow(
-                        color: color.withAlpha((0.2 * 255).toInt()),
+                        color: color.withValues(alpha: 0.2),
                         blurRadius: 6,
                         spreadRadius: 1,
                       ),
@@ -338,9 +335,7 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
                     width: 50,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: DesignColors.backgroundDark.withAlpha(
-                        (0.2 * 255).toInt(),
-                      ),
+                      color: DesignColors.backgroundDark.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -432,7 +427,7 @@ class LeaderboardItem extends StatelessWidget {
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: colors[rank]!.withAlpha((0.2 * 255).toInt()),
+          color: colors[rank]!.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: colors[rank]!, width: 2),
         ),
@@ -601,10 +596,10 @@ class PromotionZoneWidget extends StatelessWidget {
       ),
       padding: EdgeInsets.symmetric(vertical: DesignSpacing.md),
       decoration: BoxDecoration(
-        color: DesignColors.success.withAlpha((0.1 * 255).toInt()),
+        color: DesignColors.success.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: DesignColors.success.withAlpha((0.3 * 255).toInt()),
+          color: DesignColors.success.withValues(alpha: 0.3),
           width: 1,
         ),
       ),

@@ -35,7 +35,7 @@ class _RootScreenState extends State<RootScreen> {
           border: Border.all(color: DesignColors.backgroundBorder, width: 1),
           boxShadow: [
             BoxShadow(
-              color: DesignColors.backgroundDark.withAlpha((0.8 * 255).toInt()),
+              color: DesignColors.backgroundDark.withValues(alpha: 0.8),
               blurRadius: 20,
               spreadRadius: 0,
               offset: Offset(0, -2),
@@ -71,7 +71,7 @@ class _RootScreenState extends State<RootScreen> {
               fill: isSelected ? 1 : 0,
               color: isSelected
                   ? DesignColors.primary
-                  : DesignColors.textTertiary.withAlpha((0.5 * 255).toInt()),
+                  : DesignColors.textTertiary.withValues(alpha: 0.5),
             ),
             SizedBox(height: 6),
             Container(

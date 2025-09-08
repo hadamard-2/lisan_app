@@ -128,7 +128,7 @@ class _UserStatsPageState extends State<UserStatsPage>
                   border: Border.all(color: const Color(0xFFF1CC06), width: 4),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFF1CC06).withAlpha(76),
+                      color: const Color(0xFFF1CC06).withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -325,7 +325,9 @@ class _UserStatsPageState extends State<UserStatsPage>
         boxShadow: isPrimary
             ? [
                 BoxShadow(
-                  color: const Color(0xFFF1CC06).withAlpha(51), // 20% opacity
+                  color: const Color(
+                    0xFFF1CC06,
+                  ).withValues(alpha: 0.2), // 20% opacity
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -489,7 +491,7 @@ class _UserStatsPageState extends State<UserStatsPage>
               snap: false,
               elevation: 0,
               scrolledUnderElevation: 6,
-              shadowColor: Colors.black.withAlpha((0.5 * 255).toInt()),
+              shadowColor: Colors.black.withValues(alpha: 0.5),
               surfaceTintColor: Colors.transparent,
               automaticallyImplyLeading: false,
               actions: [

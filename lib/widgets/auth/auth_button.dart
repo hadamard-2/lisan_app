@@ -35,7 +35,7 @@ class AuthButton extends StatelessWidget {
           ),
           elevation: isPrimary ? 8 : 0,
           shadowColor: isPrimary
-              ? const Color(0xFFF1CC06).withAlpha((0.3 * 255).toInt())
+              ? const Color(0xFFF1CC06).withValues(alpha: 0.3)
               : Colors.transparent,
         ),
         child: isLoading

@@ -30,7 +30,7 @@ class TextChoicesWidget extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: DesignSpacing.sm),
             decoration: BoxDecoration(
               color: selectedOptionIndex == index
-                  ? DesignColors.primary.withAlpha((0.1 * 255).toInt())
+                  ? DesignColors.primary.withValues(alpha: 0.1)
                   : Colors.transparent,
               border: Border.all(
                 color: selectedOptionIndex == index

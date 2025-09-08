@@ -126,9 +126,7 @@ class _VoiceBubbleWidgetState extends State<VoiceBubbleWidget> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: _isLoading || _isPlaying
-                      ? DesignColors.backgroundCard.withAlpha(
-                          (0.5 * 255).toInt(),
-                        )
+                      ? DesignColors.backgroundCard.withValues(alpha: 0.5)
                       : DesignColors.backgroundCard,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: DesignColors.backgroundBorder),
@@ -139,9 +137,7 @@ class _VoiceBubbleWidgetState extends State<VoiceBubbleWidget> {
                     fontWeight: FontWeight.bold,
                     fontSize: 18  ,
                     color: _isLoading || _isPlaying
-                        ? DesignColors.textPrimary.withAlpha(
-                            (0.5 * 255).toInt(),
-                          )
+                        ? DesignColors.textPrimary.withValues(alpha: 0.5)
                         : DesignColors.textPrimary,
                   ),
                 ),

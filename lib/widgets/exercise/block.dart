@@ -28,13 +28,9 @@ class Block extends StatelessWidget {
       textColor = DesignColors.textPrimary;
       borderColor = DesignColors.backgroundBorder;
     } else if (isSelected) {
-      backgroundColor = DesignColors.backgroundCard.withAlpha(
-        (0.5 * 255).toInt(),
-      );
+      backgroundColor = DesignColors.backgroundCard.withValues(alpha: 0.5);
       textColor = Colors.transparent;
-      borderColor = DesignColors.backgroundBorder.withAlpha(
-        (0.5 * 255).toInt(),
-      );
+      borderColor = DesignColors.backgroundBorder.withValues(alpha: 0.5);
     } else {
       backgroundColor = Colors.transparent;
       textColor = DesignColors.textPrimary;

@@ -29,7 +29,7 @@ class CustomBottomNavBar extends StatelessWidget {
               fill: isSelected ? 1 : 0,
               color: isSelected
                   ? DesignColors.primary
-                  : DesignColors.textTertiary.withAlpha((0.5 * 255).toInt()),
+                  : DesignColors.textTertiary.withValues(alpha: 0.5),
             ),
             SizedBox(height: 6),
             Container(
@@ -56,7 +56,7 @@ class CustomBottomNavBar extends StatelessWidget {
         border: Border.all(color: DesignColors.backgroundBorder, width: 1),
         boxShadow: [
           BoxShadow(
-            color: DesignColors.backgroundDark.withAlpha((0.8 * 255).toInt()),
+            color: DesignColors.backgroundDark.withValues(alpha: 0.8),
             blurRadius: 20,
             offset: Offset(0, -2),
           ),
