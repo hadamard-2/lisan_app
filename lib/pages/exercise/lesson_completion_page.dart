@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/lesson_stats.dart';
 
@@ -17,9 +18,19 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
   late AnimationController _slideController;
   late Animation<Offset> _slideAnimation;
 
+  bool _isClaimingXP = false;
+  late Dio _dio;
+
   @override
   void initState() {
     super.initState();
+
+    // Initialize Dio
+    _dio = Dio();
+    // NOTE - I need to replace this with the URL Abel gives me
+    _dio.options.baseUrl = 'https://your-api-base-url.com';
+    _dio.options.connectTimeout = const Duration(seconds: 10);
+    _dio.options.receiveTimeout = const Duration(seconds: 10);
 
     _pulseController = AnimationController(
       duration: Duration(milliseconds: 2000),
@@ -44,6 +55,53 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
     _pulseController.dispose();
     _slideController.dispose();
     super.dispose();
+  }
+
+  Future<void> _claimXP() async {
+    if (_isClaimingXP) return; // Prevent multiple taps
+
+    setState(() {
+      _isClaimingXP = true;
+    });
+
+    try {
+      final response = await _dio.post(
+        '/lessons/complete',
+        data: widget.stats.toJson(),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Success - show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('XP claimed successfully!'),
+              backgroundColor: DesignColors.success,
+            ),
+          );
+
+          // Navigate back or to next screen
+          Navigator.of(context).pop();
+        }
+      }
+    } catch (e) {
+      // Handle error
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to claim XP: ${e.toString()}'),
+            backgroundColor: DesignColors.error,
+            action: SnackBarAction(label: 'RETRY', onPressed: _claimXP),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isClaimingXP = false;
+        });
+      }
+    }
   }
 
   @override
@@ -151,24 +209,33 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Handle claim XP action
-                    },
+                    onPressed: _isClaimingXP ? null : _claimXP,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightBlue,
+                      backgroundColor: _isClaimingXP
+                          ? DesignColors.backgroundBorder
+                          : Colors.lightBlue,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 0,
                     ),
-                    child: Text(
-                      "CLAIM XP",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: DesignColors.backgroundDark,
-                      ),
-                    ),
+                    child: _isClaimingXP
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: DesignColors.backgroundDark,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            "CLAIM XP",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: DesignColors.backgroundDark,
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -226,7 +293,7 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: color, size: 20, fill: 1,),
+              Icon(icon, color: color, size: 20, fill: 1),
               SizedBox(width: DesignSpacing.xs),
               Text(
                 value,

@@ -1,5 +1,6 @@
 class LessonStats {
   final List<String> correctExerciseIds;
+  final List<String> skippedExerciseIds;
   final int xp;
   final Duration timeTaken;
   final double accuracy;
@@ -7,6 +8,7 @@ class LessonStats {
 
   const LessonStats({
     required this.correctExerciseIds,
+    required this.skippedExerciseIds,
     required this.xp,
     required this.timeTaken,
     required this.accuracy,
@@ -27,5 +29,16 @@ class LessonStats {
 
   String get formattedAccuracy {
     return '${(accuracy * 100).round()}%';
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'correctExerciseIds': correctExerciseIds,
+      'skippedExerciseIds': skippedExerciseIds,
+      'xp': xp,
+      'timeTakenSeconds': timeTaken.inSeconds,
+      'accuracy': accuracy,
+      'remainingHearts': remainingHearts,
+    };
   }
 }

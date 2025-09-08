@@ -56,6 +56,7 @@ class _LessonTemplateState extends State<LessonTemplate>
   // Stats tracking
   late DateTime _startTime;
   final List<String> _correctIds = [];
+  final List<String> _skippedIds = [];
   int _skippedCount = 0;
 
   late AnimationController _feedbackController;
@@ -154,6 +155,7 @@ class _LessonTemplateState extends State<LessonTemplate>
     setState(() {
       _exerciseState = ExerciseState.skipped;
       _skippedTypes.add(exerciseType);
+      _skippedIds.add(_currentExercise.exerciseData.id);
     });
 
     _feedbackController.forward();
@@ -251,6 +253,7 @@ class _LessonTemplateState extends State<LessonTemplate>
       // All exercises completed - calculate stats and trigger completion callback
       final stats = LessonStats(
         correctExerciseIds: _correctIds,
+        skippedExerciseIds: _skippedIds,
         xp: _correctIds.length * 2,
         timeTaken: DateTime.now().difference(_startTime),
         accuracy: (widget.exercises.length - _skippedCount) > 0
