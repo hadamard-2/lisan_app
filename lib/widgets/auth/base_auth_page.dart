@@ -59,7 +59,7 @@ abstract class BaseAuthPageState<T extends BaseAuthPage> extends State<T>
           child: SlideTransition(
             position: _slideAnimation,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 24),
               child: buildContent(context),
             ),
           ),

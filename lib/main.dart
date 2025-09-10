@@ -9,6 +9,7 @@ import 'package:lisan_app/models/fill_in_blank_exercise_data.dart';
 import 'package:lisan_app/models/listening_exercise_data.dart';
 import 'package:lisan_app/models/speaking_exercise_data.dart';
 import 'package:lisan_app/models/translation_exercise_data.dart';
+import 'package:lisan_app/pages/auth/login_page.dart';
 
 import 'package:lisan_app/pages/exercise/fill_in_blank_exercise.dart';
 
@@ -18,6 +19,7 @@ import 'package:lisan_app/pages/exercise/listening_exercise.dart';
 import 'package:lisan_app/pages/exercise/speaking_exercise.dart';
 import 'package:lisan_app/pages/exercise/translation_exercise.dart';
 import 'package:lisan_app/pages/exercise/complete_sentence_exercise.dart';
+import 'package:lisan_app/pages/home_page.dart';
 
 import 'package:lisan_app/root_screen.dart';
 
@@ -49,7 +51,7 @@ class _MyAppState extends State<MyApp> {
 
   // Exercise data
   final List<Map<String, dynamic>> exerciseData = [
-    // --- Direct Translation ---
+    // // --- Direct Translation ---
     {
       "id": "tr_001",
       "type": "translation",
@@ -249,95 +251,96 @@ class _MyAppState extends State<MyApp> {
         splashFactory: NoSplash.splashFactory,
       ),
 
-      home: LessonTemplate(
-        exercises: exerciseData.asMap().entries.map((entry) {
-          final exercise = entry.value;
-          final exerciseId = exercise['id'];
+      // home: LessonTemplate(
+      //   exercises: exerciseData.asMap().entries.map((entry) {
+      //     final exercise = entry.value;
+      //     final exerciseId = exercise['id'];
 
-          switch (exercise['type']) {
-            case 'translation':
-              return TranslationExercise(
-                key: ValueKey(exercise['id']),
-                exerciseData: TranslationExerciseData.fromJson(exercise),
-                onAnswerChanged: (answer) =>
-                    _onTranslationAnswerChanged(exerciseId, answer),
-              );
-            case 'complete_sentence':
-              return CompleteSentenceExercise(
-                key: ValueKey(exercise['id']),
-                exerciseData: CompleteSentenceExerciseData.fromJson(exercise),
-                onAnswerChanged: (answer) =>
-                    _onCompleteSentenceAnswerChanged(exerciseId, answer),
-              );
-            case 'fill_in_blank':
-              return FillInBlankExercise(
-                key: ValueKey(exercise['id']),
-                exerciseData: FillInBlankExerciseData.fromJson(exercise),
-                onAnswerChanged: (answer) =>
-                    _onFillInBlankAnswerChanged(exerciseId, answer),
-              );
-            case 'speaking':
-              return SpeakingExercise(
-                key: ValueKey(exercise['id']),
-                exerciseData: SpeakingExerciseData.fromJson(exercise),
-                onAnswerChanged: (answer) =>
-                    _onSpeakingAnswerChanged(exerciseId, answer),
-              );
-            case 'listening':
-              return ListeningExercise(
-                key: ValueKey(exercise['id']),
-                exerciseData: ListeningExerciseData.fromJson(exercise),
-                onAnswerChanged: (answer) =>
-                    _onListeningAnswerChanged(exerciseId, answer),
-              );
-            default:
-              throw Exception('Unknown exercise type');
-          }
-        }).toList(),
+      //     switch (exercise['type']) {
+      //       case 'translation':
+      //         return TranslationExercise(
+      //           key: ValueKey(exercise['id']),
+      //           exerciseData: TranslationExerciseData.fromJson(exercise),
+      //           onAnswerChanged: (answer) =>
+      //               _onTranslationAnswerChanged(exerciseId, answer),
+      //         );
+      //       case 'complete_sentence':
+      //         return CompleteSentenceExercise(
+      //           key: ValueKey(exercise['id']),
+      //           exerciseData: CompleteSentenceExerciseData.fromJson(exercise),
+      //           onAnswerChanged: (answer) =>
+      //               _onCompleteSentenceAnswerChanged(exerciseId, answer),
+      //         );
+      //       case 'fill_in_blank':
+      //         return FillInBlankExercise(
+      //           key: ValueKey(exercise['id']),
+      //           exerciseData: FillInBlankExerciseData.fromJson(exercise),
+      //           onAnswerChanged: (answer) =>
+      //               _onFillInBlankAnswerChanged(exerciseId, answer),
+      //         );
+      //       case 'speaking':
+      //         return SpeakingExercise(
+      //           key: ValueKey(exercise['id']),
+      //           exerciseData: SpeakingExerciseData.fromJson(exercise),
+      //           onAnswerChanged: (answer) =>
+      //               _onSpeakingAnswerChanged(exerciseId, answer),
+      //         );
+      //       case 'listening':
+      //         return ListeningExercise(
+      //           key: ValueKey(exercise['id']),
+      //           exerciseData: ListeningExerciseData.fromJson(exercise),
+      //           onAnswerChanged: (answer) =>
+      //               _onListeningAnswerChanged(exerciseId, answer),
+      //         );
+      //       default:
+      //         throw Exception('Unknown exercise type');
+      //     }
+      //   }).toList(),
 
-        onLessonCompletion: (context, stats) => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => LessonCompletionPage(stats: stats)),
-        ),
+      //   onLessonCompletion: (context, stats) => Navigator.push(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => LessonCompletionPage(stats: stats)),
+      //   ),
 
-        validateAnswer: (String id) async {
-          // Only call once and cache the result
-          if (exerciseResults[id] == null) {
-            exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
-              exerciseAnswers[id],
-            );
-          }
-          return exerciseResults[id]!.isCorrect;
-        },
+      //   validateAnswer: (String id) async {
+      //     // Only call once and cache the result
+      //     if (exerciseResults[id] == null) {
+      //       exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
+      //         exerciseAnswers[id],
+      //       );
+      //     }
+      //     return exerciseResults[id]!.isCorrect;
+      //   },
 
-        getFeedbackMessage: (String id) async {
-          // Use cached result
-          if (exerciseResults[id] == null) {
-            exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
-              exerciseAnswers[id],
-            );
-          }
-          return exerciseResults[id]!.feedbackMessage;
-        },
+      //   getFeedbackMessage: (String id) async {
+      //     // Use cached result
+      //     if (exerciseResults[id] == null) {
+      //       exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
+      //         exerciseAnswers[id],
+      //       );
+      //     }
+      //     return exerciseResults[id]!.feedbackMessage;
+      //   },
 
-        getCorrectAnswer: (String id) async {
-          // Use cached result
-          if (exerciseResults[id] == null) {
-            exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
-              exerciseAnswers[id],
-            );
-          }
-          return exerciseResults[id]!.correctAnswer;
-        },
+      //   getCorrectAnswer: (String id) async {
+      //     // Use cached result
+      //     if (exerciseResults[id] == null) {
+      //       exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
+      //         exerciseAnswers[id],
+      //       );
+      //     }
+      //     return exerciseResults[id]!.correctAnswer;
+      //   },
 
-        onExerciseRequeued: (String id) {
-          print('Exercise requeued for additional practice');
-          setState(() {
-            exerciseAnswers.remove(id);
-            exerciseResults.remove(id); // Clear cached result
-          });
-        },
-      ),
+      //   onExerciseRequeued: (String id) {
+      //     print('Exercise requeued for additional practice');
+      //     setState(() {
+      //       exerciseAnswers.remove(id);
+      //       exerciseResults.remove(id); // Clear cached result
+      //     });
+      //   },
+      // ),
+      home: LoginPage(),
     );
   }
 }

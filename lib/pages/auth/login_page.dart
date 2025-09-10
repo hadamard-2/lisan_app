@@ -106,8 +106,6 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 10),
-
           // App Logo and Title
           const AuthHeader(),
 
@@ -130,7 +128,6 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
           CustomTextField(
             controller: _emailController,
             labelText: 'Email',
-            hintText: 'Enter your email',
             prefixIcon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
             validator: _validateEmail,
@@ -142,7 +139,6 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
           CustomTextField(
             controller: _passwordController,
             labelText: 'Password',
-            hintText: 'Enter your password',
             prefixIcon: Icons.lock_outline,
             obscureText: !_isPasswordVisible,
             validator: _validatePassword,
@@ -224,8 +220,6 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
               ),
             ],
           ),
-
-          const SizedBox(height: 20),
         ],
       ),
     );

@@ -141,7 +141,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 CustomTextField(
                   controller: _passwordController,
                   labelText: 'Password',
-                  hintText: 'Enter your password',
                   prefixIcon: Icons.lock_outline,
                   obscureText: !_isPasswordVisible,
                   validator: _validatePassword,

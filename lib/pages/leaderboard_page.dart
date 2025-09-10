@@ -124,35 +124,12 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-
-    // Auto-scroll to center current league after build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToCurrentLeague();
-    });
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _scrollToCurrentLeague() {
-    final currentIndex = leagues.indexWhere(
-      (league) => league['current'] == true,
-    );
-    if (currentIndex != -1) {
-      const itemWidth = 92.5; // Trophy width + spacing
-      final screenWidth = MediaQuery.of(context).size.width;
-      final targetOffset =
-          (currentIndex * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
-
-      _scrollController.animateTo(
-        targetOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
-        duration: const Duration(milliseconds: 800),
-        curve: Curves.easeOutCubic,
-      );
-    }
   }
 
   @override
@@ -175,15 +152,15 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
           // League name and timer
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     '${currentLeague['name']} League',
-                    style: const TextStyle(
-                      color: DesignColors.textPrimary,
+                    style: TextStyle(
+                      color: currentLeague['color'],
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,
@@ -201,6 +178,7 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
                 ],
               ),
               Container(
+                margin: EdgeInsets.symmetric(vertical: DesignSpacing.xs),
                 padding: EdgeInsets.symmetric(
                   horizontal: DesignSpacing.md,
                   vertical: DesignSpacing.sm,
@@ -236,176 +214,9 @@ class _LeaderboardHeaderState extends State<LeaderboardHeader> {
               ),
             ],
           ),
-
-          const SizedBox(height: 24),
-
-          // Horizontal scrollable league progression
-          SizedBox(
-            height: 120,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  for (int i = 0; i < leagues.length; i++) ...[
-                    _buildLeagueTrophy(leagues[i], i),
-                    if (i < leagues.length - 1) _buildProgressConnector(i),
-                  ],
-                ],
-              ),
-            ),
-          ),
         ],
       ),
     );
-  }
-
-  Widget _buildProgressConnector(int index) {
-    final isCompleted = leagues[index]['unlocked'] == true;
-    final nextIsUnlocked =
-        index + 1 < leagues.length && leagues[index + 1]['unlocked'] == true;
-
-    return Container(
-      width: 24,
-      height: 3,
-      margin: const EdgeInsets.only(bottom: 40),
-      decoration: BoxDecoration(
-        color: isCompleted && nextIsUnlocked
-            ? DesignColors.backgroundBorder
-            : DesignColors.backgroundBorder.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(2),
-      ),
-    );
-  }
-
-  Widget _buildLeagueTrophy(Map<String, dynamic> league, int index) {
-    final color = league['color'] as Color;
-    final isUnlocked = league['unlocked'] as bool;
-    final isCurrent = league['current'] == true;
-    final name = league['name'] as String;
-
-    return SizedBox(
-      width: 65,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Trophy container with animation
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: isUnlocked
-                  ? color
-                  : DesignColors.backgroundBorder.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: isCurrent
-                  ? [
-                      BoxShadow(
-                        color: color.withValues(alpha: 0.4),
-                        blurRadius: 12,
-                        spreadRadius: 3,
-                      ),
-                    ]
-                  : isUnlocked
-                  ? [
-                      BoxShadow(
-                        color: color.withValues(alpha: 0.2),
-                        blurRadius: 6,
-                        spreadRadius: 1,
-                      ),
-                    ]
-                  : null,
-              border: isCurrent ? Border.all(color: color, width: 2) : null,
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Icon(
-                  Icons.emoji_events,
-                  color: isUnlocked
-                      ? DesignColors.backgroundDark
-                      : Colors.transparent,
-                  size: 24,
-                ),
-                if (!isUnlocked)
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: DesignColors.backgroundDark.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.lock,
-                      color: DesignColors.textTertiary,
-                      size: 20,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          // League name
-          Text(
-            name.toUpperCase(),
-            style: TextStyle(
-              color: isCurrent
-                  ? color
-                  : isUnlocked
-                  ? DesignColors.textPrimary
-                  : DesignColors.textTertiary,
-              fontSize: 10,
-              fontWeight: isCurrent ? FontWeight.bold : FontWeight.w600,
-              letterSpacing: 0.5,
-            ),
-            textAlign: TextAlign.center,
-          ),
-
-          const SizedBox(height: 4),
-
-          // Current indicator
-          SizedBox(
-            height: 16,
-            child: isCurrent
-                ? Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'CURRENT',
-                      style: TextStyle(
-                        color: _getContrastingTextColor(color),
-                        fontSize: 8,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _getContrastingTextColor(Color backgroundColor) {
-    // Calculate luminance to determine if text should be dark or light
-    final red = (backgroundColor.r * 255.0).round() & 0xff;
-    final green = (backgroundColor.g * 255.0).round() & 0xff;
-    final blue = (backgroundColor.b * 255.0).round() & 0xff;
-
-    final luminance = (0.299 * red + 0.587 * green + 0.114 * blue) / 255;
-
-    return luminance > 0.5 ? DesignColors.backgroundDark : Colors.white;
   }
 }
 
@@ -562,7 +373,7 @@ class LeaderboardItem extends StatelessWidget {
             ),
           ),
 
-          // XP and protection time
+          // XP time
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisSize: MainAxisSize.min,

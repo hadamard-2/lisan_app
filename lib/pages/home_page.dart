@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:google_fonts/google_fonts.dart';
+
 class HomePage extends StatefulWidget {
+  // Constants for scroll calculation
+
+  // Approximate height per unit
+  final double approximateUnitHeight = 1075;
+
   const HomePage({super.key});
 
   @override
@@ -17,11 +24,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   final ScrollController _scrollController = ScrollController();
   int _currentUnitIndex = 0;
-
-  // Constants for scroll calculation
-  final double _headerHeight =
-      280.0; // Height before units start (welcome + current indicator)
-  final double _approximateUnitHeight = 500.0; // Approximate height per unit
 
   // Demo data
   final int streakCount = 47;
@@ -123,10 +125,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     // Calculate which unit is currently most visible
     final currentScroll = _scrollController.offset;
 
-    // Account for the header section
-    final scrollAfterHeader = currentScroll - _headerHeight;
-
-    if (scrollAfterHeader < 0) {
+    if (currentScroll < 0) {
       // Still in header area, show first unit
       if (_currentUnitIndex != 0) {
         setState(() => _currentUnitIndex = 0);
@@ -135,7 +134,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     // Simple calculation: divide scroll position by approximate unit height
-    int newIndex = (scrollAfterHeader / _approximateUnitHeight).floor();
+    int newIndex = (currentScroll / widget.approximateUnitHeight).floor();
 
     // Clamp to valid range
     newIndex = newIndex.clamp(0, units.length - 1);
@@ -173,20 +172,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             decoration: BoxDecoration(
               color: const Color(0xFF1E2127),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFFF1CC06)),
+              border: Border.all(color: const Color(0xFF2A2D33)),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '🔥  $streakCount',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFF1CC06),
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: '🔥',
+                    style: GoogleFonts.notoColorEmoji(fontSize: 18),
                   ),
-                ),
-              ],
+                  TextSpan(
+                    text: '  $streakCount',
+                    style: GoogleFonts.rubik(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const Spacer(),
@@ -210,7 +213,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.favorite_rounded, color: Colors.red, size: 22),
+                  Icon(Icons.favorite_rounded, color: Colors.red, size: 21),
                   const SizedBox(width: 8),
                   Text(
                     '$hearts',
@@ -368,7 +371,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 120),
       child: Column(children: pathWidgets),
     );
   }
@@ -584,7 +587,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: _buildAdventurePath(),
             ),
           ),
-          const SizedBox(height: 32),
         ],
       ),
     );

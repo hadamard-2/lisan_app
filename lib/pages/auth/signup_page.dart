@@ -179,7 +179,6 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
           CustomTextField(
             controller: _nameController,
             labelText: 'Full Name',
-            hintText: 'Enter your full name',
             prefixIcon: Icons.person_outline,
             keyboardType: TextInputType.name,
             validator: _validateName,
@@ -191,7 +190,6 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
           CustomTextField(
             controller: _emailController,
             labelText: 'Email',
-            hintText: 'Enter your email',
             prefixIcon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
             validator: _validateEmail,
@@ -203,7 +201,6 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
           CustomTextField(
             controller: _passwordController,
             labelText: 'Password',
-            hintText: 'Enter your password',
             prefixIcon: Icons.lock_outline,
             obscureText: !_isPasswordVisible,
             validator: _validatePassword,
@@ -226,7 +223,6 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
           CustomTextField(
             controller: _confirmPasswordController,
             labelText: 'Confirm Password',
-            hintText: 'Confirm your password',
             prefixIcon: Icons.lock_outline,
             obscureText: !_isConfirmPasswordVisible,
             validator: _validateConfirmPassword,

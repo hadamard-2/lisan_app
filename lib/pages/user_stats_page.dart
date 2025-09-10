@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/pages/profile_page.dart';
 
 class UserStatsPage extends StatefulWidget {
@@ -162,7 +163,7 @@ class _UserStatsPageState extends State<UserStatsPage>
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
-                    vertical: 4,
+                    vertical: 6,
                   ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF1CC06),
@@ -172,20 +173,23 @@ class _UserStatsPageState extends State<UserStatsPage>
                       width: 2,
                     ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('🔥'),
-                      const SizedBox(width: 4),
-                      Text(
-                        '$streakCount',
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF14161B),
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '🔥',
+                          style: GoogleFonts.notoColorEmoji(fontSize: 18),
                         ),
-                      ),
-                    ],
+                        TextSpan(
+                          text: ' $streakCount',
+                          style: GoogleFonts.rubik(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF14161B),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
