@@ -239,7 +239,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Welcome back, $userName!",
+            "Welcome, $userName!",
             style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,

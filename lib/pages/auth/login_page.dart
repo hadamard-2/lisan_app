@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:lisan_app/design/theme.dart';
+
 import 'package:lisan_app/root_screen.dart';
-import '../../widgets/auth/auth_header.dart';
-import '../../widgets/custom_text_field.dart';
-import '../../widgets/auth/auth_button.dart';
-import '../../widgets/auth/google_signin_button.dart';
-import '../../widgets/auth/auth_divider.dart';
-import '../../widgets/auth/base_auth_page.dart';
-import 'signup_page.dart';
+import 'package:lisan_app/services/auth_service.dart';
+
+import 'package:lisan_app/widgets/custom_text_field.dart';
+import 'package:lisan_app/widgets/auth/auth_header.dart';
+import 'package:lisan_app/widgets/auth/auth_button.dart';
+import 'package:lisan_app/widgets/auth/google_signin_button.dart';
+import 'package:lisan_app/widgets/auth/auth_divider.dart';
+import 'package:lisan_app/widgets/auth/base_auth_page.dart';
+
+import 'Package:lisan_app/pages/auth/signup_page.dart';
 
 class LoginPage extends BaseAuthPage {
   const LoginPage({super.key});
@@ -55,48 +60,91 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
   // Login handlers
   Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
+      setState(() {
+        _isLoading = true;
+      });
 
-      // Simulate login process
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        setState(() => _isLoading = false);
-        // Navigate to home or show success
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(
-        //     content: Text('Login successful!'),
-        //     backgroundColor: Color(0xFFF1CC06),
-        //   ),
-        // );
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => RootScreen()),
+      try {
+        final result = await AuthService.signIn(
+          _emailController.text.trim(),
+          _passwordController.text,
         );
+
+        if (mounted) {
+          setState(() => _isLoading = false);
+
+          if (result.success) {
+            // Navigate to home screen
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => RootScreen()),
+            );
+          } else {
+            // Show error dialog
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Login Error'),
+                content: Text(result.errorMessage ?? 'An error occurred'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+          // Show error dialog
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Login Error'),
+              content: const Text(
+                'An unexpected error occurred. Please try again.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       }
     }
   }
 
   Future<void> _handleGoogleSignIn() async {
-    // setState(() => _isGoogleLoading = true);
+    setState(() => _isGoogleLoading = true);
 
-    // // Simulate Google sign-in process
-    // await Future.delayed(const Duration(seconds: 2));
+    // Simulate Google sign-in process
+    await Future.delayed(const Duration(seconds: 2));
 
-    // if (mounted) {
-    //   setState(() => _isGoogleLoading = false);
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(
-    //       content: Text('Google sign-in successful!'),
-    //       backgroundColor: Color(0xFFF1CC06),
-    //     ),
-    //   );
-    // }
+    if (mounted) {
+      setState(() => _isGoogleLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Google sign-up not available yet!',
+            style: TextStyle(color: DesignColors.textPrimary),
+          ),
+          backgroundColor: DesignColors.backgroundCard,
+        ),
+      );
+    }
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => RootScreen()),
-    );
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => RootScreen()),
+    // );
   }
 
   @override
@@ -131,6 +179,7 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
             prefixIcon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
             validator: _validateEmail,
+            enabled: !_isLoading,
           ),
 
           const SizedBox(height: 20),
@@ -142,15 +191,18 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
             prefixIcon: Icons.lock_outline,
             obscureText: !_isPasswordVisible,
             validator: _validatePassword,
+            enabled: !_isLoading,
             suffixIcon: IconButton(
               icon: Icon(
                 _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
               ),
-              onPressed: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
-              },
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
             ),
           ),
 
@@ -160,14 +212,16 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: () {
-                // Navigate to forgot password page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Forgot password feature coming soon!'),
-                  ),
-                );
-              },
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      // Navigate to forgot password page
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Forgot password feature coming soon!'),
+                        ),
+                      );
+                    },
               child: const Text(
                 'Forgot Password?',
                 style: TextStyle(
@@ -198,12 +252,16 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
                 style: TextStyle(color: Color(0xFF888888), fontSize: 14),
               ),
               TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SignUpPage()),
-                  );
-                },
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignUpPage(),
+                          ),
+                        );
+                      },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   minimumSize: Size.zero,

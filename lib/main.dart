@@ -22,6 +22,7 @@ import 'package:lisan_app/pages/exercise/complete_sentence_exercise.dart';
 import 'package:lisan_app/pages/home_page.dart';
 
 import 'package:lisan_app/root_screen.dart';
+import 'package:lisan_app/services/auth_service.dart';
 
 void main() {
   runApp(MyApp());
@@ -340,7 +341,24 @@ class _MyAppState extends State<MyApp> {
       //     });
       //   },
       // ),
-      home: LoginPage(),
+      home: FutureBuilder<bool>(
+        future:
+            AuthService.isLoggedIn(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          } else if (snapshot.hasError) {
+            return const Scaffold(
+              body: Center(child: Text('Error loading auth status')),
+            );
+          } else {
+            final isLoggedIn = snapshot.data ?? false;
+            return isLoggedIn ? LoginPage() : HomePage();
+          }
+        },
+      ),
     );
   }
 }

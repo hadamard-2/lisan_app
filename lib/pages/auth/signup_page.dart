@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:lisan_app/design/theme.dart';
+
 import 'package:lisan_app/root_screen.dart';
-import '../../widgets/auth/auth_header.dart';
-import '../../widgets/custom_text_field.dart';
-import '../../widgets/auth/auth_button.dart';
-import '../../widgets/auth/google_signin_button.dart';
-import '../../widgets/auth/auth_divider.dart';
-import '../../widgets/auth/base_auth_page.dart';
+import 'package:lisan_app/services/auth_service.dart';
+
+import 'package:lisan_app/widgets/custom_text_field.dart';
+import 'package:lisan_app/widgets/auth/auth_header.dart';
+import 'package:lisan_app/widgets/auth/auth_button.dart';
+import 'package:lisan_app/widgets/auth/google_signin_button.dart';
+import 'package:lisan_app/widgets/auth/auth_divider.dart';
+import 'package:lisan_app/widgets/auth/base_auth_page.dart';
+
+import 'package:lisan_app/pages/auth/login_page.dart';
 
 class SignUpPage extends BaseAuthPage {
   const SignUpPage({super.key});
@@ -102,50 +108,94 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
     return _passwordsMatch ? Colors.green : Colors.red;
   }
 
-  // Sign up handlers
   Future<void> _handleSignUp() async {
     if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
+      setState(() {
+        _isLoading = true;
+      });
 
-      // Simulate sign up process
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        setState(() => _isLoading = false);
-        // Navigate to home or show success
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(
-        //     content: Text('Account created successfully!'),
-        //     backgroundColor: Color(0xFFF1CC06),
-        //   ),
-        // );
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => RootScreen()),
+      try {
+        final result = await AuthService.signUp(
+          name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
         );
+
+        if (mounted) {
+          setState(() => _isLoading = false);
+
+          if (result.success) {
+            // Navigate to home screen
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => RootScreen()),
+            );
+          } else {
+            // Show error dialog
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Sign Up Error'),
+                content: Text(result.errorMessage ?? 'An error occurred'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+          // Show error dialog
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Sign Up Error'),
+              content: const Text(
+                'An unexpected error occurred. Please try again.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       }
     }
   }
 
   Future<void> _handleGoogleSignUp() async {
-    // setState(() => _isGoogleLoading = true);
+    setState(() => _isGoogleLoading = true);
 
-    // // Simulate Google sign-up process
-    // await Future.delayed(const Duration(seconds: 2));
+    // Simulate Google sign-up process
+    await Future.delayed(const Duration(seconds: 2));
 
-    // if (mounted) {
-    //   setState(() => _isGoogleLoading = false);
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(
-    //       content: Text('Google sign-up successful!'),
-    //       backgroundColor: Color(0xFFF1CC06),
-    //     ),
-    //   );
-    // }
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => RootScreen()),
-    );
+    if (mounted) {
+      setState(() => _isGoogleLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Google sign-up not available yet!',
+            style: TextStyle(color: DesignColors.textPrimary),
+          ),
+          backgroundColor: DesignColors.backgroundCard,
+        ),
+      );
+    }
+
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => RootScreen()),
+    // );
   }
 
   @override
@@ -164,7 +214,7 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
 
           // Google Sign Up Button
           GoogleSignInButton(
-            onPressed: _handleGoogleSignUp,
+            onPressed: _isLoading ? null : _handleGoogleSignUp,
             isLoading: _isGoogleLoading,
           ),
 
@@ -182,6 +232,7 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
             prefixIcon: Icons.person_outline,
             keyboardType: TextInputType.name,
             validator: _validateName,
+            enabled: !_isLoading,
           ),
 
           const SizedBox(height: 20),
@@ -193,6 +244,7 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
             prefixIcon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
             validator: _validateEmail,
+            enabled: !_isLoading,
           ),
 
           const SizedBox(height: 20),
@@ -205,15 +257,18 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
             obscureText: !_isPasswordVisible,
             validator: _validatePassword,
             onChanged: _onPasswordChanged,
+            enabled: !_isLoading,
             suffixIcon: IconButton(
               icon: Icon(
                 _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
               ),
-              onPressed: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
-              },
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
             ),
           ),
 
@@ -228,6 +283,7 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
             validator: _validateConfirmPassword,
             onChanged: _onConfirmPasswordChanged,
             borderColor: _getConfirmPasswordBorderColor(),
+            enabled: !_isLoading,
             suffixIcon: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -244,11 +300,14 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
                         ? Icons.visibility_off
                         : Icons.visibility,
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                    });
-                  },
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                          setState(() {
+                            _isConfirmPasswordVisible =
+                                !_isConfirmPasswordVisible;
+                          });
+                        },
                 ),
               ],
             ),
@@ -274,10 +333,16 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
                 style: TextStyle(color: Color(0xFF888888), fontSize: 14),
               ),
               TextButton(
-                onPressed: () {
-                  // Navigate back to login page
-                  Navigator.pop(context);
-                },
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
+                      },
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   minimumSize: Size.zero,
