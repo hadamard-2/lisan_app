@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lisan_app/design/theme.dart';
 
 class AuthHeader extends StatelessWidget {
   const AuthHeader({super.key});
@@ -14,13 +15,13 @@ class AuthHeader extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             gradient: const LinearGradient(
-              colors: [Color(0xFFF1CC06), Color(0xFFFFD700)],
+              colors: [DesignColors.primary, Color(0xFFFFD700)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFF1CC06).withValues(alpha: 0.3),
+                color: DesignColors.primary.withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -29,7 +30,7 @@ class AuthHeader extends StatelessWidget {
           child: const Icon(
             Icons.translate,
             size: 40,
-            color: Color(0xFF14161B),
+            color: DesignColors.backgroundDark,
           ),
         ),
 
@@ -41,7 +42,7 @@ class AuthHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: Color(0xFFF1CC06),
+            color: DesignColors.primary,
             letterSpacing: 1.2,
           ),
         ),
@@ -53,7 +54,7 @@ class AuthHeader extends StatelessWidget {
           'Learn Amharic • አማርኛ እንማር',
           style: TextStyle(
             fontSize: 16,
-            color: Color(0xFFB0B0B0),
+            color: DesignColors.textSecondary,
             letterSpacing: 0.5,
           ),
         ),

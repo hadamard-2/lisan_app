@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lisan_app/design/theme.dart';
 
 class GoogleSignInButton extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -17,11 +18,14 @@ class GoogleSignInButton extends StatelessWidget {
       child: ElevatedButton.icon(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF1E2127),
+          backgroundColor: DesignColors.backgroundCard,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: const BorderSide(color: Color(0xFF2A2D33), width: 1),
+            side: const BorderSide(
+              color: DesignColors.backgroundBorder,
+              width: 1,
+            ),
           ),
           elevation: 0,
         ),
@@ -31,7 +35,9 @@ class GoogleSignInButton extends StatelessWidget {
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFF1CC06)),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    DesignColors.primary,
+                  ),
                 ),
               )
             : Image.asset(

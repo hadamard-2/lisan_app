@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/pages/profile_page.dart';
 
 class UserStatsPage extends StatefulWidget {
@@ -61,7 +62,7 @@ class _UserStatsPageState extends State<UserStatsPage>
 
   Color _generateProfileColor(String initials) {
     final colors = [
-      const Color(0xFFF1CC06), // Golden
+      DesignColors.primary, // Golden
       const Color(0xFFE67E22), // Orange
       const Color(0xFFE74C3C), // Red
       const Color(0xFF27AE60), // Green
@@ -126,10 +127,10 @@ class _UserStatsPageState extends State<UserStatsPage>
                 height: 140,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFF1CC06), width: 4),
+                  border: Border.all(color: DesignColors.primary, width: 4),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFF1CC06).withValues(alpha: 0.3),
+                      color: DesignColors.primary.withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
@@ -166,10 +167,10 @@ class _UserStatsPageState extends State<UserStatsPage>
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF1CC06),
+                    color: DesignColors.primary,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: const Color(0xFF14161B),
+                      color: DesignColors.backgroundDark,
                       width: 2,
                     ),
                   ),
@@ -185,7 +186,7 @@ class _UserStatsPageState extends State<UserStatsPage>
                           style: GoogleFonts.rubik(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF14161B),
+                            color: DesignColors.backgroundDark,
                           ),
                         ),
                       ],
@@ -211,16 +212,16 @@ class _UserStatsPageState extends State<UserStatsPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E2127),
+              color: DesignColors.backgroundCard,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFF2A2D33)),
+              border: Border.all(color: DesignColors.backgroundBorder),
             ),
             child: Text(
               _getStreakMessage(streakCount),
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFFB0B0B0),
+                color: DesignColors.textSecondary,
               ),
             ),
           ),
@@ -320,10 +321,12 @@ class _UserStatsPageState extends State<UserStatsPage>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E2127),
+        color: DesignColors.backgroundCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isPrimary ? const Color(0xFFF1CC06) : const Color(0xFF2A2D33),
+          color: isPrimary
+              ? DesignColors.primary
+              : DesignColors.backgroundBorder,
           width: isPrimary ? 2 : 1,
         ),
         boxShadow: isPrimary
@@ -344,8 +347,8 @@ class _UserStatsPageState extends State<UserStatsPage>
           Icon(
             icon,
             color: isPrimary
-                ? const Color(0xFFF1CC06)
-                : const Color(0xFFB0B0B0),
+                ? DesignColors.primary
+                : DesignColors.textSecondary,
             size: 24,
           ),
           const SizedBox(height: 12),
@@ -354,7 +357,7 @@ class _UserStatsPageState extends State<UserStatsPage>
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: isPrimary ? const Color(0xFFF1CC06) : Colors.white,
+              color: isPrimary ? DesignColors.primary : Colors.white,
             ),
           ),
           const SizedBox(height: 4),
@@ -363,7 +366,7 @@ class _UserStatsPageState extends State<UserStatsPage>
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,
-              color: Color(0xFF888888),
+              color: DesignColors.textTertiary,
             ),
           ),
         ],
@@ -434,21 +437,21 @@ class _UserStatsPageState extends State<UserStatsPage>
                         height: 70,
                         decoration: BoxDecoration(
                           color: isEarned
-                              ? const Color(0xFFF1CC06)
-                              : const Color(0xFF2A2D33),
+                              ? DesignColors.primary
+                              : DesignColors.backgroundBorder,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isEarned
-                                ? const Color(0xFFF1CC06)
-                                : const Color(0xFF2A2D33),
+                                ? DesignColors.primary
+                                : DesignColors.backgroundBorder,
                             width: 2,
                           ),
                         ),
                         child: Icon(
                           achievement["icon"] as IconData,
                           color: isEarned
-                              ? const Color(0xFF14161B)
-                              : const Color(0xFF888888),
+                              ? DesignColors.backgroundDark
+                              : DesignColors.textTertiary,
                           size: 36,
                         ),
                       ),
@@ -462,7 +465,7 @@ class _UserStatsPageState extends State<UserStatsPage>
                             fontWeight: FontWeight.w500,
                             color: isEarned
                                 ? Colors.white
-                                : const Color(0xFF888888),
+                                : DesignColors.textTertiary,
                           ),
                           textAlign: TextAlign.center,
                           maxLines: 2,
@@ -489,7 +492,7 @@ class _UserStatsPageState extends State<UserStatsPage>
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              backgroundColor: const Color(0xFF14161B),
+              backgroundColor: DesignColors.backgroundDark,
               pinned: true,
               floating: false,
               snap: false,

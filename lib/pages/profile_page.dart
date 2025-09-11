@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lisan_app/design/theme.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/auth/auth_button.dart';
 
@@ -68,7 +69,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Profile updated!'),
-            backgroundColor: Color(0xFFF1CC06),
+            backgroundColor: DesignColors.primary,
           ),
         );
       }
@@ -78,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF14161B),
+      backgroundColor: DesignColors.backgroundDark,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -166,8 +167,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   isLoading: _isLoading,
                 ),
                 const SizedBox(height: 20),
-
-                // TODO - add buttons for log out and delete account
               ],
             ),
           ),

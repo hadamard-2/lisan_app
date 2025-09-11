@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lisan_app/design/theme.dart';
 
 class HomePage extends StatefulWidget {
   // Constants for scroll calculation
@@ -170,9 +171,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E2127),
+              color: DesignColors.backgroundCard,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFF2A2D33)),
+              border: Border.all(color: DesignColors.backgroundBorder),
             ),
             child: RichText(
               text: TextSpan(
@@ -199,16 +200,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text("Practice session coming soon!"),
-                  backgroundColor: Color(0xFFF1CC06),
+                  backgroundColor: DesignColors.primary,
                 ),
               );
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
               decoration: BoxDecoration(
-                color: const Color(0xFF1E2127),
+                color: DesignColors.backgroundCard,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFF2A2D33)),
+                border: Border.all(color: DesignColors.backgroundBorder),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -253,7 +254,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
-              color: Color(0xFFB0B0B0),
+              color: DesignColors.textSecondary,
               letterSpacing: 0.5,
             ),
           ),
@@ -379,7 +380,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget _buildUnitDivider(UnitData unit) {
     return Row(
       children: [
-        const Expanded(child: Divider(color: Color(0xFF2A2D33), thickness: 2)),
+        const Expanded(
+          child: Divider(color: DesignColors.backgroundBorder, thickness: 2),
+        ),
         const SizedBox(width: 16),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -397,7 +400,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
         ),
         const SizedBox(width: 16),
-        const Expanded(child: Divider(color: Color(0xFF2A2D33), thickness: 2)),
+        const Expanded(
+          child: Divider(color: DesignColors.backgroundBorder, thickness: 2),
+        ),
       ],
     );
   }
@@ -411,17 +416,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         width: 70,
         height: 70,
         decoration: BoxDecoration(
-          color: const Color(0xFFF1CC06),
+          color: DesignColors.primary,
           borderRadius: BorderRadius.circular(16),
           border: Border(
             bottom: BorderSide(
-              color: _darkenColor(const Color(0xFFF1CC06), 0.2),
+              color: _darkenColor(DesignColors.primary, 0.2),
               width: 4,
             ),
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFF1CC06).withValues(alpha: 0.3),
+              color: DesignColors.primary.withValues(alpha: 0.3),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -429,7 +434,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
         child: const Icon(
           Icons.card_giftcard_rounded,
-          color: Color(0xFF14161B),
+          color: DesignColors.backgroundDark,
           size: 36,
         ),
       ),
@@ -462,7 +467,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: lesson.type == LessonType.locked
-                          ? const Color(0xFF888888)
+                          ? DesignColors.textTertiary
                           : Colors.white,
                     ),
                     textAlign: TextAlign.center,
@@ -522,7 +527,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         return unitColor;
       case LessonType.current:
       case LessonType.locked:
-        return const Color(0xFF1E2127);
+        return DesignColors.backgroundCard;
     }
   }
 
@@ -535,7 +540,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       case LessonType.locked:
         return const Icon(
           Icons.lock_rounded,
-          color: Color(0xFF888888),
+          color: DesignColors.textTertiary,
           size: 24,
         );
     }
@@ -554,14 +559,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Complete previous lessons to unlock!"),
-          backgroundColor: Color(0xFF888888),
+          backgroundColor: DesignColors.textTertiary,
         ),
       );
     } else if (lesson.type == LessonType.current) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Starting: ${lesson.title}"),
-          backgroundColor: const Color(0xFFF1CC06),
+          backgroundColor: DesignColors.primary,
         ),
       );
     }

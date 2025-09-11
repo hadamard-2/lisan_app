@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lisan_app/design/theme.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -44,22 +45,26 @@ class CustomTextField extends StatelessWidget {
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: borderColor ?? const Color(0xFF2A2D33)),
+          borderSide: BorderSide(
+            color: borderColor ?? DesignColors.backgroundBorder,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: borderColor ?? const Color(0xFF2A2D33)),
+          borderSide: BorderSide(
+            color: borderColor ?? DesignColors.backgroundBorder,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFF1CC06), width: 2),
+          borderSide: const BorderSide(color: DesignColors.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red),
+          borderSide: const BorderSide(color: DesignColors.error),
         ),
         filled: true,
-        fillColor: const Color(0xFF1E2127),
+        fillColor: DesignColors.backgroundCard,
       ),
     );
   }

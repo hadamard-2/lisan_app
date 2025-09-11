@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lisan_app/design/theme.dart';
 
 class AuthButton extends StatelessWidget {
   final String text;
@@ -24,18 +25,23 @@ class AuthButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary
-              ? const Color(0xFFF1CC06)
-              : const Color(0xFF1E2127),
-          foregroundColor: isPrimary ? const Color(0xFF14161B) : Colors.white,
+              ? DesignColors.primary
+              : DesignColors.backgroundCard,
+          foregroundColor: isPrimary
+              ? DesignColors.backgroundDark
+              : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: isPrimary
                 ? BorderSide.none
-                : const BorderSide(color: Color(0xFF2A2D33), width: 1),
+                : const BorderSide(
+                    color: DesignColors.backgroundBorder,
+                    width: 1,
+                  ),
           ),
           elevation: isPrimary ? 8 : 0,
           shadowColor: isPrimary
-              ? const Color(0xFFF1CC06).withValues(alpha: 0.3)
+              ? DesignColors.primary.withValues(alpha: 0.3)
               : Colors.transparent,
         ),
         child: isLoading
@@ -46,8 +52,8 @@ class AuthButton extends StatelessWidget {
                   strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     isPrimary
-                        ? const Color(0xFF14161B)
-                        : const Color(0xFFF1CC06),
+                        ? DesignColors.backgroundDark
+                        : DesignColors.primary,
                   ),
                 ),
               )
@@ -57,7 +63,7 @@ class AuthButton extends StatelessWidget {
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
-                  color: isPrimary ? const Color(0xFF14161B) : Colors.white,
+                  color: isPrimary ? DesignColors.backgroundDark : Colors.white,
                 ),
               ),
       ),

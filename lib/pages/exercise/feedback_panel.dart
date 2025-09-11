@@ -125,14 +125,14 @@ class FeedbackPanel extends StatelessWidget {
                     if (!isCorrect && currentCorrectAnswer != null) ...[
                       const SizedBox(height: DesignSpacing.md),
                       Text(
-                        'Correct Answer:',
+                        'Correct Answer',
                         style: const TextStyle(
                           color: DesignColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: DesignSpacing.xs),
+                      const SizedBox(height: DesignSpacing.sm),
                       FutureBuilder<String?>(
                         future: currentCorrectAnswer!,
                         builder: (context, snapshot) {

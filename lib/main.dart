@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lisan_app/design/theme.dart';
 
 import 'package:lisan_app/exercise_handlers/exercise_handler_factory.dart';
 
@@ -238,15 +239,15 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         colorScheme: ColorScheme.dark(
-          primary: Color(0xFFF1CC06),
-          secondary: Color(0xFFF1CC06),
-          surface: Color(0xFF1E2127),
-          onPrimary: Color(0xFF14161B),
-          onSecondary: Color(0xFF14161B),
+          primary: DesignColors.primary,
+          secondary: DesignColors.primary,
+          surface: DesignColors.backgroundCard,
+          onPrimary: DesignColors.backgroundDark,
+          onSecondary: DesignColors.backgroundDark,
           onSurface: Color(0xFFE4E4E7),
-          error: Colors.red,
+          error: DesignColors.error,
         ),
-        scaffoldBackgroundColor: const Color(0xFF14161B),
+        scaffoldBackgroundColor: DesignColors.backgroundDark,
         textTheme: GoogleFonts.rubikTextTheme(ThemeData.dark().textTheme),
         splashColor: Colors.transparent,
         splashFactory: NoSplash.splashFactory,
@@ -342,8 +343,7 @@ class _MyAppState extends State<MyApp> {
       //   },
       // ),
       home: FutureBuilder<bool>(
-        future:
-            AuthService.isLoggedIn(),
+        future: AuthService.isLoggedIn(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
@@ -355,7 +355,7 @@ class _MyAppState extends State<MyApp> {
             );
           } else {
             final isLoggedIn = snapshot.data ?? false;
-            return isLoggedIn ? LoginPage() : HomePage();
+            return isLoggedIn ? LoginPage() : RootScreen();
           }
         },
       ),
