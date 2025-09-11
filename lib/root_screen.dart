@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/pages/home_page.dart';
 import 'package:lisan_app/pages/leaderboard_page.dart';
 import 'package:lisan_app/pages/user_stats_page.dart';
@@ -99,4 +100,30 @@ class _RootScreenState extends State<RootScreen> {
       ),
     );
   }
+
+  // Widget _buildNavItem(String icon, int index) {
+  //   final isSelected = _pageIndex == index;
+  //   return GestureDetector(
+  //     onTap: () => _onNavItemTapped(index),
+  //     behavior: HitTestBehavior.opaque,
+  //     child: Container(
+  //       padding: EdgeInsets.all(16),
+  //       child: Column(
+  //         children: [
+  //           SizedBox(height: 6),
+  //           Text(icon, style: GoogleFonts.notoColorEmoji(fontSize: 22)),
+  //           SizedBox(height: 6),
+  //           Container(
+  //             height: 2,
+  //             width: 18,
+  //             decoration: BoxDecoration(
+  //               color: isSelected ? DesignColors.primary : Colors.transparent,
+  //               borderRadius: BorderRadius.circular(1),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }

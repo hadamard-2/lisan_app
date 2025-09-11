@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
+import 'package:lisan_app/pages/auth/login_page.dart';
+import 'package:lisan_app/services/auth_service.dart';
 import '../widgets/custom_text_field.dart';
-import '../widgets/auth/auth_button.dart';
+import '../widgets/custom_button.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -13,6 +15,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -22,6 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void dispose() {
     _nameController.dispose();
+    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -36,6 +40,19 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     if (!RegExp(r"^[\p{L}\s\-']+$", unicode: true).hasMatch(value.trim())) {
       return 'Name can only contain letters, spaces, hyphens, and apostrophes';
+    }
+    return null;
+  }
+
+  String? _validateUsername(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Username is required';
+    }
+    if (value.trim().length < 3) {
+      return 'Username must be at least 3 characters';
+    }
+    if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(value.trim())) {
+      return 'Username can only contain letters, numbers, and underscores';
     }
     return null;
   }
@@ -76,9 +93,110 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> _handleLogout() async {
+    // Show confirmation dialog
+    bool? shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: DesignColors.backgroundCard,
+          title: const Text('Logout', style: TextStyle(color: Colors.white)),
+          content: const Text(
+            'Are you sure you want to log out?',
+            style: TextStyle(color: DesignColors.textSecondary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: DesignColors.textSecondary),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text(
+                'Log Out',
+                style: TextStyle(color: DesignColors.primary),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldLogout == true) {
+      // Handle logout logic here
+      AuthService.signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(
+      //     content: Text('Logged out successfully'),
+      //     backgroundColor: DesignColors.success,
+      //   ),
+      // );
+    }
+  }
+
+  Future<void> _handleDeleteAccount() async {
+    // Show confirmation dialog
+    bool? shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: DesignColors.backgroundCard,
+          title: const Text(
+            'Delete Account',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: const Text(
+            'This action cannot be undone. Are you sure you want to delete your account?',
+            style: TextStyle(color: DesignColors.textSecondary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: DesignColors.textSecondary),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: DesignColors.error),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldDelete == true) {
+      // Handle account deletion logic here
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => LoginPage()),
+      // );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Account deletion initiated'),
+          backgroundColor: DesignColors.error,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true, // default = true
       backgroundColor: DesignColors.backgroundDark,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -98,13 +216,16 @@ class _ProfilePageState extends State<ProfilePage> {
           icon: Icon(Icons.arrow_back_rounded, size: 32),
         ),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          // push content up by the height of the keyboard
+          padding: EdgeInsets.symmetric(
+            horizontal: 28,
+            vertical: 16,
+          ).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom + 16),
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Name Field
@@ -115,18 +236,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   keyboardType: TextInputType.name,
                   validator: _validateName,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 12),
 
                 // Username Field
-                // FIXME - change the controller & validator
                 CustomTextField(
-                  controller: _nameController,
+                  controller: _usernameController,
                   labelText: 'Username',
                   prefixIcon: Icons.person_rounded,
                   keyboardType: TextInputType.name,
-                  validator: _validateName,
+                  validator: _validateUsername,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 12),
 
                 // Email Field
                 CustomTextField(
@@ -136,7 +256,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   keyboardType: TextInputType.emailAddress,
                   validator: _validateEmail,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 12),
 
                 // Password Field
                 CustomTextField(
@@ -161,10 +281,27 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 32),
 
                 // Save Button
-                AuthButton(
+                CustomButton(
                   text: 'Save Changes',
                   onPressed: _handleSave,
                   isLoading: _isLoading,
+                ),
+                const SizedBox(height: 64),
+                CustomButton(
+                  text: 'Log Out',
+                  onPressed: _handleLogout,
+                  isPrimary: false,
+                  backgroundColor: DesignColors.backgroundCard,
+                  textColor: DesignColors.textPrimary,
+                ),
+                const SizedBox(height: 12),
+                CustomButton(
+                  text: 'Delete Account',
+                  onPressed: _handleDeleteAccount,
+                  isPrimary: false,
+                  backgroundColor: DesignColors.error.withValues(alpha: 0.1),
+                  borderColor: DesignColors.error.withValues(alpha: 0.2),
+                  textColor: DesignColors.error,
                 ),
                 const SizedBox(height: 20),
               ],

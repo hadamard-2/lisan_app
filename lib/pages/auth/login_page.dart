@@ -6,7 +6,7 @@ import 'package:lisan_app/services/auth_service.dart';
 
 import 'package:lisan_app/widgets/custom_text_field.dart';
 import 'package:lisan_app/widgets/auth/auth_header.dart';
-import 'package:lisan_app/widgets/auth/auth_button.dart';
+import 'package:lisan_app/widgets/custom_button.dart';
 import 'package:lisan_app/widgets/auth/google_signin_button.dart';
 import 'package:lisan_app/widgets/auth/auth_divider.dart';
 import 'package:lisan_app/widgets/auth/base_auth_page.dart';
@@ -149,143 +149,139 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
 
   @override
   Widget buildContent(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // App Logo and Title
+          const AuthHeader(),
+
+          const SizedBox(height: 40),
+
+          // Google Sign In Button
+          GoogleSignInButton(
+            onPressed: _handleGoogleSignIn,
+            isLoading: _isGoogleLoading,
+          ),
+
+          const SizedBox(height: 32),
+
+          // Divider
+          const AuthDivider(),
+
+          const SizedBox(height: 32),
+
+          // Email Field
+          CustomTextField(
+            controller: _emailController,
+            labelText: 'Email',
+            prefixIcon: Icons.email_outlined,
+            keyboardType: TextInputType.emailAddress,
+            validator: _validateEmail,
+            enabled: !_isLoading,
+          ),
+
+          const SizedBox(height: 20),
+
+          // Password Field
+          CustomTextField(
+            controller: _passwordController,
+            labelText: 'Password',
+            prefixIcon: Icons.lock_outline,
+            obscureText: !_isPasswordVisible,
+            validator: _validatePassword,
+            enabled: !_isLoading,
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+              ),
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Forgot Password Link
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      // Navigate to forgot password page
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Forgot password feature coming soon!'),
+                        ),
+                      );
+                    },
+              child: const Text(
+                'Forgot Password?',
+                style: TextStyle(
+                  color: DesignColors.primary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Login Button
+          CustomButton(
+            text: 'Login',
+            onPressed: _handleLogin,
+            isLoading: _isLoading,
+          ),
+
+          const SizedBox(height: 32),
+
+          // Sign Up Link
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // App Logo and Title
-              const AuthHeader(),
-        
-              const SizedBox(height: 40),
-        
-              // Google Sign In Button
-              GoogleSignInButton(
-                onPressed: _handleGoogleSignIn,
-                isLoading: _isGoogleLoading,
-              ),
-        
-              const SizedBox(height: 32),
-        
-              // Divider
-              const AuthDivider(),
-        
-              const SizedBox(height: 32),
-        
-              // Email Field
-              CustomTextField(
-                controller: _emailController,
-                labelText: 'Email',
-                prefixIcon: Icons.email_outlined,
-                keyboardType: TextInputType.emailAddress,
-                validator: _validateEmail,
-                enabled: !_isLoading,
-              ),
-        
-              const SizedBox(height: 20),
-        
-              // Password Field
-              CustomTextField(
-                controller: _passwordController,
-                labelText: 'Password',
-                prefixIcon: Icons.lock_outline,
-                obscureText: !_isPasswordVisible,
-                validator: _validatePassword,
-                enabled: !_isLoading,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
-                  ),
-                  onPressed: _isLoading
-                      ? null
-                      : () {
-                          setState(() {
-                            _isPasswordVisible = !_isPasswordVisible;
-                          });
-                        },
+              const Text(
+                "Don't have an account? ",
+                style: TextStyle(
+                  color: DesignColors.textTertiary,
+                  fontSize: 14,
                 ),
               ),
-        
-              const SizedBox(height: 8),
-        
-              // Forgot Password Link
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: _isLoading
-                      ? null
-                      : () {
-                          // Navigate to forgot password page
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Forgot password feature coming soon!'),
-                            ),
-                          );
-                        },
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      color: DesignColors.primary,
-                      fontWeight: FontWeight.w500,
-                    ),
+              TextButton(
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SignUpPage(),
+                          ),
+                        );
+                      },
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Text(
+                  'Sign Up',
+                  style: TextStyle(
+                    color: DesignColors.primary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              ),
-        
-              const SizedBox(height: 8),
-        
-              // Login Button
-              AuthButton(
-                text: 'Login',
-                onPressed: _handleLogin,
-                isLoading: _isLoading,
-              ),
-        
-              const SizedBox(height: 32),
-        
-              // Sign Up Link
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Don't have an account? ",
-                    style: TextStyle(
-                      color: DesignColors.textTertiary,
-                      fontSize: 14,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SignUpPage(),
-                              ),
-                            );
-                          },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        color: DesignColors.primary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }

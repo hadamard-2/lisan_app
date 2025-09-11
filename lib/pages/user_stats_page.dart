@@ -22,7 +22,7 @@ class _UserStatsPageState extends State<UserStatsPage>
   final String userInitials = "DS";
   final int streakCount = 47;
   final int totalXP = 2847;
-  final String currentLeague = "Gold";
+  final String currentLeague = "Amethyst";
   final int daysActive = 63;
   final int lessonsCompleted = 89;
   final int wordsLearned = 342;

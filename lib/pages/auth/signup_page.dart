@@ -6,7 +6,7 @@ import 'package:lisan_app/services/auth_service.dart';
 
 import 'package:lisan_app/widgets/custom_text_field.dart';
 import 'package:lisan_app/widgets/auth/auth_header.dart';
-import 'package:lisan_app/widgets/auth/auth_button.dart';
+import 'package:lisan_app/widgets/custom_button.dart';
 import 'package:lisan_app/widgets/auth/google_signin_button.dart';
 import 'package:lisan_app/widgets/auth/auth_divider.dart';
 import 'package:lisan_app/widgets/auth/base_auth_page.dart';
@@ -200,172 +200,171 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
 
   @override
   Widget buildContent(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 10),
-        
-              // App Logo and Title
-              const AuthHeader(),
-        
-              const SizedBox(height: 40),
-        
-              // Google Sign Up Button
-              GoogleSignInButton(
-                onPressed: _isLoading ? null : _handleGoogleSignUp,
-                isLoading: _isGoogleLoading,
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // App Logo and Title
+          const AuthHeader(),
+
+          const SizedBox(height: 40),
+
+          // Google Sign Up Button
+          GoogleSignInButton(
+            onPressed: _isLoading ? null : _handleGoogleSignUp,
+            isLoading: _isGoogleLoading,
+          ),
+
+          const SizedBox(height: 32),
+
+          // Divider
+          const AuthDivider(),
+
+          const SizedBox(height: 32),
+
+          // Name Field
+          CustomTextField(
+            controller: _nameController,
+            labelText: 'Full Name',
+            prefixIcon: Icons.person_outline,
+            keyboardType: TextInputType.name,
+            validator: _validateName,
+            enabled: !_isLoading,
+          ),
+
+          const SizedBox(height: 20),
+
+          // Email Field
+          CustomTextField(
+            controller: _emailController,
+            labelText: 'Email',
+            prefixIcon: Icons.email_outlined,
+            keyboardType: TextInputType.emailAddress,
+            validator: _validateEmail,
+            enabled: !_isLoading,
+          ),
+
+          const SizedBox(height: 20),
+
+          // Password Field
+          CustomTextField(
+            controller: _passwordController,
+            labelText: 'Password',
+            prefixIcon: Icons.lock_outline,
+            obscureText: !_isPasswordVisible,
+            validator: _validatePassword,
+            onChanged: _onPasswordChanged,
+            enabled: !_isLoading,
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
               ),
-        
-              const SizedBox(height: 32),
-        
-              // Divider
-              const AuthDivider(),
-        
-              const SizedBox(height: 32),
-        
-              // Name Field
-              CustomTextField(
-                controller: _nameController,
-                labelText: 'Full Name',
-                prefixIcon: Icons.person_outline,
-                keyboardType: TextInputType.name,
-                validator: _validateName,
-                enabled: !_isLoading,
-              ),
-        
-              const SizedBox(height: 20),
-        
-              // Email Field
-              CustomTextField(
-                controller: _emailController,
-                labelText: 'Email',
-                prefixIcon: Icons.email_outlined,
-                keyboardType: TextInputType.emailAddress,
-                validator: _validateEmail,
-                enabled: !_isLoading,
-              ),
-        
-              const SizedBox(height: 20),
-        
-              // Password Field
-              CustomTextField(
-                controller: _passwordController,
-                labelText: 'Password',
-                prefixIcon: Icons.lock_outline,
-                obscureText: !_isPasswordVisible,
-                validator: _validatePassword,
-                onChanged: _onPasswordChanged,
-                enabled: !_isLoading,
-                suffixIcon: IconButton(
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Confirm Password Field
+          CustomTextField(
+            controller: _confirmPasswordController,
+            labelText: 'Confirm Password',
+            prefixIcon: Icons.lock_outline,
+            obscureText: !_isConfirmPasswordVisible,
+            validator: _validateConfirmPassword,
+            onChanged: _onConfirmPasswordChanged,
+            borderColor: _getConfirmPasswordBorderColor(),
+            enabled: !_isLoading,
+            suffixIcon: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_confirmPasswordController.text.isNotEmpty)
+                  Icon(
+                    _passwordsMatch ? Icons.check_circle : Icons.error,
+                    color: _passwordsMatch
+                        ? DesignColors.success
+                        : DesignColors.error,
+                    size: 20,
+                  ),
+                const SizedBox(width: 8),
+                IconButton(
                   icon: Icon(
-                    _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                    _isConfirmPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility,
                   ),
                   onPressed: _isLoading
                       ? null
                       : () {
                           setState(() {
-                            _isPasswordVisible = !_isPasswordVisible;
+                            _isConfirmPasswordVisible =
+                                !_isConfirmPasswordVisible;
                           });
                         },
                 ),
-              ),
-        
-              const SizedBox(height: 20),
-        
-              // Confirm Password Field
-              CustomTextField(
-                controller: _confirmPasswordController,
-                labelText: 'Confirm Password',
-                prefixIcon: Icons.lock_outline,
-                obscureText: !_isConfirmPasswordVisible,
-                validator: _validateConfirmPassword,
-                onChanged: _onConfirmPasswordChanged,
-                borderColor: _getConfirmPasswordBorderColor(),
-                enabled: !_isLoading,
-                suffixIcon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (_confirmPasswordController.text.isNotEmpty)
-                      Icon(
-                        _passwordsMatch ? Icons.check_circle : Icons.error,
-                        color: _passwordsMatch ? DesignColors.success : DesignColors.error,
-                        size: 20,
-                      ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      icon: Icon(
-                        _isConfirmPasswordVisible
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                      ),
-                      onPressed: _isLoading
-                          ? null
-                          : () {
-                              setState(() {
-                                _isConfirmPasswordVisible =
-                                    !_isConfirmPasswordVisible;
-                              });
-                            },
-                    ),
-                  ],
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 32),
+
+          // Sign Up Button
+          CustomButton(
+            text: 'Create Account',
+            onPressed: _handleSignUp,
+            isLoading: _isLoading,
+          ),
+
+          const SizedBox(height: 32),
+
+          // Login Link
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "Already have an account? ",
+                style: TextStyle(
+                  color: DesignColors.textTertiary,
+                  fontSize: 14,
                 ),
               ),
-        
-              const SizedBox(height: 32),
-        
-              // Sign Up Button
-              AuthButton(
-                text: 'Create Account',
-                onPressed: _handleSignUp,
-                isLoading: _isLoading,
-              ),
-        
-              const SizedBox(height: 32),
-        
-              // Login Link
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Already have an account? ",
-                    style: TextStyle(color: DesignColors.textTertiary, fontSize: 14),
+              TextButton(
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
+                      },
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Text(
+                  'Login',
+                  style: TextStyle(
+                    color: DesignColors.primary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                   ),
-                  TextButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LoginPage(),
-                              ),
-                            );
-                          },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
-                        color: DesignColors.primary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-        
-              const SizedBox(height: 20),
             ],
           ),
-        ),
+
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }

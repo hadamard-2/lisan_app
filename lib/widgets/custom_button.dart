@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 
-class AuthButton extends StatelessWidget {
+class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
   final bool isPrimary;
   final double height;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final Color? textColor;
 
-  const AuthButton({
+  const CustomButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
     this.isPrimary = true,
     this.height = 56,
+    this.backgroundColor,
+    this.borderColor,
+    this.textColor,
   });
 
   @override
@@ -24,23 +30,23 @@ class AuthButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isPrimary
-              ? DesignColors.primary
-              : DesignColors.backgroundCard,
-          foregroundColor: isPrimary
-              ? DesignColors.backgroundDark
-              : Colors.white,
+          backgroundColor:
+              backgroundColor ??
+              (isPrimary ? DesignColors.primary : DesignColors.backgroundCard),
+          foregroundColor:
+              textColor ??
+              (isPrimary ? DesignColors.backgroundDark : Colors.white),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: isPrimary
+            side: isPrimary && backgroundColor == null
                 ? BorderSide.none
-                : const BorderSide(
-                    color: DesignColors.backgroundBorder,
+                : BorderSide(
+                    color: borderColor ?? DesignColors.backgroundBorder,
                     width: 1,
                   ),
           ),
-          elevation: isPrimary ? 8 : 0,
-          shadowColor: isPrimary
+          elevation: isPrimary && backgroundColor == null ? 8 : 0,
+          shadowColor: isPrimary && backgroundColor == null
               ? DesignColors.primary.withValues(alpha: 0.3)
               : Colors.transparent,
         ),
@@ -51,9 +57,10 @@ class AuthButton extends StatelessWidget {
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    isPrimary
-                        ? DesignColors.backgroundDark
-                        : DesignColors.primary,
+                    textColor ??
+                        (isPrimary
+                            ? DesignColors.backgroundDark
+                            : DesignColors.primary),
                   ),
                 ),
               )
@@ -63,7 +70,9 @@ class AuthButton extends StatelessWidget {
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
-                  color: isPrimary ? DesignColors.backgroundDark : Colors.white,
+                  color:
+                      textColor ??
+                      (isPrimary ? DesignColors.backgroundDark : Colors.white),
                 ),
               ),
       ),
