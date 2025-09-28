@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/lesson_stats.dart';
+import 'package:lisan_app/root_screen.dart';
 
 class LessonCompletionPage extends StatefulWidget {
   final LessonStats stats;
@@ -103,7 +104,7 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
     //   }
     // }
 
-    Navigator.pop(context);
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => RootScreen()));
   }
 
   @override
