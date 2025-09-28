@@ -45,12 +45,12 @@ class _SpeakingExerciseState extends State<SpeakingExercise> {
       width: double.infinity,
       padding: const EdgeInsets.all(DesignSpacing.md),
       child: Column(
-        spacing: DesignSpacing.xxl,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.isRequeued) PreviousMistakeIndicator(),
 
           InstructionText(instruction: widget.exerciseData.instruction),
+          SizedBox(height: DesignSpacing.xxl),
 
           ..._renderExerciseContent(),
         ],

@@ -56,12 +56,12 @@ class _CompleteSentenceExerciseState extends State<CompleteSentenceExercise> {
     return Container(
       padding: const EdgeInsets.all(DesignSpacing.md),
       child: Column(
-        spacing: DesignSpacing.xxl,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.isRequeued) PreviousMistakeIndicator(),
 
           InstructionText(instruction: widget.exerciseData.instruction),
+          SizedBox(height: DesignSpacing.xxl),
 
           // Exercise content based on subtype
           _renderExerciseContent(),

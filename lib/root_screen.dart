@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/pages/home_page.dart';
 import 'package:lisan_app/pages/leaderboard_page.dart';
 import 'package:lisan_app/pages/user_stats_page.dart';

@@ -43,8 +43,9 @@ class TextUtils {
 
     for (final rune in runes) {
       // skip spaces and control chars
-      if (rune == 0x20 || rune == 0x0A || rune == 0x0D || rune == 0x09)
+      if (rune == 0x20 || rune == 0x0A || rune == 0x0D || rune == 0x09) {
         continue;
+      }
 
       total++;
 

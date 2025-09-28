@@ -1,4 +1,5 @@
 import 'dart:math';
+// import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import 'package:lisan_app/design/theme.dart';
@@ -23,6 +24,7 @@ import 'package:lisan_app/pages/exercise/listening_exercise.dart';
 import 'package:lisan_app/pages/exercise/speaking_exercise.dart';
 import 'package:lisan_app/pages/exercise/translation_exercise.dart';
 import 'package:lisan_app/pages/exercise/complete_sentence_exercise.dart';
+// import 'package:lisan_app/services/auth_service.dart';
 
 class AdventurePath extends StatefulWidget {
   final List<UnitData> units;
@@ -46,7 +48,15 @@ class _AdventurePathState extends State<AdventurePath> {
   Map<String, ExerciseResult?> exerciseResults = {};
   late Map<String, ExerciseHandler> handlers;
 
-  // Exercise data
+  // late final Dio _dio;
+
+  // // Exercise data - now fetched from API
+  // // List<Map<String, dynamic>>? exerciseData;
+  // bool isLoading = true;
+
+  // // Hardcoded lesson ID for now - replace with dynamic value from lesson tap
+  // final String lessonId = 'dde8b8c5-cd62-4c34-b970-70f2b4218b85';
+
   final List<Map<String, dynamic>> exerciseData = [
     // --- Direct Translation ---
     {
@@ -230,6 +240,13 @@ class _AdventurePathState extends State<AdventurePath> {
   @override
   void initState() {
     super.initState();
+    // _dio = Dio(
+    //   BaseOptions(
+    //     connectTimeout: const Duration(seconds: 30),
+    //     receiveTimeout: const Duration(seconds: 30),
+    //   ),
+    // );
+    // _fetchExerciseData();
 
     handlers = {};
     for (var exercise in exerciseData) {
@@ -237,7 +254,56 @@ class _AdventurePathState extends State<AdventurePath> {
     }
   }
 
+  // Future<void> _fetchExerciseData() async {
+  //   final String url =
+  //       'http://insect-famous-ghastly.ngrok-free.app/api/lesson-service/exercises/lesson?lesson_id=$lessonId';
+  //   final String? token = await AuthService.getAccessToken();
+
+  //   try {
+  //     final response = await _dio.post(
+  //       url,
+  //       options: Options(
+  //         headers: {
+  //           'Authorization': 'Bearer $token',
+  //           'Content-Type': 'application/json',
+  //         },
+  //       ),
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       final List<dynamic> data = response.data; // already decoded JSON
+  //       setState(() {
+  //         exerciseData = data.map((e) => e as Map<String, dynamic>).toList();
+  //         isLoading = false;
+  //         handlers = {};
+  //         for (var exercise in exerciseData!) {
+  //           handlers[exercise['id']] = ExerciseHandlerFactory.createHandler(
+  //             exercise,
+  //           );
+  //         }
+  //       });
+  //     } else {
+  //       // Handle error
+  //       setState(() {
+  //         exerciseData = [];
+  //         isLoading = false;
+  //       });
+  //       print('Failed to load exercises: ${response.statusCode}');
+  //     }
+  //   } on DioException catch (e) {
+  //     setState(() {
+  //       exerciseData = [];
+  //       isLoading = false;
+  //     });
+  //     print('Error fetching exercises: ${e.message}');
+  //   }
+  // }
+
   Widget renderLessonTemplate() {
+    // if (isLoading || exerciseData == null) {
+    //   return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    // }
+
     return LessonTemplate(
       exercises: exerciseData.asMap().entries.map((entry) {
         final exercise = entry.value;
@@ -333,8 +399,8 @@ class _AdventurePathState extends State<AdventurePath> {
 
   // Mathematical positioning for smooth curves
   double _getLessonOffset(int lessonIndex) {
-    const double amplitude = -110.0;
-    const double frequency = pi / 3;
+    const double amplitude = -120.0;
+    const double frequency = pi / 4;
     return sin(lessonIndex * frequency) * amplitude;
   }
 
@@ -365,20 +431,6 @@ class _AdventurePathState extends State<AdventurePath> {
           child: Divider(color: DesignColors.backgroundBorder, thickness: 2),
         ),
       ],
-    );
-  }
-
-  Widget _buildTreasureChest(int globalIndex, bool previousCompleted) {
-    final offset = _getLessonOffset(globalIndex);
-    final asset = previousCompleted
-        ? 'assets/images/treasure_chest_open.png'
-        : 'assets/images/treasure_chest_closed.png';
-
-    final image = Image.asset(asset, width: 90, height: 90);
-
-    return Transform.translate(
-      offset: Offset(offset, 0),
-      child: previousCompleted ? image : Opacity(opacity: 0.65, child: image),
     );
   }
 
@@ -493,13 +545,6 @@ class _AdventurePathState extends State<AdventurePath> {
         ),
       );
     } else if (lesson.type == LessonType.current) {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: Text("Starting: ${lesson.title}"),
-      //     backgroundColor: DesignColors.primary,
-      //   ),
-      // );
-
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => renderLessonTemplate()),
@@ -527,24 +572,12 @@ class _AdventurePathState extends State<AdventurePath> {
       ) {
         final lesson = unit.lessons[lessonIndex];
 
-        // Add treasure chest after every 2nd lesson in each unit
-        if (lessonIndex != 0 && lessonIndex % 2 == 0) {
-          // Determine if the previous lesson was completed
-          bool previousCompleted =
-              unit.lessons[lessonIndex - 1].type == LessonType.completed;
-          pathWidgets.add(
-            _buildTreasureChest(globalLessonIndex, previousCompleted),
-          );
-          pathWidgets.add(const SizedBox(height: 27));
-          globalLessonIndex++; // Increment for treasure chest position
-        }
-
         pathWidgets.add(
           _buildLessonNode(lesson, globalLessonIndex, unit.color),
         );
 
         if (lessonIndex < unit.lessons.length - 1) {
-          pathWidgets.add(const SizedBox(height: 32));
+          pathWidgets.add(const SizedBox(height: 48));
         }
 
         globalLessonIndex++;

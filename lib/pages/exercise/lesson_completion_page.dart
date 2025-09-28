@@ -28,7 +28,7 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
     // Initialize Dio
     _dio = Dio();
     // NOTE - I need to replace this with the URL Abel gives me
-    _dio.options.baseUrl = 'https://your-api-base-url.com';
+    _dio.options.baseUrl = 'http://insect-famous-ghastly.ngrok-free.app/api';
     _dio.options.connectTimeout = const Duration(seconds: 10);
     _dio.options.receiveTimeout = const Duration(seconds: 10);
 
@@ -58,50 +58,52 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
   }
 
   Future<void> _claimXP() async {
-    if (_isClaimingXP) return; // Prevent multiple taps
+    // if (_isClaimingXP) return; // Prevent multiple taps
 
-    setState(() {
-      _isClaimingXP = true;
-    });
+    // setState(() {
+    //   _isClaimingXP = true;
+    // });
 
-    try {
-      final response = await _dio.post(
-        '/lessons/complete',
-        data: widget.stats.toJson(),
-      );
+    // try {
+    //   final response = await _dio.post(
+    //     '/lessons/complete',
+    //     data: widget.stats.toJson(),
+    //   );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        // Success - show success message
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('XP claimed successfully!'),
-              backgroundColor: DesignColors.success,
-            ),
-          );
+    //   if (response.statusCode == 200 || response.statusCode == 201) {
+    //     // Success - show success message
+    //     if (mounted) {
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         const SnackBar(
+    //           content: Text('XP claimed successfully!'),
+    //           backgroundColor: DesignColors.success,
+    //         ),
+    //       );
 
-          // Navigate back or to next screen
-          Navigator.of(context).pop();
-        }
-      }
-    } catch (e) {
-      // Handle error
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to claim XP: ${e.toString()}'),
-            backgroundColor: DesignColors.error,
-            action: SnackBarAction(label: 'RETRY', onPressed: _claimXP),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isClaimingXP = false;
-        });
-      }
-    }
+    //       // Navigate back or to next screen
+    //       Navigator.of(context).pop();
+    //     }
+    //   }
+    // } catch (e) {
+    //   // Handle error
+    //   if (mounted) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(
+    //         content: Text('Failed to claim XP: ${e.toString()}'),
+    //         backgroundColor: DesignColors.error,
+    //         action: SnackBarAction(label: 'RETRY', onPressed: _claimXP),
+    //       ),
+    //     );
+    //   }
+    // } finally {
+    //   if (mounted) {
+    //     setState(() {
+    //       _isClaimingXP = false;
+    //     });
+    //   }
+    // }
+
+    Navigator.pop(context);
   }
 
   @override

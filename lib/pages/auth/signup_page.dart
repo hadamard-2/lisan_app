@@ -179,23 +179,23 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
     // Simulate Google sign-up process
     await Future.delayed(const Duration(seconds: 2));
 
-    if (mounted) {
-      setState(() => _isGoogleLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Google sign-up not available yet!',
-            style: TextStyle(color: DesignColors.textPrimary),
-          ),
-          backgroundColor: DesignColors.backgroundCard,
-        ),
-      );
-    }
+    // if (mounted) {
+    //   setState(() => _isGoogleLoading = false);
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(
+    //       content: Text(
+    //         'Google sign-up not available yet!',
+    //         style: TextStyle(color: DesignColors.textPrimary),
+    //       ),
+    //       backgroundColor: DesignColors.backgroundCard,
+    //     ),
+    //   );
+    // }
 
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => RootScreen()),
-    // );
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => RootScreen()),
+    );
   }
 
   @override
