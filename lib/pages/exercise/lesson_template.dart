@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
-import 'package:lisan_app/pages/exercise/feedback_panel.dart';
-import 'package:lisan_app/pages/exercise/lesson_controls.dart';
-import 'package:lisan_app/pages/exercise/lesson_top_bar.dart';
+import 'package:lisan_app/widgets/exercise/feedback_panel.dart';
+import 'package:lisan_app/widgets/exercise/lesson_controls.dart';
+import 'package:lisan_app/widgets/exercise/lesson_top_bar.dart';
 import 'package:lisan_app/models/exercise_state.dart';
 import 'package:lisan_app/models/lesson_stats.dart';
 

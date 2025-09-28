@@ -14,8 +14,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _usernameController = TextEditingController();
+  final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -24,8 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _usernameController.dispose();
+    _fullNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -33,26 +31,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String? _validateName(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Name is required';
+      return 'Full Name is required';
     }
     if (value.trim().length < 2) {
-      return 'Name must be at least 2 characters';
+      return 'Full Name must be at least 2 characters';
     }
     if (!RegExp(r"^[\p{L}\s\-']+$", unicode: true).hasMatch(value.trim())) {
-      return 'Name can only contain letters, spaces, hyphens, and apostrophes';
-    }
-    return null;
-  }
-
-  String? _validateUsername(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Username is required';
-    }
-    if (value.trim().length < 3) {
-      return 'Username must be at least 3 characters';
-    }
-    if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(value.trim())) {
-      return 'Username can only contain letters, numbers, and underscores';
+      return 'Full Name can only contain letters, spaces, hyphens, and apostrophes';
     }
     return null;
   }
@@ -230,21 +215,11 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 // Name Field
                 CustomTextField(
-                  controller: _nameController,
-                  labelText: 'Name',
+                  controller: _fullNameController,
+                  labelText: 'Full Name',
                   prefixIcon: Icons.person_outline,
                   keyboardType: TextInputType.name,
                   validator: _validateName,
-                ),
-                const SizedBox(height: 12),
-
-                // Username Field
-                CustomTextField(
-                  controller: _usernameController,
-                  labelText: 'Username',
-                  prefixIcon: Icons.person_rounded,
-                  keyboardType: TextInputType.name,
-                  validator: _validateUsername,
                 ),
                 const SizedBox(height: 12),
 

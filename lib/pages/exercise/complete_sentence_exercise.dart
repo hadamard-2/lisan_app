@@ -3,10 +3,10 @@ import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/available_block.dart';
 import 'package:lisan_app/models/complete_sentence_exercise_data.dart';
 import 'package:lisan_app/pages/exercise/exercise_widget.dart';
-import 'package:lisan_app/pages/exercise/instruction_text.dart';
-import 'package:lisan_app/pages/exercise/partial_block_build_widget.dart';
-import 'package:lisan_app/pages/exercise/partial_free_text_widget.dart';
-import 'package:lisan_app/pages/exercise/previous_mistake_indicator.dart';
+import 'package:lisan_app/widgets/exercise/instruction_text.dart';
+import 'package:lisan_app/widgets/exercise/partial_block_build_widget.dart';
+import 'package:lisan_app/widgets/exercise/partial_free_text_widget.dart';
+import 'package:lisan_app/widgets/exercise/previous_mistake_indicator.dart';
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
 
 class CompleteSentenceExercise extends ExerciseWidget {
