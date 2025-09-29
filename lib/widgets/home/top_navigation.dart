@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/design/theme.dart';
 
-class TopNavigation extends StatelessWidget {
+class TopStatsBar extends StatelessWidget {
   final int streakCount;
   final int hearts;
 
-  const TopNavigation({
+  const TopStatsBar({
     super.key,
     required this.streakCount,
     required this.hearts,

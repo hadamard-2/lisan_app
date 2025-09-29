@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/design/theme.dart';
 
 class LessonTopBar extends StatelessWidget {
@@ -58,24 +59,22 @@ class LessonTopBar extends StatelessWidget {
           ),
 
           // Hearts Counter
-          Row(
-            spacing: DesignSpacing.xs,
-            children: [
-              const Icon(
-                Icons.favorite_rounded,
-                color: DesignColors.error,
-                size: 24,
-              ),
-
-              Text(
-                '$_remainingHearts',
-                style: const TextStyle(
-                  color: DesignColors.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: '❤️',
+                  style: GoogleFonts.notoColorEmoji(fontSize: 18),
                 ),
-              ),
-            ],
+                TextSpan(
+                  text: ' $_remainingHearts',
+                  style: GoogleFonts.rubik(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

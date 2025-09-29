@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       child: Column(
         children: [
           const SizedBox(height: 8),
-          TopNavigation(streakCount: streakCount, hearts: hearts),
+          TopStatsBar(streakCount: streakCount, hearts: hearts),
           const SizedBox(height: 4),
           WelcomeSection(userName: userName),
           const SizedBox(height: 8),
