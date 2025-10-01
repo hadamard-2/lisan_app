@@ -83,7 +83,7 @@ class _MatchPairsLessonTemplateState extends State<MatchPairsLessonTemplate>
 
     // Animation setup
     _newItemsController = AnimationController(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 250),
       vsync: this,
     );
     _newItemsAnimation = CurvedAnimation(
@@ -240,7 +240,7 @@ class _MatchPairsLessonTemplateState extends State<MatchPairsLessonTemplate>
     _selectedRightId = null;
 
     // Check if round is complete
-    Future.delayed(const Duration(milliseconds: 600), () {
+    Future.delayed(const Duration(milliseconds: 300), () {
       if (!mounted) return;
 
       // Use _roundCorrectMatches vs. current round size
@@ -273,7 +273,7 @@ class _MatchPairsLessonTemplateState extends State<MatchPairsLessonTemplate>
     }
 
     // Clear selections after error animation
-    Future.delayed(const Duration(milliseconds: 800), () {
+    Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) {
         setState(() {
           _leftItemStates[_selectedLeftId!] = MatchItemState.normal;
