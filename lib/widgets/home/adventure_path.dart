@@ -6,6 +6,7 @@ import 'package:lisan_app/design/theme.dart';
 
 import 'package:lisan_app/models/lesson_node.dart';
 import 'package:lisan_app/models/lesson_type.dart';
+import 'package:lisan_app/models/match_pairs_exercise_data.dart';
 import 'package:lisan_app/models/picture_multiple_choice_exercise_data.dart';
 import 'package:lisan_app/models/unit_data.dart';
 
@@ -22,6 +23,7 @@ import 'package:lisan_app/pages/exercise/fill_in_blank_exercise.dart';
 import 'package:lisan_app/pages/exercise/lesson_template.dart';
 import 'package:lisan_app/pages/exercise/lesson_completion_page.dart';
 import 'package:lisan_app/pages/exercise/listening_exercise.dart';
+import 'package:lisan_app/pages/exercise/match_pairs_lesson_template.dart';
 import 'package:lisan_app/pages/exercise/picture_multiple_choice_exercise.dart';
 import 'package:lisan_app/pages/exercise/speaking_exercise.dart';
 import 'package:lisan_app/pages/exercise/translation_exercise.dart';
@@ -248,111 +250,111 @@ class _AdventurePathState extends State<AdventurePath> {
       "id": "mp_lesson_001",
       "type": "matching_pairs",
       "subtype": "audio_text",
-      "instruction": "Match each audio clip with the correct text translation",
+      "instruction": "Tap the matching pairs",
       "data": {
         "left_items": [
           {
             "id": "audio_1",
-            "audio_url": "https://cdn.example.com/audio/mp_001_1.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_1.mp3",
           },
           {
             "id": "audio_2",
-            "audio_url": "https://cdn.example.com/audio/mp_001_2.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_2.mp3",
           },
           {
             "id": "audio_3",
-            "audio_url": "https://cdn.example.com/audio/mp_001_3.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_3.mp3",
           },
           {
             "id": "audio_4",
-            "audio_url": "https://cdn.example.com/audio/mp_001_4.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_4.mp3",
           },
           {
             "id": "audio_5",
-            "audio_url": "https://cdn.example.com/audio/mp_001_5.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_5.mp3",
           },
           {
             "id": "audio_6",
-            "audio_url": "https://cdn.example.com/audio/mp_001_6.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_6.mp3",
           },
           {
             "id": "audio_7",
-            "audio_url": "https://cdn.example.com/audio/mp_001_7.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_7.mp3",
           },
           {
             "id": "audio_8",
-            "audio_url": "https://cdn.example.com/audio/mp_001_8.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_8.mp3",
           },
           {
             "id": "audio_9",
-            "audio_url": "https://cdn.example.com/audio/mp_001_9.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_9.mp3",
           },
           {
             "id": "audio_10",
-            "audio_url": "https://cdn.example.com/audio/mp_001_10.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_10.mp3",
           },
           {
             "id": "audio_11",
-            "audio_url": "https://cdn.example.com/audio/mp_001_11.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_11.mp3",
           },
           {
             "id": "audio_12",
-            "audio_url": "https://cdn.example.com/audio/mp_001_12.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_12.mp3",
           },
           {
             "id": "audio_13",
-            "audio_url": "https://cdn.example.com/audio/mp_001_13.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_13.mp3",
           },
           {
             "id": "audio_14",
-            "audio_url": "https://cdn.example.com/audio/mp_001_14.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_14.mp3",
           },
           {
             "id": "audio_15",
-            "audio_url": "https://cdn.example.com/audio/mp_001_15.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_15.mp3",
           },
           {
             "id": "audio_16",
-            "audio_url": "https://cdn.example.com/audio/mp_001_16.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_16.mp3",
           },
           {
             "id": "audio_17",
-            "audio_url": "https://cdn.example.com/audio/mp_001_17.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_17.mp3",
           },
           {
             "id": "audio_18",
-            "audio_url": "https://cdn.example.com/audio/mp_001_18.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_18.mp3",
           },
           {
             "id": "audio_19",
-            "audio_url": "https://cdn.example.com/audio/mp_001_19.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_19.mp3",
           },
           {
             "id": "audio_20",
-            "audio_url": "https://cdn.example.com/audio/mp_001_20.mp3",
+            "audio_url": "assets/mp_lesson_voices/mp_001_20.mp3",
           },
         ],
         "right_items": [
-          {"id": "text_a", "text": "ወንበር"},
-          {"id": "text_b", "text": "ጠረጴዛ"},
-          {"id": "text_c", "text": "ውሃ"},
-          {"id": "text_d", "text": "ቤት"},
-          {"id": "text_e", "text": "ወተት"},
-          {"id": "text_f", "text": "መጽሐፍ"},
-          {"id": "text_g", "text": "እርሳስ"},
-          {"id": "text_h", "text": "በር"},
-          {"id": "text_i", "text": "መስኮት"},
-          {"id": "text_j", "text": "አልጋ"},
-          {"id": "text_k", "text": "ምግብ"},
-          {"id": "text_l", "text": "ቡና"},
-          {"id": "text_m", "text": "ሻይ"},
-          {"id": "text_n", "text": "መኪና"},
-          {"id": "text_o", "text": "መንገድ"},
-          {"id": "text_p", "text": "ዛፍ"},
-          {"id": "text_q", "text": "አበባ"},
-          {"id": "text_r", "text": "ሰማይ"},
-          {"id": "text_s", "text": "ፀሐይ"},
-          {"id": "text_t", "text": "ጨረቃ"},
+          {"id": "text_a", "text": "Chair"},
+          {"id": "text_b", "text": "Table"},
+          {"id": "text_c", "text": "Water"},
+          {"id": "text_d", "text": "House"},
+          {"id": "text_e", "text": "Milk"},
+          {"id": "text_f", "text": "Book"},
+          {"id": "text_g", "text": "Pencil"},
+          {"id": "text_h", "text": "Door"},
+          {"id": "text_i", "text": "Window"},
+          {"id": "text_j", "text": "Bed"},
+          {"id": "text_k", "text": "Food"},
+          {"id": "text_l", "text": "Coffee"},
+          {"id": "text_m", "text": "Tea"},
+          {"id": "text_n", "text": "Car"},
+          {"id": "text_o", "text": "Road"},
+          {"id": "text_p", "text": "Tree"},
+          {"id": "text_q", "text": "Flower"},
+          {"id": "text_r", "text": "Sky"},
+          {"id": "text_s", "text": "Sun"},
+          {"id": "text_t", "text": "Moon"},
         ],
         "correct_pairs": [
           {"left_id": "audio_1", "right_id": "text_a"},
@@ -382,7 +384,7 @@ class _AdventurePathState extends State<AdventurePath> {
       "id": "mp_lesson_002",
       "type": "matching_pairs",
       "subtype": "text_text",
-      "instruction": "Match the Amharic words with their English translations",
+      "instruction": "Tap the matching pairs",
       "data": {
         "left_items": [
           {"id": "amharic_1", "text": "ቤት"},
@@ -552,6 +554,21 @@ class _AdventurePathState extends State<AdventurePath> {
   //   }
   // }
 
+  Widget renderMatchPairsLessonTemplate() {
+    return MatchPairsLessonTemplate(
+      exerciseData: MatchPairsExerciseData.fromJson(matchPairsExerciseData[0]),
+      onLessonCompletion: (context, stats) => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LessonCompletionPage(stats: stats),
+        ),
+      ),
+      onExit: () => Navigator.pop(context),
+      hearts: 5,
+      itemsPerRound: 5,
+    );
+  }
+
   Widget renderLessonTemplate() {
     // if (isLoading || exerciseData == null) {
     //   return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -662,7 +679,7 @@ class _AdventurePathState extends State<AdventurePath> {
   // Mathematical positioning for smooth curves
   double _getLessonOffset(int lessonIndex) {
     const double amplitude = -120.0;
-    const double frequency = pi / 4;
+    const double frequency = 1;
     return sin(lessonIndex * frequency) * amplitude;
   }
 
@@ -809,7 +826,10 @@ class _AdventurePathState extends State<AdventurePath> {
     } else if (lesson.type == LessonType.current) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => renderLessonTemplate()),
+        MaterialPageRoute(
+          // builder: (context) => renderLessonTemplate(),
+          builder: (context) => renderMatchPairsLessonTemplate(),
+        ),
       );
     }
   }

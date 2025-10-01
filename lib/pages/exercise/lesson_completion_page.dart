@@ -104,7 +104,10 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
     //   }
     // }
 
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => RootScreen()));
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => RootScreen()),
+    );
   }
 
   @override
@@ -170,7 +173,9 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
               SlideTransition(
                 position: _slideAnimation,
                 child: Row(
-                  spacing: DesignSpacing.md,
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  spacing: 12,
                   children: [
                     Expanded(
                       flex: 1,
