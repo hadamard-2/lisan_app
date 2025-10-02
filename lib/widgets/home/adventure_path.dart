@@ -85,7 +85,6 @@ class _AdventurePathState extends State<AdventurePath> {
         "correct_answer": "መጽሐፍ ማንበብ እወዳለሁ።",
       },
     },
-
     // --- Complete Sentence ---
     {
       "id": "cs_001",
@@ -244,8 +243,325 @@ class _AdventurePathState extends State<AdventurePath> {
     },
   ];
 
+  final List<Map<String, dynamic>> newExerciseData = [
+    // --- Direct Translation ---
+    {
+      "id": "tr_001",
+      "type": "translation",
+      "subtype": "block_build",
+      "instruction": "Translate this sentence",
+      "data": {
+        "prompt_words": [
+          {
+            "text": "ወንድሜ",
+            "audio_url": "assets/sample_voices/tr_001_1.wav",
+            "hints": ["brother"],
+          },
+          {
+            "text": "ከእህቴ",
+            "audio_url": "assets/sample_voices/tr_001_2.wav",
+            "hints": ["sister"],
+          },
+          {
+            "text": "ይረዝማል",
+            "audio_url": "assets/sample_voices/tr_001_3.wav",
+            "hints": ["taller"],
+          },
+        ],
+        "prompt_audio_url": "assets/sample_voices/tr_001.wav",
+        "blocks": ["taller", "than", "My", "brother", "sister", "my", "is"],
+        "correct_answer": "My brother is taller than my sister",
+      },
+    },
+    {
+      "id": "tr_002",
+      "type": "translation",
+      "subtype": "free_text",
+      "instruction": "Translate this sentence",
+      "data": {
+        "prompt_words": [
+          {"text": "I"},
+          {"text": "love"},
+          {"text": "to"},
+          {"text": "read"},
+          {"text": "books."},
+        ],
+        "correct_answer": "መጽሐፍ ማንበብ እወዳለሁ።",
+      },
+    },
+
+    // --- Complete Sentence ---
+    {
+      "id": "cs_001",
+      "type": "complete_sentence",
+      "subtype": "partial_free_text",
+      "instruction": "Complete the sentence",
+      "data": {
+        "reference_text": "She is a doctor.",
+        "display_tokens": [
+          {
+            "text": "እሷ",
+            "audio_url": "assets/sample_voices/cs_001_1.wav",
+            "hints": ["She"],
+          },
+          {"text": "____"},
+          {
+            "text": "ናት",
+            "audio_url": "assets/sample_voices/cs_001_3.wav",
+            "hints": ["is"],
+          },
+        ],
+        "correct_answer": "እሷ ሀኪም ናት",
+      },
+    },
+    {
+      "id": "cs_002",
+      "type": "complete_sentence",
+      "subtype": "partial_block_build",
+      "instruction": "Complete the sentence",
+      "data": {
+        "reference_text": "This beautiful flower smells good.",
+        "display_tokens": [
+          {
+            "text": "ይህ",
+            "audio_url": "assets/sample_voices/cs_002_1.wav",
+            "hints": ["This"],
+          },
+          {"text": "____"},
+          {
+            "text": "አበባ",
+            "audio_url": "assets/sample_voices/cs_002_3.wav",
+            "hints": ["flower"],
+          },
+          {
+            "text": "ጥሩ",
+            "audio_url": "assets/sample_voices/cs_002_4.wav",
+            "hints": ["good"],
+          },
+          {"text": "____"},
+          {
+            "text": "አለው።",
+            "audio_url": "assets/sample_voices/cs_002_6.wav",
+            "hints": ["has"],
+          },
+        ],
+        "blocks": ["ቆንጆ", "መዓዛ", "ቀለም"],
+        "correct_answer": "ይህ ቆንጆ አበባ ጥሩ መዓዛ አለው",
+      },
+    },
+
+    // --- Fill in Blank ---
+    {
+      "id": "fb_001",
+      "type": "fill_in_blank",
+      "instruction": "Choose the correct word for the blank.",
+      "data": {
+        "display_tokens": [
+          {
+            "text": "እኔ",
+            "audio_url": "assets/sample_voices/fb_001_1.wav",
+            "hints": ["I"],
+          },
+          {"text": "____"},
+          {
+            "text": "እጠጣለሁ።",
+            "audio_url": "assets/sample_voices/fb_001_3.wav",
+            "hints": ["drink"],
+          },
+        ],
+        "options": [
+          {"id": 0, "text": "ውሃ"},
+          {"id": 1, "text": "ሽንኩርት"},
+          {"id": 2, "text": "ወንበር"},
+        ],
+        "correct_option_id": 0,
+      },
+    },
+    {
+      "id": "fb_002",
+      "type": "fill_in_blank",
+      "instruction": "Select the pair that best fits the blanks.",
+      "data": {
+        "display_tokens": [
+          {"text": "____"},
+          {
+            "text": "ከገበያ",
+            "audio_url": "assets/sample_voices/fb_002_2.wav",
+            "hints": ["market"],
+          },
+          {"text": "____"},
+          {
+            "text": "ገዛች",
+            "audio_url": "assets/sample_voices/fb_002_4.wav",
+            "hints": ["bought"],
+          },
+        ],
+        "options": [
+          {"id": 0, "text": "እሱ ... ቦርሳ"},
+          {"id": 1, "text": "እሷ ... አትክልት"},
+          {"id": 2, "text": "እነሱ ... ወተት"},
+        ],
+        "correct_option_id": 1,
+      },
+    },
+
+    // --- Speaking ---
+    {
+      "id": "sp_001",
+      "type": "speaking",
+      "instruction": "Speak this sentence aloud",
+      "data": {
+        "prompt_words": [
+          {
+            "text": "ሰላም",
+            "audio_url": "assets/sample_voices/sp_001_1.wav",
+            "hints": ["Hello"],
+          },
+          {
+            "text": "እንዴት",
+            "audio_url": "assets/sample_voices/sp_001_2.wav",
+            "hints": ["How"],
+          },
+          {
+            "text": "ነህ?",
+            "audio_url": "assets/sample_voices/sp_001_3.wav",
+            "hints": ["are you?"],
+          },
+        ],
+        "prompt_audio_url": "assets/sample_voices/sp_001.wav",
+        "correct_answer": "ሰላም እንዴት ነህ?",
+      },
+    },
+
+    // --- Listening ---
+    {
+      "id": "ls_001",
+      "type": "listening",
+      "subtype": "choose_missing",
+      "instruction": "Listen and choose the correct missing word.",
+      "data": {
+        "prompt_audio_url": "assets/sample_voices/ls_001.wav",
+        "display_tokens": [
+          {
+            "text": "እሷ",
+            "audio_url": "assets/sample_voices/ls_001_1.wav",
+            "hints": ["She"],
+          },
+          {"text": "____"},
+          {
+            "text": "ትወዳለች።",
+            "audio_url": "assets/sample_voices/ls_001_3.wav",
+            "hints": ["likes"],
+          },
+        ],
+        "options": [
+          {
+            "id": 0,
+            "option_audio_url": "assets/sample_voices/ls_001_1.wav",
+            "text": "ቡና",
+          },
+          {
+            "id": 1,
+            "option_audio_url": "assets/sample_voices/ls_001_2.wav",
+            "text": "ቃና",
+          },
+        ],
+        "correct_option_id": 0,
+      },
+    },
+    {
+      "id": "ls_002",
+      "type": "listening",
+      "subtype": "type_missing",
+      "instruction": "Listen and type the missing word.",
+      "data": {
+        "prompt_audio_url": "assets/sample_voices/ls_002.wav",
+        "display_tokens": [
+          {
+            "text": "ዛሬ",
+            "audio_url": "assets/sample_voices/ls_002_1.wav",
+            "hints": ["today"],
+          },
+          {
+            "text": "በጣም",
+            "audio_url": "assets/sample_voices/ls_002_2.wav",
+            "hints": ["very"],
+          },
+          {"text": "____"},
+          {
+            "text": "ነው።",
+            "audio_url": "assets/sample_voices/ls_002_4.wav",
+            "hints": ["is"],
+          },
+        ],
+        "correct_answer": "ሞቃታማ",
+      },
+    },
+    {
+      "id": "ls_003",
+      "type": "listening",
+      "subtype": "free_text",
+      "instruction": "Type what you hear",
+      "data": {
+        "prompt_audio_url": "assets/sample_voices/ls_003.wav",
+        "correct_answer": "የት ነው ያለኸው አሁን?",
+      },
+    },
+    {
+      "id": "ls_004",
+      "type": "listening",
+      "subtype": "block_build",
+      "instruction": "Tap what you hear",
+      "data": {
+        "prompt_audio_url": "assets/sample_voices/ls_004.wav",
+        "blocks": ["እየሄድኩ", "ትምህርት", "ነው", "ቤት"],
+        "correct_answer": "ትምህርት ቤት እየሄድኩ ነው",
+      },
+    },
+
+    // --- Picture Multiple Choice ---
+    {
+      "id": "pc_001",
+      "type": "picture_multiple_choice",
+      "subtype": "block_build",
+      "instruction": "Select the correct image",
+      "data": {
+        "prompt_words": [
+          {
+            "text": "በሬ",
+            "audio_url": "assets/sample_voices/pc_001_1.wav",
+            "hints": ["Ox"],
+          },
+        ],
+        "options": [
+          {
+            "id": 0,
+            "image_url": "assets/images/picture_choice (1).png",
+            "label": "Cat",
+          },
+          {
+            "id": 1,
+            "image_url": "assets/images/picture_choice (2).png",
+            "label": "Ox",
+          },
+          {
+            "id": 2,
+            "image_url": "assets/images/picture_choice (3).png",
+            "label": "Dog",
+          },
+          {
+            "id": 3,
+            "image_url": "assets/images/picture_choice (4).png",
+            "label": "Sheep",
+          },
+        ],
+        "correct_option_id": 1,
+      },
+    },
+  ];
+
   final List<Map<String, dynamic>> matchPairsExerciseData = [
-    // --- Match Pairs ---
+    // --- Matching Pairs ---
     {
       "id": "mp_lesson_001",
       "type": "matching_pairs",
@@ -504,7 +820,7 @@ class _AdventurePathState extends State<AdventurePath> {
     // _fetchExerciseData();
 
     handlers = {};
-    for (var exercise in exerciseData) {
+    for (var exercise in newExerciseData) {
       handlers[exercise['id']] = ExerciseHandlerFactory.createHandler(exercise);
     }
   }
@@ -575,7 +891,7 @@ class _AdventurePathState extends State<AdventurePath> {
     // }
 
     return LessonTemplate(
-      exercises: exerciseData.asMap().entries.map((entry) {
+      exercises: newExerciseData.asMap().entries.map((entry) {
         final exercise = entry.value;
         final exerciseId = exercise['id'];
 
@@ -827,8 +1143,8 @@ class _AdventurePathState extends State<AdventurePath> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          // builder: (context) => renderLessonTemplate(),
-          builder: (context) => renderMatchPairsLessonTemplate(),
+          builder: (context) => renderLessonTemplate(),
+          // builder: (context) => renderMatchPairsLessonTemplate(),
         ),
       );
     }

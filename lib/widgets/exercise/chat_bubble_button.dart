@@ -160,36 +160,25 @@ class _BubbleOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     final bubbleWidth = 280.0;
     final bubbleHeight = 120.0;
     final triangleSize = 10.0;
+    final spacing = 16.0;
 
     // Position bubble below the button, centered
     double left =
         buttonPosition.dx + (buttonSize.width / 2) - (bubbleWidth / 2);
-    double top = buttonPosition.dy + buttonSize.height + triangleSize + 8;
+    double top = buttonPosition.dy + buttonSize.height + spacing;
 
-    // Ensure bubble stays within screen bounds horizontally
+    // Ensure horizontal bounds
     final minLeft = 16.0;
     final maxLeft = screenWidth - bubbleWidth - 16.0;
     left = left.clamp(minLeft, maxLeft);
 
-    // Check if bubble would go off screen vertically
-    if (top + bubbleHeight > screenHeight - 16) {
-      // Show above button instead
-      top = buttonPosition.dy - bubbleHeight - triangleSize - 8;
-    }
-
-    // Calculate triangle position (centered on button)
+    // Calculate triangle position - centered on button, pointing up from top of bubble
     double triangleLeft =
         buttonPosition.dx + (buttonSize.width / 2) - (triangleSize / 2);
-    double triangleTop = buttonPosition.dy + buttonSize.height;
-
-    bool showAbove = top < buttonPosition.dy;
-    if (showAbove) {
-      triangleTop = buttonPosition.dy - triangleSize;
-    }
+    double triangleTop = top - triangleSize;
 
     return GestureDetector(
       onTap: onDismiss,
@@ -264,12 +253,10 @@ class _BubbleOverlay extends StatelessWidget {
               opacity: fadeAnimation,
               child: ScaleTransition(
                 scale: scaleAnimation,
+                alignment: Alignment.topCenter,
                 child: CustomPaint(
                   size: Size(triangleSize, triangleSize),
-                  painter: _TrianglePainter(
-                    color: bubbleColor,
-                    pointsDown: !showAbove,
-                  ),
+                  painter: _TrianglePainter(color: bubbleColor),
                 ),
               ),
             ),
@@ -282,9 +269,8 @@ class _BubbleOverlay extends StatelessWidget {
 
 class _TrianglePainter extends CustomPainter {
   final Color color;
-  final bool pointsDown;
 
-  _TrianglePainter({required this.color, required this.pointsDown});
+  _TrianglePainter({required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -294,17 +280,10 @@ class _TrianglePainter extends CustomPainter {
 
     final path = Path();
 
-    if (pointsDown) {
-      // Triangle pointing down
-      path.moveTo(0, 0);
-      path.lineTo(size.width / 2, size.height);
-      path.lineTo(size.width, 0);
-    } else {
-      // Triangle pointing up
-      path.moveTo(0, size.height);
-      path.lineTo(size.width / 2, 0);
-      path.lineTo(size.width, size.height);
-    }
+    // Triangle pointing up
+    path.moveTo(0, size.height);
+    path.lineTo(size.width / 2, 0);
+    path.lineTo(size.width, size.height);
 
     path.close();
     canvas.drawPath(path, paint);
