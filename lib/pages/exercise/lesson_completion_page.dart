@@ -306,7 +306,7 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
               Text(
                 value,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),

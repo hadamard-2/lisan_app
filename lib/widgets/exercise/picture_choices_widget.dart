@@ -46,7 +46,7 @@ class PictureChoicesWidget extends StatelessWidget {
             ),
             child: Column(
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              spacing: DesignSpacing.md,
+              spacing: DesignSpacing.sm,
               children: [
                 Expanded(
                   flex: 3,

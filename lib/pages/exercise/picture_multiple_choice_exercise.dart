@@ -63,7 +63,7 @@ class _PictureMultipleChoiceExerciseState
           if (widget.isRequeued) const PreviousMistakeIndicator(),
 
           InstructionText(instruction: instruction),
-          const SizedBox(height: DesignSpacing.xxl),
+          const SizedBox(height: DesignSpacing.xl),
 
           ..._buildExerciseContent(options),
         ],
@@ -77,7 +77,7 @@ class _PictureMultipleChoiceExerciseState
         text: widget.exerciseData.promptText,
         audioUrl: widget.exerciseData.audioUrl,
       ),
-      const SizedBox(height: DesignSpacing.xxxl),
+      const SizedBox(height: DesignSpacing.xl),
       PictureChoicesWidget(
         options: options,
         selectedOptionIndex: _selectedOptionIndex,

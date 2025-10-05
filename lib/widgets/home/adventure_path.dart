@@ -1,6 +1,9 @@
-import 'dart:math';
 // import 'package:dio/dio.dart';
+import 'dart:math';
+import 'package:json5/json5.dart' as json5;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:lisan_app/design/theme.dart';
 
@@ -28,6 +31,7 @@ import 'package:lisan_app/pages/exercise/picture_multiple_choice_exercise.dart';
 import 'package:lisan_app/pages/exercise/speaking_exercise.dart';
 import 'package:lisan_app/pages/exercise/translation_exercise.dart';
 import 'package:lisan_app/pages/exercise/complete_sentence_exercise.dart';
+
 // import 'package:lisan_app/services/auth_service.dart';
 
 class AdventurePath extends StatefulWidget {
@@ -61,716 +65,74 @@ class _AdventurePathState extends State<AdventurePath> {
   // // Hardcoded lesson ID for now - replace with dynamic value from lesson tap
   // final String lessonId = 'dde8b8c5-cd62-4c34-b970-70f2b4218b85';
 
-  final List<Map<String, dynamic>> exerciseData = [
-    // --- Direct Translation ---
-    {
-      "id": "tr_001",
-      "type": "translation",
-      "subtype": "block_build",
-      "instruction": "Translate this sentence",
-      "data": {
-        "prompt_text": "ወንድሜ ከእህቴ ይረዝማል",
-        "prompt_audio_url": "assets/sample_voices/tr_001.wav",
-        "blocks": ["taller", "than", "My", "brother", "sister", "my", "is"],
-        "correct_answer": "My brother is taller than my sister",
-      },
-    },
-    {
-      "id": "tr_002",
-      "type": "translation",
-      "subtype": "free_text",
-      "instruction": "Translate this sentence",
-      "data": {
-        "prompt_text": "I love to read books.",
-        "correct_answer": "መጽሐፍ ማንበብ እወዳለሁ።",
-      },
-    },
-    // --- Complete Sentence ---
-    {
-      "id": "cs_001",
-      "type": "complete_sentence",
-      "subtype": "partial_free_text",
-      "instruction": "Complete the sentence",
-      "data": {
-        "reference_text": "She is a doctor.",
-        "display_text": "እሷ ____ ናት።",
-        "correct_answer": "እሷ ሀኪም ናት።",
-      },
-    },
-    {
-      "id": "cs_002",
-      "type": "complete_sentence",
-      "subtype": "partial_block_build",
-      "instruction": "Complete the sentence",
-      "data": {
-        "reference_text": "This beautiful flower smells good.",
-        "display_text": "ይህ ____ አበባ ጥሩ ____ አለው።",
-        "blocks": ["ቆንጆ", "መዓዛ", "ቀለም"],
-        "correct_answer": "ይህ ቆንጆ አበባ ጥሩ መዓዛ አለው",
-      },
-    },
+  List<Map<String, dynamic>> exerciseData = [];
+  // List<Map<String, dynamic>> newExerciseData = [];
+  List<Map<String, dynamic>> matchPairsExerciseData = [];
 
-    // --- Fill in Blank ---
-    {
-      "id": "fb_001",
-      "type": "fill_in_blank",
-      "instruction": "Choose the correct word for the blank.",
-      "data": {
-        "display_text": "እኔ ____ እጠጣለሁ።",
-        "options": [
-          {"id": 0, "text": "ውሃ"},
-          {"id": 1, "text": "ሽንኩርት"},
-          {"id": 2, "text": "ወንበር"},
-        ],
-        "correct_option_id": 0,
-      },
-    },
-    {
-      "id": "fb_002",
-      "type": "fill_in_blank",
-      "instruction": "Select the pair that best fits the blanks.",
-      "data": {
-        "display_text": "____ ከገበያ ____ ገዛች።",
-        "options": [
-          {"id": 0, "text": "እሱ ... ቦርሳ"},
-          {"id": 1, "text": "እሷ ... አትክልት"},
-          {"id": 2, "text": "እነሱ ... ወተት"},
-        ],
-        "correct_option_id": 1,
-      },
-    },
+  @override
+  void initState() {
+    super.initState();
+    // _dio = Dio(
+    //   BaseOptions(
+    //     connectTimeout: const Duration(seconds: 30),
+    //     receiveTimeout: const Duration(seconds: 30),
+    //   ),
+    // );
+    // _fetchExerciseData();
 
-    // --- Speaking ---
-    {
-      "id": "sp_001",
-      "type": "speaking",
-      "instruction": "Speak this sentence aloud",
-      "data": {
-        "prompt_text": "ሰላም እንዴት ነህ?",
-        "prompt_audio_url": "assets/sample_voices/sp_001.wav",
-        "correct_answer": "ሰላም እንዴት ነህ?",
-      },
-    },
+    _initializeData();
+  }
 
-    // --- Listening ---
-    {
-      "id": "ls_001",
-      "type": "listening",
-      "subtype": "choose_missing",
-      "instruction": "Listen and choose the correct missing word.",
-      "data": {
-        "prompt_audio_url": "assets/sample_voices/ls_001.wav",
-        "display_text": "እሷ ____ ትወዳለች።",
-        "options": [
-          {
-            "id": 0,
-            "option_audio_url": "assets/sample_voices/ls_001_1.wav",
-            "text": "ቡና",
-          },
-          {
-            "id": 1,
-            "option_audio_url": "assets/sample_voices/ls_001_2.wav",
-            "text": "ቃና",
-          },
-        ],
-        "correct_option_id": 0,
-      },
-    },
-    {
-      "id": "ls_002",
-      "type": "listening",
-      "subtype": "type_missing",
-      "instruction": "Listen and type the missing word.",
-      "data": {
-        "prompt_audio_url": "assets/sample_voices/ls_002.wav",
-        "display_text": "ዛሬ በጣም ____ ነው።",
-        "correct_answer": "ሞቃታማ",
-      },
-    },
-    {
-      "id": "ls_003",
-      "type": "listening",
-      "subtype": "free_text",
-      "instruction": "Type what you hear",
-      "data": {
-        "prompt_audio_url": "assets/sample_voices/ls_003.wav",
-        "correct_answer": "የት ነው ያለኸው አሁን?",
-      },
-    },
-    {
-      "id": "ls_004",
-      "type": "listening",
-      "subtype": "block_build",
-      "instruction": "Tap what you hear",
-      "data": {
-        "prompt_audio_url": "assets/sample_voices/ls_004.wav",
-        "blocks": ["እየሄድኩ", "ትምህርት", "ነው", "ቤት"],
-        "correct_answer": "ትምህርት ቤት እየሄድኩ ነው",
-      },
-    },
-    // --- Picture Multiple Choice ---
-    {
-      "id": "pc_001",
-      "type": "picture_multiple_choice",
-      "subtype": "block_build",
-      "instruction": "Select the correct image",
-      "data": {
-        "prompt_text": "በሬ",
-        "options": [
-          {
-            'id': 0,
-            'image_url': 'assets/images/picture_choice (1).png',
-            'label': 'Cat',
-          },
-          {
-            'id': 1,
-            'image_url': 'assets/images/picture_choice (2).png',
-            'label': 'Ox',
-          },
-          {
-            'id': 2,
-            'image_url': 'assets/images/picture_choice (3).png',
-            'label': 'Dog',
-          },
-          {
-            'id': 3,
-            'image_url': 'assets/images/picture_choice (4).png',
-            'label': 'Sheep',
-          },
-        ],
-        "correct_option_id": 1,
-      },
-    },
-  ];
+  Future<void> _initializeData() async {
+    exerciseData = await _loadData(
+      'assets/data/exerciseData.json5',
+      'exerciseData',
+    );
+    matchPairsExerciseData = await _loadData(
+      'assets/data/matchPairsExerciseData.json5',
+      'matchPairsExerciseData',
+    );
 
-  final List<Map<String, dynamic>> newExerciseData = [
-    // --- Direct Translation ---
-    {
-      "id": "tr_001",
-      "type": "translation",
-      "subtype": "block_build",
-      "instruction": "Translate this sentence",
-      "data": {
-        "prompt_words": [
-          {
-            "text": "ወንድሜ",
-            "audio_url": "assets/sample_voices/tr_001_1.wav",
-            "hints": ["brother"],
-          },
-          {
-            "text": "ከእህቴ",
-            "audio_url": "assets/sample_voices/tr_001_2.wav",
-            "hints": ["sister"],
-          },
-          {
-            "text": "ይረዝማል",
-            "audio_url": "assets/sample_voices/tr_001_3.wav",
-            "hints": ["taller"],
-          },
-        ],
-        "prompt_audio_url": "assets/sample_voices/tr_001.wav",
-        "blocks": ["taller", "than", "My", "brother", "sister", "my", "is"],
-        "correct_answer": "My brother is taller than my sister",
-      },
-    },
-    {
-      "id": "tr_002",
-      "type": "translation",
-      "subtype": "free_text",
-      "instruction": "Translate this sentence",
-      "data": {
-        "prompt_words": [
-          {"text": "I"},
-          {"text": "love"},
-          {"text": "to"},
-          {"text": "read"},
-          {"text": "books."},
-        ],
-        "correct_answer": "መጽሐፍ ማንበብ እወዳለሁ።",
-      },
-    },
+    handlers = {};
+    for (var exercise in exerciseData) {
+      handlers[exercise['id']] = ExerciseHandlerFactory.createHandler(exercise);
+    }
 
-    // --- Complete Sentence ---
-    {
-      "id": "cs_001",
-      "type": "complete_sentence",
-      "subtype": "partial_free_text",
-      "instruction": "Complete the sentence",
-      "data": {
-        "reference_text": "She is a doctor.",
-        "display_tokens": [
-          {
-            "text": "እሷ",
-            "audio_url": "assets/sample_voices/cs_001_1.wav",
-            "hints": ["She"],
-          },
-          {"text": "____"},
-          {
-            "text": "ናት",
-            "audio_url": "assets/sample_voices/cs_001_3.wav",
-            "hints": ["is"],
-          },
-        ],
-        "correct_answer": "እሷ ሀኪም ናት",
-      },
-    },
-    {
-      "id": "cs_002",
-      "type": "complete_sentence",
-      "subtype": "partial_block_build",
-      "instruction": "Complete the sentence",
-      "data": {
-        "reference_text": "This beautiful flower smells good.",
-        "display_tokens": [
-          {
-            "text": "ይህ",
-            "audio_url": "assets/sample_voices/cs_002_1.wav",
-            "hints": ["This"],
-          },
-          {"text": "____"},
-          {
-            "text": "አበባ",
-            "audio_url": "assets/sample_voices/cs_002_3.wav",
-            "hints": ["flower"],
-          },
-          {
-            "text": "ጥሩ",
-            "audio_url": "assets/sample_voices/cs_002_4.wav",
-            "hints": ["good"],
-          },
-          {"text": "____"},
-          {
-            "text": "አለው።",
-            "audio_url": "assets/sample_voices/cs_002_6.wav",
-            "hints": ["has"],
-          },
-        ],
-        "blocks": ["ቆንጆ", "መዓዛ", "ቀለም"],
-        "correct_answer": "ይህ ቆንጆ አበባ ጥሩ መዓዛ አለው",
-      },
-    },
+    // Trigger a rebuild after data is loaded
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
-    // --- Fill in Blank ---
-    {
-      "id": "fb_001",
-      "type": "fill_in_blank",
-      "instruction": "Choose the correct word for the blank.",
-      "data": {
-        "display_tokens": [
-          {
-            "text": "እኔ",
-            "audio_url": "assets/sample_voices/fb_001_1.wav",
-            "hints": ["I"],
-          },
-          {"text": "____"},
-          {
-            "text": "እጠጣለሁ።",
-            "audio_url": "assets/sample_voices/fb_001_3.wav",
-            "hints": ["drink"],
-          },
-        ],
-        "options": [
-          {"id": 0, "text": "ውሃ"},
-          {"id": 1, "text": "ሽንኩርት"},
-          {"id": 2, "text": "ወንበር"},
-        ],
-        "correct_option_id": 0,
-      },
-    },
-    {
-      "id": "fb_002",
-      "type": "fill_in_blank",
-      "instruction": "Select the pair that best fits the blanks.",
-      "data": {
-        "display_tokens": [
-          {"text": "____"},
-          {
-            "text": "ከገበያ",
-            "audio_url": "assets/sample_voices/fb_002_2.wav",
-            "hints": ["market"],
-          },
-          {"text": "____"},
-          {
-            "text": "ገዛች",
-            "audio_url": "assets/sample_voices/fb_002_4.wav",
-            "hints": ["bought"],
-          },
-        ],
-        "options": [
-          {"id": 0, "text": "እሱ ... ቦርሳ"},
-          {"id": 1, "text": "እሷ ... አትክልት"},
-          {"id": 2, "text": "እነሱ ... ወተት"},
-        ],
-        "correct_option_id": 1,
-      },
-    },
+  Future<List<Map<String, dynamic>>> _loadData(
+    String filePath,
+    String key,
+  ) async {
+    try {
+      final String jsonString = await rootBundle.loadString(filePath);
+      final decoded = json5.json5Decode(jsonString);
 
-    // --- Speaking ---
-    {
-      "id": "sp_001",
-      "type": "speaking",
-      "instruction": "Speak this sentence aloud",
-      "data": {
-        "prompt_words": [
-          {
-            "text": "ሰላም",
-            "audio_url": "assets/sample_voices/sp_001_1.wav",
-            "hints": ["Hello"],
-          },
-          {
-            "text": "እንዴት",
-            "audio_url": "assets/sample_voices/sp_001_2.wav",
-            "hints": ["How"],
-          },
-          {
-            "text": "ነህ?",
-            "audio_url": "assets/sample_voices/sp_001_3.wav",
-            "hints": ["are you?"],
-          },
-        ],
-        "prompt_audio_url": "assets/sample_voices/sp_001.wav",
-        "correct_answer": "ሰላም እንዴት ነህ?",
-      },
-    },
+      if (decoded is! Map || !decoded.containsKey(key)) {
+        throw FormatException('Key "$key" not found in JSON file');
+      }
 
-    // --- Listening ---
-    {
-      "id": "ls_001",
-      "type": "listening",
-      "subtype": "choose_missing",
-      "instruction": "Listen and choose the correct missing word.",
-      "data": {
-        "prompt_audio_url": "assets/sample_voices/ls_001.wav",
-        "display_tokens": [
-          {
-            "text": "እሷ",
-            "audio_url": "assets/sample_voices/ls_001_1.wav",
-            "hints": ["She"],
-          },
-          {"text": "____"},
-          {
-            "text": "ትወዳለች።",
-            "audio_url": "assets/sample_voices/ls_001_3.wav",
-            "hints": ["likes"],
-          },
-        ],
-        "options": [
-          {
-            "id": 0,
-            "option_audio_url": "assets/sample_voices/ls_001_1.wav",
-            "text": "ቡና",
-          },
-          {
-            "id": 1,
-            "option_audio_url": "assets/sample_voices/ls_001_2.wav",
-            "text": "ቃና",
-          },
-        ],
-        "correct_option_id": 0,
-      },
-    },
-    {
-      "id": "ls_002",
-      "type": "listening",
-      "subtype": "type_missing",
-      "instruction": "Listen and type the missing word.",
-      "data": {
-        "prompt_audio_url": "assets/sample_voices/ls_002.wav",
-        "display_tokens": [
-          {
-            "text": "ዛሬ",
-            "audio_url": "assets/sample_voices/ls_002_1.wav",
-            "hints": ["today"],
-          },
-          {
-            "text": "በጣም",
-            "audio_url": "assets/sample_voices/ls_002_2.wav",
-            "hints": ["very"],
-          },
-          {"text": "____"},
-          {
-            "text": "ነው።",
-            "audio_url": "assets/sample_voices/ls_002_4.wav",
-            "hints": ["is"],
-          },
-        ],
-        "correct_answer": "ሞቃታማ",
-      },
-    },
-    {
-      "id": "ls_003",
-      "type": "listening",
-      "subtype": "free_text",
-      "instruction": "Type what you hear",
-      "data": {
-        "prompt_audio_url": "assets/sample_voices/ls_003.wav",
-        "correct_answer": "የት ነው ያለኸው አሁን?",
-      },
-    },
-    {
-      "id": "ls_004",
-      "type": "listening",
-      "subtype": "block_build",
-      "instruction": "Tap what you hear",
-      "data": {
-        "prompt_audio_url": "assets/sample_voices/ls_004.wav",
-        "blocks": ["እየሄድኩ", "ትምህርት", "ነው", "ቤት"],
-        "correct_answer": "ትምህርት ቤት እየሄድኩ ነው",
-      },
-    },
+      final data = decoded[key];
+      if (data is! List) {
+        throw FormatException('Expected a list for key "$key"');
+      }
 
-    // --- Picture Multiple Choice ---
-    {
-      "id": "pc_001",
-      "type": "picture_multiple_choice",
-      "subtype": "block_build",
-      "instruction": "Select the correct image",
-      "data": {
-        "prompt_words": [
-          {
-            "text": "በሬ",
-            "audio_url": "assets/sample_voices/pc_001_1.wav",
-            "hints": ["Ox"],
-          },
-        ],
-        "options": [
-          {
-            "id": 0,
-            "image_url": "assets/images/picture_choice (1).png",
-            "label": "Cat",
-          },
-          {
-            "id": 1,
-            "image_url": "assets/images/picture_choice (2).png",
-            "label": "Ox",
-          },
-          {
-            "id": 2,
-            "image_url": "assets/images/picture_choice (3).png",
-            "label": "Dog",
-          },
-          {
-            "id": 3,
-            "image_url": "assets/images/picture_choice (4).png",
-            "label": "Sheep",
-          },
-        ],
-        "correct_option_id": 1,
-      },
-    },
-  ];
-
-  final List<Map<String, dynamic>> matchPairsExerciseData = [
-    // --- Matching Pairs ---
-    {
-      "id": "mp_lesson_001",
-      "type": "matching_pairs",
-      "subtype": "audio_text",
-      "instruction": "Tap the matching pairs",
-      "data": {
-        "left_items": [
-          {
-            "id": "audio_1",
-            "audio_url": "assets/mp_lesson_voices/mp_001_1.mp3",
-          },
-          {
-            "id": "audio_2",
-            "audio_url": "assets/mp_lesson_voices/mp_001_2.mp3",
-          },
-          {
-            "id": "audio_3",
-            "audio_url": "assets/mp_lesson_voices/mp_001_3.mp3",
-          },
-          {
-            "id": "audio_4",
-            "audio_url": "assets/mp_lesson_voices/mp_001_4.mp3",
-          },
-          {
-            "id": "audio_5",
-            "audio_url": "assets/mp_lesson_voices/mp_001_5.mp3",
-          },
-          {
-            "id": "audio_6",
-            "audio_url": "assets/mp_lesson_voices/mp_001_6.mp3",
-          },
-          {
-            "id": "audio_7",
-            "audio_url": "assets/mp_lesson_voices/mp_001_7.mp3",
-          },
-          {
-            "id": "audio_8",
-            "audio_url": "assets/mp_lesson_voices/mp_001_8.mp3",
-          },
-          {
-            "id": "audio_9",
-            "audio_url": "assets/mp_lesson_voices/mp_001_9.mp3",
-          },
-          {
-            "id": "audio_10",
-            "audio_url": "assets/mp_lesson_voices/mp_001_10.mp3",
-          },
-          {
-            "id": "audio_11",
-            "audio_url": "assets/mp_lesson_voices/mp_001_11.mp3",
-          },
-          {
-            "id": "audio_12",
-            "audio_url": "assets/mp_lesson_voices/mp_001_12.mp3",
-          },
-          {
-            "id": "audio_13",
-            "audio_url": "assets/mp_lesson_voices/mp_001_13.mp3",
-          },
-          {
-            "id": "audio_14",
-            "audio_url": "assets/mp_lesson_voices/mp_001_14.mp3",
-          },
-          {
-            "id": "audio_15",
-            "audio_url": "assets/mp_lesson_voices/mp_001_15.mp3",
-          },
-          {
-            "id": "audio_16",
-            "audio_url": "assets/mp_lesson_voices/mp_001_16.mp3",
-          },
-          {
-            "id": "audio_17",
-            "audio_url": "assets/mp_lesson_voices/mp_001_17.mp3",
-          },
-          {
-            "id": "audio_18",
-            "audio_url": "assets/mp_lesson_voices/mp_001_18.mp3",
-          },
-          {
-            "id": "audio_19",
-            "audio_url": "assets/mp_lesson_voices/mp_001_19.mp3",
-          },
-          {
-            "id": "audio_20",
-            "audio_url": "assets/mp_lesson_voices/mp_001_20.mp3",
-          },
-        ],
-        "right_items": [
-          {"id": "text_a", "text": "Chair"},
-          {"id": "text_b", "text": "Table"},
-          {"id": "text_c", "text": "Water"},
-          {"id": "text_d", "text": "House"},
-          {"id": "text_e", "text": "Milk"},
-          {"id": "text_f", "text": "Book"},
-          {"id": "text_g", "text": "Pencil"},
-          {"id": "text_h", "text": "Door"},
-          {"id": "text_i", "text": "Window"},
-          {"id": "text_j", "text": "Bed"},
-          {"id": "text_k", "text": "Food"},
-          {"id": "text_l", "text": "Coffee"},
-          {"id": "text_m", "text": "Tea"},
-          {"id": "text_n", "text": "Car"},
-          {"id": "text_o", "text": "Road"},
-          {"id": "text_p", "text": "Tree"},
-          {"id": "text_q", "text": "Flower"},
-          {"id": "text_r", "text": "Sky"},
-          {"id": "text_s", "text": "Sun"},
-          {"id": "text_t", "text": "Moon"},
-        ],
-        "correct_pairs": [
-          {"left_id": "audio_1", "right_id": "text_a"},
-          {"left_id": "audio_2", "right_id": "text_b"},
-          {"left_id": "audio_3", "right_id": "text_c"},
-          {"left_id": "audio_4", "right_id": "text_d"},
-          {"left_id": "audio_5", "right_id": "text_e"},
-          {"left_id": "audio_6", "right_id": "text_f"},
-          {"left_id": "audio_7", "right_id": "text_g"},
-          {"left_id": "audio_8", "right_id": "text_h"},
-          {"left_id": "audio_9", "right_id": "text_i"},
-          {"left_id": "audio_10", "right_id": "text_j"},
-          {"left_id": "audio_11", "right_id": "text_k"},
-          {"left_id": "audio_12", "right_id": "text_l"},
-          {"left_id": "audio_13", "right_id": "text_m"},
-          {"left_id": "audio_14", "right_id": "text_n"},
-          {"left_id": "audio_15", "right_id": "text_o"},
-          {"left_id": "audio_16", "right_id": "text_p"},
-          {"left_id": "audio_17", "right_id": "text_q"},
-          {"left_id": "audio_18", "right_id": "text_r"},
-          {"left_id": "audio_19", "right_id": "text_s"},
-          {"left_id": "audio_20", "right_id": "text_t"},
-        ],
-      },
-    },
-    {
-      "id": "mp_lesson_002",
-      "type": "matching_pairs",
-      "subtype": "text_text",
-      "instruction": "Tap the matching pairs",
-      "data": {
-        "left_items": [
-          {"id": "amharic_1", "text": "ቤት"},
-          {"id": "amharic_2", "text": "ውሃ"},
-          {"id": "amharic_3", "text": "ወተት"},
-          {"id": "amharic_4", "text": "መጽሐፍ"},
-          {"id": "amharic_5", "text": "ወንበር"},
-          {"id": "amharic_6", "text": "ጠረጴዛ"},
-          {"id": "amharic_7", "text": "እርሳስ"},
-          {"id": "amharic_8", "text": "በር"},
-          {"id": "amharic_9", "text": "መስኮት"},
-          {"id": "amharic_10", "text": "አልጋ"},
-          {"id": "amharic_11", "text": "ምግብ"},
-          {"id": "amharic_12", "text": "ቡና"},
-          {"id": "amharic_13", "text": "ሻይ"},
-          {"id": "amharic_14", "text": "መኪና"},
-          {"id": "amharic_15", "text": "መንገድ"},
-          {"id": "amharic_16", "text": "ዛፍ"},
-          {"id": "amharic_17", "text": "አበባ"},
-          {"id": "amharic_18", "text": "ሰማይ"},
-          {"id": "amharic_19", "text": "ፀሐይ"},
-          {"id": "amharic_20", "text": "ጨረቃ"},
-        ],
-        "right_items": [
-          {"id": "english_a", "text": "Pencil"},
-          {"id": "english_b", "text": "House"},
-          {"id": "english_c", "text": "Sun"},
-          {"id": "english_d", "text": "Water"},
-          {"id": "english_e", "text": "Car"},
-          {"id": "english_f", "text": "Book"},
-          {"id": "english_g", "text": "Chair"},
-          {"id": "english_h", "text": "Road"},
-          {"id": "english_i", "text": "Milk"},
-          {"id": "english_j", "text": "Bed"},
-          {"id": "english_k", "text": "Moon"},
-          {"id": "english_l", "text": "Food"},
-          {"id": "english_m", "text": "Window"},
-          {"id": "english_n", "text": "Sky"},
-          {"id": "english_o", "text": "Tea"},
-          {"id": "english_p", "text": "Table"},
-          {"id": "english_q", "text": "Coffee"},
-          {"id": "english_r", "text": "Door"},
-          {"id": "english_s", "text": "Flower"},
-          {"id": "english_t", "text": "Tree"},
-        ],
-        "correct_pairs": [
-          {"left_id": "amharic_1", "right_id": "english_b"},
-          {"left_id": "amharic_2", "right_id": "english_d"},
-          {"left_id": "amharic_3", "right_id": "english_i"},
-          {"left_id": "amharic_4", "right_id": "english_f"},
-          {"left_id": "amharic_5", "right_id": "english_g"},
-          {"left_id": "amharic_6", "right_id": "english_p"},
-          {"left_id": "amharic_7", "right_id": "english_a"},
-          {"left_id": "amharic_8", "right_id": "english_r"},
-          {"left_id": "amharic_9", "right_id": "english_m"},
-          {"left_id": "amharic_10", "right_id": "english_j"},
-          {"left_id": "amharic_11", "right_id": "english_l"},
-          {"left_id": "amharic_12", "right_id": "english_q"},
-          {"left_id": "amharic_13", "right_id": "english_o"},
-          {"left_id": "amharic_14", "right_id": "english_e"},
-          {"left_id": "amharic_15", "right_id": "english_h"},
-          {"left_id": "amharic_16", "right_id": "english_t"},
-          {"left_id": "amharic_17", "right_id": "english_s"},
-          {"left_id": "amharic_18", "right_id": "english_n"},
-          {"left_id": "amharic_19", "right_id": "english_c"},
-          {"left_id": "amharic_20", "right_id": "english_k"},
-        ],
-      },
-    },
-  ];
+      return List<Map<String, dynamic>>.from(data);
+    } on FlutterError catch (e) {
+      print('Failed to load file: $filePath - ${e.message}');
+      return [];
+    } on FormatException catch (e) {
+      print('JSON parsing error in $filePath: ${e.message}');
+      return [];
+    } catch (e) {
+      print('Unexpected error loading $filePath: $e');
+      return [];
+    }
+  }
 
   void _onTranslationAnswerChanged(String exerciseId, String answer) {
     setState(() {
@@ -806,23 +168,6 @@ class _AdventurePathState extends State<AdventurePath> {
     setState(() {
       exerciseAnswers[exerciseId] = answer;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // _dio = Dio(
-    //   BaseOptions(
-    //     connectTimeout: const Duration(seconds: 30),
-    //     receiveTimeout: const Duration(seconds: 30),
-    //   ),
-    // );
-    // _fetchExerciseData();
-
-    handlers = {};
-    for (var exercise in newExerciseData) {
-      handlers[exercise['id']] = ExerciseHandlerFactory.createHandler(exercise);
-    }
   }
 
   // Future<void> _fetchExerciseData() async {
@@ -891,7 +236,7 @@ class _AdventurePathState extends State<AdventurePath> {
     // }
 
     return LessonTemplate(
-      exercises: newExerciseData.asMap().entries.map((entry) {
+      exercises: exerciseData.asMap().entries.map((entry) {
         final exercise = entry.value;
         final exerciseId = exercise['id'];
 
@@ -1029,7 +374,6 @@ class _AdventurePathState extends State<AdventurePath> {
     );
   }
 
-  // TODO - maybe add a circular progress indicator (using percent_indicator package on pub.dev)
   Widget _buildLessonNode(LessonNode lesson, int globalIndex, Color unitColor) {
     final offset = _getLessonOffset(globalIndex);
 

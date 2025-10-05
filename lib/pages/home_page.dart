@@ -10,7 +10,7 @@ import 'package:lisan_app/widgets/home/top_navigation.dart';
 import 'package:lisan_app/widgets/home/welcome_section.dart';
 
 class HomePage extends StatefulWidget {
-  final double approximateUnitHeight = 1075;
+  final double approximateUnitHeight = 925;
 
   const HomePage({super.key});
 

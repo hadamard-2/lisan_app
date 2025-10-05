@@ -64,6 +64,7 @@ class _SpeakingExerciseState extends State<SpeakingExercise> {
         text: widget.exerciseData.promptText,
         audioUrl: widget.exerciseData.promptAudioUrl,
       ),
+      SizedBox(height: DesignSpacing.xxl),
       VoiceInputWidget(
         onRecordingComplete: (audioPath) {
           widget.onAnswerChanged(audioPath);

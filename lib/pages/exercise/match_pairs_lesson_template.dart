@@ -306,7 +306,28 @@ class _MatchPairsLessonTemplateState extends State<MatchPairsLessonTemplate>
         child: Column(
           children: [
             LessonTopBar(
-              onExit: widget.onExit,
+              onExit: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('Confirm Exit'),
+                    content: Text('Are you sure you want to exit the lesson?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          widget.onExit?.call();
+                        },
+                        child: Text('Exit'),
+                      ),
+                    ],
+                  ),
+                );
+              },
               progress: _progress,
               remainingHearts: _remainingHearts,
             ),
