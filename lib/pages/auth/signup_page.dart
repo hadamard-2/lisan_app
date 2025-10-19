@@ -7,8 +7,8 @@ import 'package:lisan_app/services/auth_service.dart';
 import 'package:lisan_app/widgets/custom_text_field.dart';
 import 'package:lisan_app/widgets/auth/auth_header.dart';
 import 'package:lisan_app/widgets/custom_button.dart';
-import 'package:lisan_app/widgets/auth/google_signin_button.dart';
-import 'package:lisan_app/widgets/auth/auth_divider.dart';
+// import 'package:lisan_app/widgets/auth/google_signin_button.dart';
+// import 'package:lisan_app/widgets/auth/auth_divider.dart';
 import 'package:lisan_app/widgets/auth/base_auth_page.dart';
 
 import 'package:lisan_app/pages/auth/login_page.dart';
@@ -30,7 +30,7 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
-  bool _isGoogleLoading = false;
+  // bool _isGoogleLoading = false;
   bool _passwordsMatch = true;
 
   @override
@@ -173,30 +173,30 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
     }
   }
 
-  Future<void> _handleGoogleSignUp() async {
-    setState(() => _isGoogleLoading = true);
+  // Future<void> _handleGoogleSignUp() async {
+  //   setState(() => _isGoogleLoading = true);
 
-    // Simulate Google sign-up process
-    await Future.delayed(const Duration(seconds: 2));
+  //   // Simulate Google sign-up process
+  //   await Future.delayed(const Duration(seconds: 2));
 
-    // if (mounted) {
-    //   setState(() => _isGoogleLoading = false);
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(
-    //       content: Text(
-    //         'Google sign-up not available yet!',
-    //         style: TextStyle(color: DesignColors.textPrimary),
-    //       ),
-    //       backgroundColor: DesignColors.backgroundCard,
-    //     ),
-    //   );
-    // }
+  //   // if (mounted) {
+  //   //   setState(() => _isGoogleLoading = false);
+  //   //   ScaffoldMessenger.of(context).showSnackBar(
+  //   //     const SnackBar(
+  //   //       content: Text(
+  //   //         'Google sign-up not available yet!',
+  //   //         style: TextStyle(color: DesignColors.textPrimary),
+  //   //       ),
+  //   //       backgroundColor: DesignColors.backgroundCard,
+  //   //     ),
+  //   //   );
+  //   // }
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => RootScreen()),
-    );
-  }
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => RootScreen()),
+  //   );
+  // }
 
   @override
   Widget buildContent(BuildContext context) {
@@ -210,16 +210,17 @@ class _SignUpPageState extends BaseAuthPageState<SignUpPage> {
 
           const SizedBox(height: 40),
 
+          // NOTE - not implemented
           // Google Sign Up Button
-          GoogleSignInButton(
-            onPressed: _isLoading ? null : _handleGoogleSignUp,
-            isLoading: _isGoogleLoading,
-          ),
+          // GoogleSignInButton(
+          //   onPressed: _isLoading ? null : _handleGoogleSignUp,
+          //   isLoading: _isGoogleLoading,
+          // ),
 
-          const SizedBox(height: 32),
+          // const SizedBox(height: 32),
 
-          // Divider
-          const AuthDivider(),
+          // // Divider
+          // const AuthDivider(),
 
           const SizedBox(height: 32),
 

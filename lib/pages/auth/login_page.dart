@@ -7,8 +7,8 @@ import 'package:lisan_app/services/auth_service.dart';
 import 'package:lisan_app/widgets/custom_text_field.dart';
 import 'package:lisan_app/widgets/auth/auth_header.dart';
 import 'package:lisan_app/widgets/custom_button.dart';
-import 'package:lisan_app/widgets/auth/google_signin_button.dart';
-import 'package:lisan_app/widgets/auth/auth_divider.dart';
+// import 'package:lisan_app/widgets/auth/google_signin_button.dart';
+// import 'package:lisan_app/widgets/auth/auth_divider.dart';
 import 'package:lisan_app/widgets/auth/base_auth_page.dart';
 
 import 'Package:lisan_app/pages/auth/signup_page.dart';
@@ -27,7 +27,7 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
 
   bool _isPasswordVisible = false;
   bool _isLoading = false;
-  bool _isGoogleLoading = false;
+  // bool _isGoogleLoading = false;
 
   @override
   void dispose() {
@@ -122,30 +122,30 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
     }
   }
 
-  Future<void> _handleGoogleSignIn() async {
-    setState(() => _isGoogleLoading = true);
+  // Future<void> _handleGoogleSignIn() async {
+  //   setState(() => _isGoogleLoading = true);
 
-    // Simulate Google sign-in process
-    await Future.delayed(const Duration(seconds: 2));
+  //   // Simulate Google sign-in process
+  //   await Future.delayed(const Duration(seconds: 2));
 
-    // if (mounted) {
-    //   setState(() => _isGoogleLoading = false);
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(
-    //       content: Text(
-    //         'Google sign-up not available yet!',
-    //         style: TextStyle(color: DesignColors.textPrimary),
-    //       ),
-    //       backgroundColor: DesignColors.backgroundCard,
-    //     ),
-    //   );
-    // }
+  //   // if (mounted) {
+  //   //   setState(() => _isGoogleLoading = false);
+  //   //   ScaffoldMessenger.of(context).showSnackBar(
+  //   //     const SnackBar(
+  //   //       content: Text(
+  //   //         'Google sign-up not available yet!',
+  //   //         style: TextStyle(color: DesignColors.textPrimary),
+  //   //       ),
+  //   //       backgroundColor: DesignColors.backgroundCard,
+  //   //     ),
+  //   //   );
+  //   // }
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => RootScreen()),
-    );
-  }
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => RootScreen()),
+  //   );
+  // }
 
   @override
   Widget buildContent(BuildContext context) {
@@ -159,18 +159,19 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
 
           const SizedBox(height: 40),
 
+          // NOTE - not implemented
           // Google Sign In Button
-          GoogleSignInButton(
-            onPressed: _handleGoogleSignIn,
-            isLoading: _isGoogleLoading,
-          ),
+          // GoogleSignInButton(
+          //   onPressed: _handleGoogleSignIn,
+          //   isLoading: _isGoogleLoading,
+          // ),
 
-          const SizedBox(height: 32),
+          // const SizedBox(height: 32),
 
-          // Divider
-          const AuthDivider(),
+          // // Divider
+          // const AuthDivider(),
 
-          const SizedBox(height: 32),
+          // const SizedBox(height: 32),
 
           // Email Field
           CustomTextField(
@@ -206,33 +207,32 @@ class _LoginPageState extends BaseAuthPageState<LoginPage> {
             ),
           ),
 
-          const SizedBox(height: 8),
-
-          // Forgot Password Link
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: _isLoading
-                  ? null
-                  : () {
-                      // Navigate to forgot password page
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Forgot password feature coming soon!'),
-                        ),
-                      );
-                    },
-              child: const Text(
-                'Forgot Password?',
-                style: TextStyle(
-                  color: DesignColors.primary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 8),
+          // const SizedBox(height: 8),
+          // // Forgot Password Link
+          // Align(
+          //   alignment: Alignment.centerRight,
+          //   child: TextButton(
+          //     onPressed: _isLoading
+          //         ? null
+          //         : () {
+          //             // Navigate to forgot password page
+          //             ScaffoldMessenger.of(context).showSnackBar(
+          //               const SnackBar(
+          //                 content: Text('Forgot password feature coming soon!'),
+          //               ),
+          //             );
+          //           },
+          //     child: const Text(
+          //       'Forgot Password?',
+          //       style: TextStyle(
+          //         color: DesignColors.primary,
+          //         fontWeight: FontWeight.w500,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 8),
+          const SizedBox(height: 32),
 
           // Login Button
           CustomButton(
