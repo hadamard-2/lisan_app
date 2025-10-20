@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/design/theme.dart';
+import 'package:lisan_app/pages/amharic_handwriting_page.dart';
 import 'package:lisan_app/pages/auth/login_page.dart';
 
 import 'package:lisan_app/root_screen.dart';
@@ -52,8 +53,8 @@ class _MyAppState extends State<MyApp> {
             );
           } else {
             final isLoggedIn = snapshot.data ?? false;
-            // return LoginPage();
-            return isLoggedIn ? LoginPage() : RootScreen();
+            return AmharicHandwritingPage();
+            // return isLoggedIn ? LoginPage() : RootScreen();
           }
         },
       ),
