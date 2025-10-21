@@ -19,7 +19,7 @@ class _AmharicHandwritingPageState extends State<AmharicHandwritingPage> {
   final List<List<ml.StrokePoint>> _allStrokes = [];
   List<ml.StrokePoint> _currentStroke = [];
 
-  final String _targetLetter = 'ዣ';
+  final String _targetLetter = 'ቹ';
   bool? _isCorrect;
   bool _isProcessing = false;
 
@@ -322,14 +322,30 @@ class _AmharicHandwritingPageState extends State<AmharicHandwritingPage> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      child: GestureDetector(
-                        onPanStart: _onPanStart,
-                        onPanUpdate: _onPanUpdate,
-                        onPanEnd: _onPanEnd,
-                        child: CustomPaint(
-                          painter: _DrawingPainter(_strokes),
-                          size: Size.infinite,
-                        ),
+                      child: Stack(
+                        children: [
+                          // Background guide letter
+                          Center(
+                            child: Text(
+                              _targetLetter,
+                              style: TextStyle(
+                                fontFamily: 'Geez Handwriting Dots',
+                                fontSize: 250,
+                                color: Colors.indigo.withValues(alpha: 0.4),
+                              ),
+                            ),
+                          ),
+                          // Drawing canvas
+                          GestureDetector(
+                            onPanStart: _onPanStart,
+                            onPanUpdate: _onPanUpdate,
+                            onPanEnd: _onPanEnd,
+                            child: CustomPaint(
+                              painter: _DrawingPainter(_strokes),
+                              size: Size.infinite,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
