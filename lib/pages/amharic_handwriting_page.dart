@@ -330,8 +330,8 @@ class _AmharicHandwritingPageState extends State<AmharicHandwritingPage> {
                               _targetLetter,
                               style: TextStyle(
                                 fontFamily: 'Geez Handwriting Dots',
-                                fontSize: 250,
-                                color: Colors.indigo.withValues(alpha: 0.4),
+                                fontSize: 270,
+                                color: Colors.indigo.withValues(alpha: 0.3),
                               ),
                             ),
                           ),

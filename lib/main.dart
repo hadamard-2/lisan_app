@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
             );
           } else {
             final isLoggedIn = snapshot.data ?? false;
-            return AmharicHandwritingPage();
+            return RootScreen();
             // return isLoggedIn ? LoginPage() : RootScreen();
           }
         },

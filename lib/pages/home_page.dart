@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:lisan_app/design/theme.dart';
 
 import 'package:lisan_app/models/lesson_node.dart';
 import 'package:lisan_app/models/lesson_type.dart';
 import 'package:lisan_app/models/unit_data.dart';
+import 'package:lisan_app/pages/fidel_practice_page.dart';
 
 import 'package:lisan_app/widgets/home/adventure_path.dart';
 import 'package:lisan_app/widgets/home/current_unit_indicator.dart';
-import 'package:lisan_app/widgets/home/top_navigation.dart';
+import 'package:lisan_app/widgets/home/top_stats_bar.dart';
 import 'package:lisan_app/widgets/home/welcome_section.dart';
 
 class HomePage extends StatefulWidget {
@@ -158,33 +160,83 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: Column(
-        children: [
-          const SizedBox(height: 8),
-          TopStatsBar(streakCount: streakCount, hearts: hearts),
-          const SizedBox(height: 4),
-          WelcomeSection(userName: userName),
-          const SizedBox(height: 8),
-          CurrentUnitIndicator(
-            currentUnit: _currentUnitIndex < units.length
-                ? units[_currentUnitIndex]
-                : null,
+    return Stack(
+      children: [
+        FadeTransition(
+          opacity: _fadeAnimation,
+          child: Column(
+            children: [
+              const SizedBox(height: 8),
+              TopStatsBar(streakCount: streakCount, hearts: hearts),
+              const SizedBox(height: 4),
+              WelcomeSection(userName: userName),
+              const SizedBox(height: 8),
+              CurrentUnitIndicator(
+                currentUnit: _currentUnitIndex < units.length
+                    ? units[_currentUnitIndex]
+                    : null,
+              ),
+              const SizedBox(height: 4),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: AdventurePath(
+                    units: units,
+                    pathAnimation: _pathAnimation,
+                    pulseController: _pulseController,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          Expanded(
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: AdventurePath(
-                units: units,
-                pathAnimation: _pathAnimation,
-                pulseController: _pulseController,
+        ),
+        // Floating Action Button
+        Positioned(
+          right: 16,
+          bottom: 112, // Position above the nav bar (80 + 12 + 16)
+          child: Material(
+            elevation: 8,
+            borderRadius: BorderRadius.circular(16),
+            color: DesignColors.backgroundCard,
+            child: InkWell(
+              onTap: () {
+                // Navigate to FidelPracticePage using the bottom nav
+                // This assumes the parent RootScreen can handle this
+                // For now, we'll use a simple approach
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const FidelPracticePage(),
+                  ),
+                );
+              },
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: DesignColors.backgroundBorder,
+                    width: 1,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    'ፊደል',
+                    style: TextStyle(
+                      color: DesignColors.primary,
+                      fontFamily: 'Neteru',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

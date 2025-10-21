@@ -110,6 +110,9 @@ flutter:
     - family: Geez Handwriting Dots Arrows
       fonts:
         - asset: assets/fonts/GeezHandwritingDotsArrows.ttf
+    - family: Neteru
+      fonts:
+        - asset: assets/fonts/Neteru.ttf
 
   #
   # For details regarding fonts from package dependencies,
