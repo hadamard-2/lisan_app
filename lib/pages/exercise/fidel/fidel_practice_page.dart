@@ -1,6 +1,8 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:lisan_app/pages/exercise/fidel/trace_fidel_exercise_content.dart';
 
 class FidelPracticePage extends StatelessWidget {
   const FidelPracticePage({super.key});
@@ -306,6 +308,12 @@ class FidelPracticePage extends StatelessWidget {
     ],
   ];
 
+  static List<String> getRandomLetterRow() {
+    final random = Random();
+    final randomRow = amharicAlphabet[random.nextInt(amharicAlphabet.length)];
+    return randomRow.map((char) => char['geez']!).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -356,7 +364,16 @@ class FidelPracticePage extends StatelessWidget {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TraceFidelExerciseContent(
+                          targetLetters: getRandomLetterRow(),
+                        ),
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: DesignColors.primary,
                     foregroundColor: DesignColors.backgroundDark,

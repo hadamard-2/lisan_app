@@ -3,12 +3,16 @@ import 'package:google_ml_kit/google_ml_kit.dart' as ml;
 import 'package:lisan_app/design/theme.dart';
 
 class TraceFidelExerciseContent extends StatefulWidget {
-  final String targetLetter;
+  final List<String> targetLetters;
 
-  const TraceFidelExerciseContent({super.key, required this.targetLetter});
+  const TraceFidelExerciseContent({super.key, required this.targetLetters});
 
   factory TraceFidelExerciseContent.fromJson(Map<String, dynamic> json) {
-    return TraceFidelExerciseContent(targetLetter: json['character'] as String);
+    final characters = json['characters'] as List<String>;
+    
+    return TraceFidelExerciseContent(
+      targetLetters: characters,
+    );
   }
 
   @override
@@ -34,6 +38,12 @@ class _TraceFidelExerciseContentState extends State<TraceFidelExerciseContent> {
   bool _isModelDownloaded = false;
   bool _isDownloadingModel = false;
   String _modelStatus = 'Checking model...';
+
+  // Character progression
+  int _currentCharacterIndex = 0;
+
+  String get _currentLetter => widget.targetLetters[_currentCharacterIndex];
+  bool get _isLastCharacter => _currentCharacterIndex >= widget.targetLetters.length - 1;
 
   @override
   void initState() {
@@ -199,7 +209,7 @@ class _TraceFidelExerciseContentState extends State<TraceFidelExerciseContent> {
         // Check if any of the top 5 candidates match the target
         setState(() {
           _isCorrect = topCandidates.any(
-            (candidate) => candidate.text == widget.targetLetter,
+            (candidate) => candidate.text == _currentLetter,
           );
         });
       } else {
@@ -229,18 +239,45 @@ class _TraceFidelExerciseContentState extends State<TraceFidelExerciseContent> {
     });
   }
 
+  void _nextCharacter() {
+    if (_isLastCharacter) {
+      // Show completion dialog or navigate back
+      Navigator.pop(context);
+      return;
+    }
+
+    setState(() {
+      _currentCharacterIndex++;
+      _clearCanvas();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: DesignColors.backgroundDark,
       appBar: AppBar(
-        title: const Text(
-          'Trace the character',
-          style: TextStyle(
-            color: DesignColors.textPrimary,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Trace the character',
+              style: TextStyle(
+                color: DesignColors.textPrimary,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (widget.targetLetters.length > 1)
+              Text(
+                '${_currentCharacterIndex + 1} of ${widget.targetLetters.length}',
+                style: const TextStyle(
+                  color: DesignColors.textSecondary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+          ],
         ),
         backgroundColor: DesignColors.backgroundDark,
         elevation: 0,
@@ -298,13 +335,13 @@ class _TraceFidelExerciseContentState extends State<TraceFidelExerciseContent> {
 
             const SizedBox(height: DesignSpacing.md),
 
-            // Target Letter Display with Audio
+            // Target Letter Display
             Center(
               child: Text(
-                widget.targetLetter,
+                _currentLetter,
                 style: const TextStyle(
                   fontFamily: 'Neteru',
-                  fontSize: 40,
+                  fontSize: 64,
                   color: DesignColors.textPrimary,
                 ),
               ),
@@ -336,7 +373,7 @@ class _TraceFidelExerciseContentState extends State<TraceFidelExerciseContent> {
                             // Background guide letter with dashed style
                             Center(
                               child: Text(
-                                widget.targetLetter,
+                                _currentLetter,
                                 style: TextStyle(
                                   fontFamily: 'Geez Handwriting Dots',
                                   fontSize: 300,
@@ -468,7 +505,7 @@ class _TraceFidelExerciseContentState extends State<TraceFidelExerciseContent> {
                     child: ElevatedButton.icon(
                       onPressed: (_isProcessing || !_isModelDownloaded)
                           ? null
-                          : _recognizeHandwriting,
+                          : (_isCorrect == true ? _nextCharacter : _recognizeHandwriting),
                       icon: _isProcessing
                           ? const SizedBox(
                               width: 20,
@@ -480,12 +517,18 @@ class _TraceFidelExerciseContentState extends State<TraceFidelExerciseContent> {
                                 ),
                               ),
                             )
-                          : const Icon(
-                              Icons.check_rounded,
+                          : Icon(
+                              _isCorrect == true 
+                                  ? (_isLastCharacter ? Icons.check_circle : Icons.arrow_forward_rounded)
+                                  : Icons.check_rounded,
                               color: DesignColors.backgroundDark,
                             ),
                       label: Text(
-                        _isProcessing ? 'CHECKING...' : 'CHECK',
+                        _isProcessing 
+                            ? 'CHECKING...' 
+                            : (_isCorrect == true 
+                                ? (_isLastCharacter ? 'FINISH' : 'NEXT')
+                                : 'CHECK'),
                         style: const TextStyle(
                           color: DesignColors.backgroundDark,
                           fontWeight: FontWeight.w600,

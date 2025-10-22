@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/pages/auth/login_page.dart';
-import 'package:lisan_app/pages/exercise/fidel/fidel_pronunciation_choice_exercise_content.dart';
-import 'package:lisan_app/pages/exercise/fidel/listening_fidel_choice_exercise_content.dart';
-import 'package:lisan_app/pages/exercise/fidel/pronunciation_fidel_choice_exercise_content.dart';
-import 'package:lisan_app/pages/exercise/fidel/trace_fidel_exercise_content.dart';
 
 import 'package:lisan_app/root_screen.dart';
 import 'package:lisan_app/services/auth_service.dart';
@@ -56,29 +52,7 @@ class _MyAppState extends State<MyApp> {
             );
           } else {
             final isLoggedIn = snapshot.data ?? false;
-
-            return TraceFidelExerciseContent.fromJson({
-              "type": "trace_fidel",
-              "character": "ኡ",
-            });
-            // return FidelPronunciationChoiceExerciseContent.fromJson({
-            //   "type": "fidel_pronunciation_choice",
-            //   "character": "ሁ",
-            //   "options": ["fa", "hu", "haa"],
-            //   "correct_answer": "hu",
-            // });
-            // return PronunciationFidelChoiceExerciseContent.fromJson({
-            //   "type": "pronunciation_fidel_choice",
-            //   "pronunciation": "su",
-            //   "options": ["ደ", "ተ", "ፍ", "ሱ"],
-            //   "correct_answer": "ሱ",
-            // });
-            // return ListeningFidelChoiceExerciseContent.fromJson({
-            //   "type": "listening_fidel_choice",
-            //   "audio_asset_path": "assets/fidel_audio/ፎ.mp3",
-            //   "options": ["ፎ", "ዩ", "ማ", "ቹ"],
-            //   "correct_answer": "ፎ",
-            // });
+            return RootScreen();
             // return isLoggedIn ? LoginPage() : RootScreen();
           }
         },
