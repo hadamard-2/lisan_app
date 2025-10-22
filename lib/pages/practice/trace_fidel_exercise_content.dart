@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart' as ml;
+import 'package:lisan_app/design/theme.dart';
 
-class AmharicHandwritingPage extends StatefulWidget {
-  const AmharicHandwritingPage({super.key});
+class TraceFidelExerciseContent extends StatefulWidget {
+  const TraceFidelExerciseContent({super.key});
 
   @override
-  State<AmharicHandwritingPage> createState() => _AmharicHandwritingPageState();
+  State<TraceFidelExerciseContent> createState() =>
+      _TraceFidelExerciseContentState();
 }
 
-class _AmharicHandwritingPageState extends State<AmharicHandwritingPage> {
+class _TraceFidelExerciseContentState extends State<TraceFidelExerciseContent> {
   late ml.DigitalInkRecognizer _recognizer;
   ml.DigitalInkRecognizerModelManager? _modelManager;
 
@@ -225,205 +227,238 @@ class _AmharicHandwritingPageState extends State<AmharicHandwritingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: DesignColors.backgroundDark,
       appBar: AppBar(
-        title: const Text('የአማርኛ ፊደል ልምምድ'),
-        backgroundColor: Colors.indigo,
+        title: const Text(
+          'Trace the character',
+          style: TextStyle(
+            color: DesignColors.textPrimary,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        backgroundColor: DesignColors.backgroundDark,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: DesignColors.textPrimary),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Model Status Banner
             if (!_isModelDownloaded)
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                color: _isDownloadingModel
-                    ? Colors.orange[100]
-                    : Colors.red[100],
+                padding: const EdgeInsets.all(DesignSpacing.md),
+                color: DesignColors.attention.withValues(alpha: 0.2),
                 child: Row(
                   children: [
                     if (_isDownloadingModel)
                       const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            DesignColors.primary,
+                          ),
+                        ),
                       )
                     else
-                      const Icon(Icons.warning, color: Colors.orange),
-                    const SizedBox(width: 12),
+                      Icon(Icons.warning, color: DesignColors.attention),
+                    const SizedBox(width: DesignSpacing.sm),
                     Expanded(
                       child: Text(
                         _modelStatus,
-                        style: const TextStyle(fontSize: 14),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: DesignColors.textPrimary,
+                        ),
                       ),
                     ),
                     if (!_isDownloadingModel && !_isModelDownloaded)
                       TextButton(
                         onPressed: _downloadModel,
-                        child: const Text('Retry'),
+                        child: const Text(
+                          'Retry',
+                          style: TextStyle(color: DesignColors.primary),
+                        ),
                       ),
                   ],
                 ),
               ),
 
-            // Target Letter Display
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.indigo,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  const Text(
-                    'ይህን ፊደል ይጻፉ',
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _targetLetter,
-                    style: const TextStyle(
-                      fontSize: 80,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+            const SizedBox(height: DesignSpacing.md),
+
+            // Target Letter Display with Audio
+            Center(
+              child: Text(
+                _targetLetter,
+                style: const TextStyle(
+                  fontFamily: 'Neteru',
+                  fontSize: 40,
+                  color: DesignColors.textPrimary,
+                ),
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: DesignSpacing.lg),
 
             // Drawing Canvas
             Expanded(
-              child: Stack(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.lg,
+                ),
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: DesignColors.backgroundCard,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: DesignColors.backgroundBorder,
+                          width: 2,
                         ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Stack(
-                        children: [
-                          // Background guide letter
-                          Center(
-                            child: Text(
-                              _targetLetter,
-                              style: TextStyle(
-                                fontFamily: 'Geez Handwriting Dots',
-                                fontSize: 270,
-                                color: Colors.indigo.withValues(alpha: 0.3),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(22),
+                        child: Stack(
+                          children: [
+                            // Background guide letter with dashed style
+                            Center(
+                              child: Text(
+                                _targetLetter,
+                                style: TextStyle(
+                                  fontFamily: 'Geez Handwriting Dots',
+                                  fontSize: 300,
+                                  color: DesignColors.textSecondary.withValues(
+                                    alpha: 0.2,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          // Drawing canvas
-                          GestureDetector(
-                            onPanStart: _onPanStart,
-                            onPanUpdate: _onPanUpdate,
-                            onPanEnd: _onPanEnd,
-                            child: CustomPaint(
-                              painter: _DrawingPainter(_strokes),
-                              size: Size.infinite,
+                            // Drawing canvas
+                            GestureDetector(
+                              onPanStart: _onPanStart,
+                              onPanUpdate: _onPanUpdate,
+                              onPanEnd: _onPanEnd,
+                              child: CustomPaint(
+                                painter: _DrawingPainter(_strokes),
+                                size: Size.infinite,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Overlay when model not ready
-                  if (!_isModelDownloaded)
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'Waiting for model...',
-                          style: TextStyle(fontSize: 18, color: Colors.black54),
+                          ],
                         ),
                       ),
                     ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Feedback Display
-            if (_isCorrect != null)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: _isCorrect == true ? Colors.green[50] : Colors.red[50],
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: _isCorrect == true ? Colors.green : Colors.red,
-                    width: 2,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      _isCorrect == true ? Icons.check_circle : Icons.cancel,
-                      color: _isCorrect == true ? Colors.green : Colors.red,
-                      size: 32,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      _isCorrect == true ? 'ትክክል!' : 'እንደገና ይሞክሩ',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: _isCorrect == true
-                            ? Colors.green[800]
-                            : Colors.red[800],
+                    // Overlay when model not ready
+                    if (!_isModelDownloaded)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: DesignColors.backgroundDark.withValues(
+                            alpha: 0.7,
+                          ),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Waiting for model...',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: DesignColors.textSecondary,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
+            ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: DesignSpacing.lg),
+
+            // Feedback Display
+            if (_isCorrect != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DesignSpacing.lg,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(DesignSpacing.md),
+                  decoration: BoxDecoration(
+                    color: _isCorrect == true
+                        ? DesignColors.success.withValues(alpha: 0.2)
+                        : DesignColors.error.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _isCorrect == true
+                          ? DesignColors.success
+                          : DesignColors.error,
+                      width: 2,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _isCorrect == true ? Icons.check_circle : Icons.cancel,
+                        color: _isCorrect == true
+                            ? DesignColors.success
+                            : DesignColors.error,
+                        size: 32,
+                      ),
+                      const SizedBox(width: DesignSpacing.sm),
+                      Text(
+                        _isCorrect == true ? 'Correct!' : 'Try Again',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: _isCorrect == true
+                              ? DesignColors.success
+                              : DesignColors.error,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            const SizedBox(height: DesignSpacing.lg),
 
             // Action Buttons
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: DesignSpacing.lg),
               child: Row(
                 children: [
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: _isModelDownloaded ? _clearCanvas : null,
-                      icon: const Icon(Icons.clear),
-                      label: const Text('አጥፋ'),
+                      icon: const Icon(
+                        Icons.refresh_rounded,
+                        color: DesignColors.textPrimary,
+                      ),
+                      label: const Text(
+                        'CLEAR',
+                        style: TextStyle(color: DesignColors.textPrimary),
+                      ),
                       style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: BorderSide(color: Colors.grey[400]!),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: DesignSpacing.md,
+                        ),
+                        side: const BorderSide(
+                          color: DesignColors.backgroundBorder,
+                        ),
+                        backgroundColor: DesignColors.backgroundCard,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: DesignSpacing.md),
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: (_isProcessing || !_isModelDownloaded)
@@ -436,15 +471,29 @@ class _AmharicHandwritingPageState extends State<AmharicHandwritingPage> {
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
+                                  DesignColors.backgroundDark,
                                 ),
                               ),
                             )
-                          : const Icon(Icons.check),
-                      label: Text(_isProcessing ? 'በማረጋገጥ...' : 'አረጋግጥ'),
+                          : const Icon(
+                              Icons.check_rounded,
+                              color: DesignColors.backgroundDark,
+                            ),
+                      label: Text(
+                        _isProcessing ? 'CHECKING...' : 'CHECK',
+                        style: const TextStyle(
+                          color: DesignColors.backgroundDark,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: Colors.indigo,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: DesignSpacing.md,
+                        ),
+                        backgroundColor: DesignColors.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ),
@@ -452,7 +501,7 @@ class _AmharicHandwritingPageState extends State<AmharicHandwritingPage> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: DesignSpacing.lg),
           ],
         ),
       ),
@@ -468,7 +517,7 @@ class _DrawingPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.indigo
+      ..color = DesignColors.primary
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 15.0;
 
