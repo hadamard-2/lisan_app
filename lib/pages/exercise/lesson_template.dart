@@ -345,6 +345,7 @@ class _LessonTemplateState extends State<LessonTemplate>
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
+                              Navigator.of(context).pop();
                               widget.onExit?.call();
                             },
                             child: Text('Exit'),
