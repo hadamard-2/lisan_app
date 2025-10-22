@@ -23,9 +23,9 @@ class _RootScreenState extends State<RootScreen> {
 
   final _pages = [
     HomePage(),
-    FidelPracticePage(),
     LeaderboardPage(),
     UserStatsPage(),
+    FidelPracticePage(),
   ];
 
   @override
@@ -62,6 +62,7 @@ class _RootScreenState extends State<RootScreen> {
                       _buildNavItem(Symbols.home_rounded, 0),
                       _buildNavItem(Symbols.trophy, 1),
                       _buildNavItem(Symbols.person_rounded, 2),
+                      _buildFidelNavItem(3),
                     ],
                   ),
                 ),
@@ -101,6 +102,37 @@ class _RootScreenState extends State<RootScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFidelNavItem(int index) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const FidelPracticePage()),
+        );
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: 57,
+        height: 57,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: DesignColors.primary, width: 2),
+        ),
+        child: Center(
+          child: Text(
+            'ሀሁ',
+            style: TextStyle(
+              color: DesignColors.primary,
+              fontFamily: 'Neteru',
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              letterSpacing: 1,
+            ),
+          ),
         ),
       ),
     );
