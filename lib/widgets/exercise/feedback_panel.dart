@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/exercise_state.dart';
+import 'package:just_audio/just_audio.dart';
 
-class FeedbackPanel extends StatelessWidget {
+class FeedbackPanel extends StatefulWidget {
   final ExerciseState exerciseState;
   final Future<String?>? currentFeedbackMessage;
   final Future<String?>? currentCorrectAnswer;
@@ -23,22 +24,65 @@ class FeedbackPanel extends StatelessWidget {
   });
 
   @override
+  State<FeedbackPanel> createState() => _FeedbackPanelState();
+}
+
+class _FeedbackPanelState extends State<FeedbackPanel> {
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  @override
+  void initState() {
+    super.initState();
+    _playFeedbackSound();
+  }
+
+  @override
+  void didUpdateWidget(FeedbackPanel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.exerciseState != widget.exerciseState) {
+      _playFeedbackSound();
+    }
+  }
+
+  Future<void> _playFeedbackSound() async {
+    if (widget.exerciseState == ExerciseState.correct ||
+        widget.exerciseState == ExerciseState.incorrect) {
+      try {
+        final soundFile = widget.exerciseState == ExerciseState.correct
+            ? 'assets/sound_effects/correct_answer.m4a'
+            : 'assets/sound_effects/incorrect_answer.mp3';
+        
+        await _audioPlayer.setAsset(soundFile);
+        await _audioPlayer.play();
+      } catch (e) {
+        debugPrint('Error playing feedback sound: $e');
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (exerciseState != ExerciseState.correct &&
-        exerciseState != ExerciseState.incorrect &&
-        exerciseState != ExerciseState.skipped) {
+    if (widget.exerciseState != ExerciseState.correct &&
+        widget.exerciseState != ExerciseState.incorrect &&
+        widget.exerciseState != ExerciseState.skipped) {
       return const SizedBox.shrink();
     }
 
-    final isCorrect = exerciseState == ExerciseState.correct;
-    final isSkipped = exerciseState == ExerciseState.skipped;
+    final isCorrect = widget.exerciseState == ExerciseState.correct;
+    final isSkipped = widget.exerciseState == ExerciseState.skipped;
 
     return Positioned(
       left: 0,
       right: 0,
       bottom: 0,
       child: SlideTransition(
-        position: feedbackSlideAnimation,
+        position: widget.feedbackSlideAnimation,
         child: Container(
           decoration: BoxDecoration(
             color: DesignColors.backgroundCard,
@@ -101,10 +145,10 @@ class FeedbackPanel extends StatelessWidget {
                       ],
                     ),
 
-                    if (currentFeedbackMessage != null) ...[
+                    if (widget.currentFeedbackMessage != null) ...[
                       const SizedBox(height: DesignSpacing.md),
                       FutureBuilder<String?>(
-                        future: currentFeedbackMessage!,
+                        future: widget.currentFeedbackMessage!,
                         builder: (context, snapshot) {
                           if (snapshot.hasData && snapshot.data != null) {
                             return Text(
@@ -122,7 +166,7 @@ class FeedbackPanel extends StatelessWidget {
                       ),
                     ],
 
-                    if (!isCorrect && currentCorrectAnswer != null) ...[
+                    if (!isCorrect && widget.currentCorrectAnswer != null) ...[
                       const SizedBox(height: DesignSpacing.md),
                       Text(
                         'Correct Answer',
@@ -134,7 +178,7 @@ class FeedbackPanel extends StatelessWidget {
                       ),
                       const SizedBox(height: DesignSpacing.sm),
                       FutureBuilder<String?>(
-                        future: currentCorrectAnswer!,
+                        future: widget.currentCorrectAnswer!,
                         builder: (context, snapshot) {
                           if (snapshot.hasData && snapshot.data != null) {
                             return Text(
@@ -160,18 +204,18 @@ class FeedbackPanel extends StatelessWidget {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: handleContinue,
+                    onPressed: widget.handleContinue,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: buttonColor,
+                      backgroundColor: widget.buttonColor,
                       foregroundColor: DesignColors.backgroundDark,
                       elevation: 8,
-                      shadowColor: buttonColor.withValues(alpha: 0.3),
+                      shadowColor: widget.buttonColor.withValues(alpha: 0.3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: Text(
-                      buttonText,
+                      widget.buttonText,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
