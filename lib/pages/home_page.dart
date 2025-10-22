@@ -4,7 +4,7 @@ import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/lesson_node.dart';
 import 'package:lisan_app/models/lesson_type.dart';
 import 'package:lisan_app/models/unit_data.dart';
-import 'package:lisan_app/pages/fidel_practice_page.dart';
+import 'package:lisan_app/pages/practice/fidel_practice_page.dart';
 
 import 'package:lisan_app/widgets/home/adventure_path.dart';
 import 'package:lisan_app/widgets/home/current_unit_indicator.dart';

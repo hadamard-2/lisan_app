@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
+import 'package:just_audio/just_audio.dart';
 
 class FidelPracticePage extends StatelessWidget {
   const FidelPracticePage({super.key});
@@ -403,41 +404,84 @@ class FidelPracticePage extends StatelessWidget {
   }
 }
 
-class AmharicCell extends StatelessWidget {
+class AmharicCell extends StatefulWidget {
   final Map<String, String> character;
 
   const AmharicCell({super.key, required this.character});
 
   @override
+  State<AmharicCell> createState() => _AmharicCellState();
+}
+
+class _AmharicCellState extends State<AmharicCell> {
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _isPlaying = false;
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> _playAudio() async {
+    if (_isPlaying) return;
+
+    try {
+      setState(() => _isPlaying = true);
+      await _audioPlayer.setAsset(
+        'assets/fidel_audio/${widget.character['geez']}.mp3',
+      );
+      await _audioPlayer.play();
+      await _audioPlayer.positionStream.firstWhere(
+        (position) => position >= (_audioPlayer.duration ?? Duration.zero),
+      );
+      setState(() => _isPlaying = false);
+    } catch (e) {
+      print('Error playing audio: $e');
+      setState(() => _isPlaying = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: DesignColors.backgroundCard,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: DesignColors.backgroundBorder, width: 2),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            character['geez']!,
-            style: const TextStyle(
-              fontFamily: 'Neteru',
-              color: DesignColors.textPrimary,
-              fontSize: 22,
-              fontWeight: FontWeight.w500,
-            ),
+    return GestureDetector(
+      onTap: _playAudio,
+      child: Container(
+        decoration: BoxDecoration(
+          color: _isPlaying
+              ? DesignColors.primary.withValues(alpha: 0.2)
+              : DesignColors.backgroundCard,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: _isPlaying
+                ? DesignColors.primary
+                : DesignColors.backgroundBorder,
+            width: 2,
           ),
-          const SizedBox(height: 4),
-          Text(
-            character['roman']!,
-            style: const TextStyle(
-              color: DesignColors.textSecondary,
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              widget.character['geez']!,
+              style: const TextStyle(
+                fontFamily: 'Neteru',
+                color: DesignColors.textPrimary,
+                fontSize: 22,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 4),
+            Text(
+              widget.character['roman']!,
+              style: const TextStyle(
+                color: DesignColors.textSecondary,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
