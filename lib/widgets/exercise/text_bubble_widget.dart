@@ -44,7 +44,7 @@ class _TextBubbleWidgetState extends State<TextBubbleWidget> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(DesignSpacing.lg),
+      padding: const EdgeInsets.all(DesignSpacing.md),
       decoration: BoxDecoration(
         color: DesignColors.backgroundCard,
         borderRadius: BorderRadius.circular(16),

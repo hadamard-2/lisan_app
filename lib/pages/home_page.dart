@@ -29,10 +29,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _currentUnitIndex = 0;
 
   // Demo data
-  final int streakCount = 47;
+  final int streakCount = 4;
   final int hearts = 3;
   final int maxHearts = 5;
-  final String userName = "Dwight";
+  final String userName = "Jim";
 
   final List<UnitData> units = [
     UnitData(

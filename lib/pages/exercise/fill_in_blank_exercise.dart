@@ -6,6 +6,7 @@ import 'package:lisan_app/widgets/exercise/instruction_text.dart';
 import 'package:lisan_app/widgets/exercise/previous_mistake_indicator.dart';
 import 'package:lisan_app/widgets/exercise/text_choices_widget.dart';
 import 'package:lisan_app/widgets/exercise/text_bubble_widget.dart';
+import 'dart:math';
 
 class FillInBlankExercise extends ExerciseWidget {
   @override
@@ -40,11 +41,17 @@ class FillInBlankExercise extends ExerciseWidget {
 
 class _FillInBlankExerciseState extends State<FillInBlankExercise> {
   int _selectedOptionIndex = -1;
+  late final String _illustrationPath;
 
   @override
   void initState() {
     super.initState();
     widget.exerciseData.options.shuffle();
+
+    final random = Random();
+    final number = random.nextBool() ? '1' : '2';
+    final gender = random.nextBool() ? 'male' : 'female';
+    _illustrationPath = 'assets/illustrations/normal_${number}_$gender.png';
   }
 
   @override
@@ -71,7 +78,26 @@ class _FillInBlankExerciseState extends State<FillInBlankExercise> {
 
   List<Widget> _buildExerciseContent(List<Map<String, dynamic>> options) {
     return [
-      TextBubbleWidget(text: widget.exerciseData.displayText),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Illustration
+          Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(_illustrationPath, fit: BoxFit.contain),
+            ),
+          ),
+          SizedBox(width: DesignSpacing.md),
+          // Text Bubble
+          Expanded(
+            child: TextBubbleWidget(text: widget.exerciseData.displayText),
+          ),
+        ],
+      ),
       const SizedBox(height: DesignSpacing.xxxl * 2),
       TextChoicesWidget(
         options: options,

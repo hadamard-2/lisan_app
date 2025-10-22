@@ -18,8 +18,8 @@ class _UserStatsPageState extends State<UserStatsPage>
   late Animation<Offset> _slideAnimation;
 
   // Demo user data
-  final String userName = "Dwight Schrute";
-  final String userInitials = "DS";
+  final String userName = "Jim Halpert";
+  final String userInitials = "JH";
   final int streakCount = 47;
   final int totalXP = 2847;
   final String currentLeague = "Amethyst";

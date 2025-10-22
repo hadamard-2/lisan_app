@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import 'dart:math';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/lesson_stats.dart';
 import 'package:lisan_app/root_screen.dart';
@@ -20,18 +20,10 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
   late Animation<Offset> _slideAnimation;
 
   bool _isClaimingXP = false;
-  late Dio _dio;
 
   @override
   void initState() {
     super.initState();
-
-    // Initialize Dio
-    _dio = Dio();
-    // NOTE - I need to replace this with the URL Abel gives me
-    _dio.options.baseUrl = 'http://insect-famous-ghastly.ngrok-free.app/api';
-    _dio.options.connectTimeout = const Duration(seconds: 10);
-    _dio.options.receiveTimeout = const Duration(seconds: 10);
 
     _pulseController = AnimationController(
       duration: Duration(milliseconds: 2000),
@@ -61,53 +53,24 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
   Future<void> _claimXP() async {
     // if (_isClaimingXP) return; // Prevent multiple taps
 
-    // setState(() {
-    //   _isClaimingXP = true;
-    // });
-
-    // try {
-    //   final response = await _dio.post(
-    //     '/lessons/complete',
-    //     data: widget.stats.toJson(),
-    //   );
-
-    //   if (response.statusCode == 200 || response.statusCode == 201) {
-    //     // Success - show success message
-    //     if (mounted) {
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         const SnackBar(
-    //           content: Text('XP claimed successfully!'),
-    //           backgroundColor: DesignColors.success,
-    //         ),
-    //       );
-
-    //       // Navigate back or to next screen
-    //       Navigator.of(context).pop();
-    //     }
-    //   }
-    // } catch (e) {
-    //   // Handle error
-    //   if (mounted) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Text('Failed to claim XP: ${e.toString()}'),
-    //         backgroundColor: DesignColors.error,
-    //         action: SnackBarAction(label: 'RETRY', onPressed: _claimXP),
-    //       ),
-    //     );
-    //   }
-    // } finally {
-    //   if (mounted) {
-    //     setState(() {
-    //       _isClaimingXP = false;
-    //     });
-    //   }
-    // }
-
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => RootScreen()),
     );
+  }
+
+  String _getIllustrationPath() {
+    final accuracy = widget.stats.accuracy;
+    final random = Random();
+    final gender = random.nextBool() ? 'male' : 'female';
+
+    if (accuracy == 1.0) {
+      return 'assets/illustrations/joy_$gender.png';
+    } else if (accuracy >= 0.8) {
+      return 'assets/illustrations/win_$gender.png';
+    } else {
+      return 'assets/illustrations/thumbs_up_$gender.png';
+    }
   }
 
   @override
@@ -120,19 +83,19 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // Character illustration placeholder
+              // Character illustration
               Container(
-                height: 120,
+                height: 200,
                 width: double.infinity,
                 decoration: BoxDecoration(
                   color: DesignColors.backgroundCard,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.celebration_rounded,
-                    color: DesignColors.primary,
-                    size: 60,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    _getIllustrationPath(),
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),

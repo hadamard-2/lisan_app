@@ -325,7 +325,7 @@ class FidelPracticePage extends StatelessWidget {
           icon: const Icon(
             Icons.arrow_back_rounded,
             color: DesignColors.textPrimary,
-            size: 32,
+            size: 30,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
