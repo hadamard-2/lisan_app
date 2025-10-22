@@ -1,4 +1,3 @@
-// import 'package:dio/dio.dart';
 import 'dart:math';
 import 'package:json5/json5.dart' as json5;
 
@@ -56,15 +55,6 @@ class _AdventurePathState extends State<AdventurePath> {
   Map<String, ExerciseResult?> exerciseResults = {};
   late Map<String, ExerciseHandler> handlers;
 
-  // late final Dio _dio;
-
-  // // Exercise data - now fetched from API
-  // // List<Map<String, dynamic>>? exerciseData;
-  // bool isLoading = true;
-
-  // // Hardcoded lesson ID for now - replace with dynamic value from lesson tap
-  // final String lessonId = 'dde8b8c5-cd62-4c34-b970-70f2b4218b85';
-
   List<Map<String, dynamic>> exerciseData = [];
   // List<Map<String, dynamic>> newExerciseData = [];
   List<Map<String, dynamic>> matchPairsExerciseData = [];
@@ -72,14 +62,6 @@ class _AdventurePathState extends State<AdventurePath> {
   @override
   void initState() {
     super.initState();
-    // _dio = Dio(
-    //   BaseOptions(
-    //     connectTimeout: const Duration(seconds: 30),
-    //     receiveTimeout: const Duration(seconds: 30),
-    //   ),
-    // );
-    // _fetchExerciseData();
-
     _initializeData();
   }
 
@@ -170,51 +152,6 @@ class _AdventurePathState extends State<AdventurePath> {
     });
   }
 
-  // Future<void> _fetchExerciseData() async {
-  //   final String url =
-  //       'http://insect-famous-ghastly.ngrok-free.app/api/lesson-service/exercises/lesson?lesson_id=$lessonId';
-  //   final String? token = await AuthService.getAccessToken();
-
-  //   try {
-  //     final response = await _dio.post(
-  //       url,
-  //       options: Options(
-  //         headers: {
-  //           'Authorization': 'Bearer $token',
-  //           'Content-Type': 'application/json',
-  //         },
-  //       ),
-  //     );
-
-  //     if (response.statusCode == 200) {
-  //       final List<dynamic> data = response.data; // already decoded JSON
-  //       setState(() {
-  //         exerciseData = data.map((e) => e as Map<String, dynamic>).toList();
-  //         isLoading = false;
-  //         handlers = {};
-  //         for (var exercise in exerciseData!) {
-  //           handlers[exercise['id']] = ExerciseHandlerFactory.createHandler(
-  //             exercise,
-  //           );
-  //         }
-  //       });
-  //     } else {
-  //       // Handle error
-  //       setState(() {
-  //         exerciseData = [];
-  //         isLoading = false;
-  //       });
-  //       print('Failed to load exercises: ${response.statusCode}');
-  //     }
-  //   } on DioException catch (e) {
-  //     setState(() {
-  //       exerciseData = [];
-  //       isLoading = false;
-  //     });
-  //     print('Error fetching exercises: ${e.message}');
-  //   }
-  // }
-
   Widget renderMatchPairsLessonTemplate() {
     return MatchPairsLessonTemplate(
       exerciseData: MatchPairsExerciseData.fromJson(matchPairsExerciseData[0]),
@@ -231,10 +168,6 @@ class _AdventurePathState extends State<AdventurePath> {
   }
 
   Widget renderLessonTemplate() {
-    // if (isLoading || exerciseData == null) {
-    //   return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    // }
-
     return LessonTemplate(
       exercises: exerciseData.asMap().entries.map((entry) {
         final exercise = entry.value;

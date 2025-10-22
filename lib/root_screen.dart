@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lisan_app/pages/practice/fidel_practice_page.dart';
+import 'package:lisan_app/pages/exercise/fidel/fidel_practice_page.dart';
 import 'package:lisan_app/pages/home_page.dart';
 import 'package:lisan_app/pages/leaderboard_page.dart';
 import 'package:lisan_app/pages/user_stats_page.dart';

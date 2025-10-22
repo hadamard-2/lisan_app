@@ -38,38 +38,36 @@ class _FidelPronunciationChoiceExerciseContentState
                 'What sound does this make?',
                 style: TextStyle(
                   color: DesignColors.textPrimary,
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: DesignSpacing.xxxl),
 
               // Character card
-              Expanded(
-                child: Center(
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: DesignColors.primary,
-                      borderRadius: BorderRadius.circular(32),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'ቢ',
-                        style: TextStyle(
-                          fontFamily: 'Neteru',
-                          fontSize: 120,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
+              Center(
+                child: Container(
+                  width: 180,
+                  height: 180,
+                  decoration: BoxDecoration(
+                    color: DesignColors.primary,
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'ቢ',
+                      style: TextStyle(
+                        fontFamily: 'Neteru',
+                        fontSize: 100,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
                       ),
                     ),
                   ),
                 ),
               ),
 
-              const SizedBox(height: DesignSpacing.xl),
+              const SizedBox(height: DesignSpacing.xxxl),
 
               // Answer options
               Row(
@@ -87,7 +85,7 @@ class _FidelPronunciationChoiceExerciseContentState
                           });
                         },
                         child: Container(
-                          height: 72,
+                          height: 52,
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? DesignColors.backgroundBorder
@@ -105,7 +103,7 @@ class _FidelPronunciationChoiceExerciseContentState
                               option,
                               style: TextStyle(
                                 color: DesignColors.textPrimary,
-                                fontSize: 24,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

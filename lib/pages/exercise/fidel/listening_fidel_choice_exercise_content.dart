@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 
-class PronunciationFidelChoiceExerciseContent extends StatefulWidget {
-  const PronunciationFidelChoiceExerciseContent({super.key});
+class ListeningFidelChoiceExerciseContent extends StatefulWidget {
+  const ListeningFidelChoiceExerciseContent({super.key});
 
   @override
-  State<PronunciationFidelChoiceExerciseContent> createState() =>
-      _PronunciationFidelChoiceExerciseContentState();
+  State<ListeningFidelChoiceExerciseContent> createState() =>
+      _ListeningFidelChoiceExerciseContentState();
 }
 
-class _PronunciationFidelChoiceExerciseContentState
-    extends State<PronunciationFidelChoiceExerciseContent> {
+class _ListeningFidelChoiceExerciseContentState
+    extends State<ListeningFidelChoiceExerciseContent> {
   String? selectedAnswer;
 
-  final List<String> characterOptions = ['ሁ', 'ሱ', 'ባ', 'ር'];
+  final List<String> characterOptions = ['ሁ', 'ላ', 'ር', 'መ'];
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +34,32 @@ class _PronunciationFidelChoiceExerciseContentState
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Select the correct character for "su"',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                'What do you hear?',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
 
-              const SizedBox(height: DesignSpacing.xxxl),
+              SizedBox(height: DesignSpacing.xl),
+
+              // Audio button
+              Center(
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: DesignColors.primary,
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.volume_up_rounded,
+                      size: 60,
+                      color: DesignColors.backgroundDark,
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: DesignSpacing.xxl),
 
               // Character options grid
               Expanded(
@@ -77,7 +98,7 @@ class _PronunciationFidelChoiceExerciseContentState
                             style: TextStyle(
                               fontFamily: 'Neteru',
                               color: DesignColors.textPrimary,
-                              fontSize: 86,
+                              fontSize: 52,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
