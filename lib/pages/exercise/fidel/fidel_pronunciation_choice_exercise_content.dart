@@ -2,7 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 
 class FidelPronunciationChoiceExerciseContent extends StatefulWidget {
-  const FidelPronunciationChoiceExerciseContent({super.key});
+  final String character;
+  final List<String> options;
+  final String correctAnswer;
+
+  const FidelPronunciationChoiceExerciseContent({
+    super.key,
+    required this.character,
+    required this.options,
+    required this.correctAnswer,
+  });
+
+  factory FidelPronunciationChoiceExerciseContent.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    return FidelPronunciationChoiceExerciseContent(
+      character: json['character'] as String,
+      options: List<String>.from(json['options'] as List),
+      correctAnswer: json['correct_answer'] as String,
+    );
+  }
 
   @override
   State<FidelPronunciationChoiceExerciseContent> createState() =>
@@ -12,8 +31,6 @@ class FidelPronunciationChoiceExerciseContent extends StatefulWidget {
 class _FidelPronunciationChoiceExerciseContentState
     extends State<FidelPronunciationChoiceExerciseContent> {
   String? selectedAnswer;
-
-  final List<String> options = ['ta', 'bi', 'hie'];
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +72,7 @@ class _FidelPronunciationChoiceExerciseContentState
                   ),
                   child: Center(
                     child: Text(
-                      'ቢ',
+                      widget.character,
                       style: TextStyle(
                         fontFamily: 'Neteru',
                         fontSize: 100,
@@ -71,7 +88,7 @@ class _FidelPronunciationChoiceExerciseContentState
 
               // Answer options
               Row(
-                children: options.map((option) {
+                children: widget.options.map((option) {
                   final isSelected = selectedAnswer == option;
                   return Expanded(
                     child: Padding(

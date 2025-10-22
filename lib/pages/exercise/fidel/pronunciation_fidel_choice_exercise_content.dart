@@ -2,7 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 
 class PronunciationFidelChoiceExerciseContent extends StatefulWidget {
-  const PronunciationFidelChoiceExerciseContent({super.key});
+  final String pronunciation;
+  final List<String> options;
+  final String correctAnswer;
+
+  const PronunciationFidelChoiceExerciseContent({
+    super.key,
+    required this.pronunciation,
+    required this.options,
+    required this.correctAnswer,
+  });
+
+  factory PronunciationFidelChoiceExerciseContent.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    return PronunciationFidelChoiceExerciseContent(
+      pronunciation: json['pronunciation'] as String,
+      options: List<String>.from(json['options'] as List),
+      correctAnswer: json['correct_answer'] as String,
+    );
+  }
 
   @override
   State<PronunciationFidelChoiceExerciseContent> createState() =>
@@ -12,8 +31,6 @@ class PronunciationFidelChoiceExerciseContent extends StatefulWidget {
 class _PronunciationFidelChoiceExerciseContentState
     extends State<PronunciationFidelChoiceExerciseContent> {
   String? selectedAnswer;
-
-  final List<String> characterOptions = ['ሁ', 'ሴ', 'ሪ', 'ባ'];
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +51,7 @@ class _PronunciationFidelChoiceExerciseContentState
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Select the correct character for "su"',
+                'Select the correct character for "${widget.pronunciation}"',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
 
@@ -49,9 +66,9 @@ class _PronunciationFidelChoiceExerciseContentState
                     mainAxisSpacing: DesignSpacing.md,
                     childAspectRatio: 0.9,
                   ),
-                  itemCount: characterOptions.length,
+                  itemCount: widget.options.length,
                   itemBuilder: (context, index) {
-                    final character = characterOptions[index];
+                    final character = widget.options[index];
                     final isSelected = selectedAnswer == character;
 
                     return GestureDetector(

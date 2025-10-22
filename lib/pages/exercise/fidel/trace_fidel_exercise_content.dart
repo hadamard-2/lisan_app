@@ -3,7 +3,13 @@ import 'package:google_ml_kit/google_ml_kit.dart' as ml;
 import 'package:lisan_app/design/theme.dart';
 
 class TraceFidelExerciseContent extends StatefulWidget {
-  const TraceFidelExerciseContent({super.key});
+  final String targetLetter;
+
+  const TraceFidelExerciseContent({super.key, required this.targetLetter});
+
+  factory TraceFidelExerciseContent.fromJson(Map<String, dynamic> json) {
+    return TraceFidelExerciseContent(targetLetter: json['character'] as String);
+  }
 
   @override
   State<TraceFidelExerciseContent> createState() =>
@@ -21,7 +27,6 @@ class _TraceFidelExerciseContentState extends State<TraceFidelExerciseContent> {
   final List<List<ml.StrokePoint>> _allStrokes = [];
   List<ml.StrokePoint> _currentStroke = [];
 
-  final String _targetLetter = 'ቹ';
   bool? _isCorrect;
   bool _isProcessing = false;
 
@@ -194,7 +199,7 @@ class _TraceFidelExerciseContentState extends State<TraceFidelExerciseContent> {
         // Check if any of the top 5 candidates match the target
         setState(() {
           _isCorrect = topCandidates.any(
-            (candidate) => candidate.text == _targetLetter,
+            (candidate) => candidate.text == widget.targetLetter,
           );
         });
       } else {
@@ -296,7 +301,7 @@ class _TraceFidelExerciseContentState extends State<TraceFidelExerciseContent> {
             // Target Letter Display with Audio
             Center(
               child: Text(
-                _targetLetter,
+                widget.targetLetter,
                 style: const TextStyle(
                   fontFamily: 'Neteru',
                   fontSize: 40,
@@ -331,7 +336,7 @@ class _TraceFidelExerciseContentState extends State<TraceFidelExerciseContent> {
                             // Background guide letter with dashed style
                             Center(
                               child: Text(
-                                _targetLetter,
+                                widget.targetLetter,
                                 style: TextStyle(
                                   fontFamily: 'Geez Handwriting Dots',
                                   fontSize: 300,

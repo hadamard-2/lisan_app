@@ -2,7 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 
 class ListeningFidelChoiceExerciseContent extends StatefulWidget {
-  const ListeningFidelChoiceExerciseContent({super.key});
+  final String audioAssetPath;
+  final List<String> options;
+  final String correctAnswer;
+
+  const ListeningFidelChoiceExerciseContent({
+    super.key,
+    required this.audioAssetPath,
+    required this.options,
+    required this.correctAnswer,
+  });
+
+  factory ListeningFidelChoiceExerciseContent.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    return ListeningFidelChoiceExerciseContent(
+      audioAssetPath: json['audio_asset_path'] as String,
+      options: List<String>.from(json['options'] as List),
+      correctAnswer: json['correct_answer'] as String,
+    );
+  }
 
   @override
   State<ListeningFidelChoiceExerciseContent> createState() =>
@@ -12,8 +31,6 @@ class ListeningFidelChoiceExerciseContent extends StatefulWidget {
 class _ListeningFidelChoiceExerciseContentState
     extends State<ListeningFidelChoiceExerciseContent> {
   String? selectedAnswer;
-
-  final List<String> characterOptions = ['ሁ', 'ላ', 'ር', 'መ'];
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +87,9 @@ class _ListeningFidelChoiceExerciseContentState
                     mainAxisSpacing: DesignSpacing.md,
                     childAspectRatio: 0.9,
                   ),
-                  itemCount: characterOptions.length,
+                  itemCount: widget.options.length,
                   itemBuilder: (context, index) {
-                    final character = characterOptions[index];
+                    final character = widget.options[index];
                     final isSelected = selectedAnswer == character;
 
                     return GestureDetector(

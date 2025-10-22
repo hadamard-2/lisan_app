@@ -332,7 +332,7 @@ List<Map<String, String>> getRandomFidels(
 }
 
 // 1. Trace Fidel Exercise
-String generateTraceFidelExercise() {
+Map<String, dynamic> generateTraceFidelChoiceExerciseData() {
   final fidel = getRandomFidel();
 
   final exercise = {
@@ -340,12 +340,12 @@ String generateTraceFidelExercise() {
     'character': fidel['geez'],
   };
 
-  return jsonEncode(exercise);
+  return exercise;
 }
 
 // 2. Fidel-Pronunciation Choice Exercise
 // Show a Ge'ez character, user picks the correct pronunciation
-String generateFidelPronunciationExercise() {
+Map<String, dynamic> generateFidelPronunciationChoiceExerciseData() {
   final correctFidel = getRandomFidel();
   final distractors = getRandomFidels(2, exclude: correctFidel);
 
@@ -364,12 +364,12 @@ String generateFidelPronunciationExercise() {
     'correct_answer': correctFidel['roman'],
   };
 
-  return jsonEncode(exercise);
+  return exercise;
 }
 
 // 3. Pronunciation-Fidel Choice Exercise
 // Show a romanization, user picks the correct Ge'ez character
-String generatePronunciationFidelExercise() {
+Map<String, dynamic> generatePronunciationFidelChoiceExerciseData() {
   final correctFidel = getRandomFidel();
   final distractors = getRandomFidels(3, exclude: correctFidel);
 
@@ -385,12 +385,12 @@ String generatePronunciationFidelExercise() {
     'correct_answer': correctFidel['geez'],
   };
 
-  return jsonEncode(exercise);
+  return exercise;
 }
 
 // 4. Listening Fidel Choice Exercise
 // User hears audio, picks the correct Ge'ez character
-String generateListeningFidelExercise() {
+Map<String, dynamic> generateListeningFidelChoiceExerciseData() {
   final correctFidel = getRandomFidel();
   final distractors = getRandomFidels(3, exclude: correctFidel);
 
@@ -406,17 +406,57 @@ String generateListeningFidelExercise() {
     'correct_answer': correctFidel['geez'],
   };
 
-  return jsonEncode(exercise);
+  return exercise;
 }
 
-// Example usage:
+List<Map<String, dynamic>> generateFidelLesson() {
+  // Generate 2 exercises of each type
+  final exercises = [
+    // TraceFidelChoiceExercise
+    generateTraceFidelChoiceExerciseData(),
+    generateTraceFidelChoiceExerciseData(),
+    // FidelPronunciationChoiceExercise
+    generateFidelPronunciationChoiceExerciseData(),
+    generateFidelPronunciationChoiceExerciseData(),
+    // PronunciationFidelChoiceExercise
+    generatePronunciationFidelChoiceExerciseData(),
+    generatePronunciationFidelChoiceExerciseData(),
+    // ListeningFidelChoiceExercise
+    generateListeningFidelChoiceExerciseData(),
+    generateListeningFidelChoiceExerciseData(),
+  ];
+  
+  // Shuffle the exercises to randomize the order
+  exercises.shuffle();
+  
+  return exercises;
+}
+
 void main() {
-  print('=== Trace Fidel ===');
-  print(JsonEncoder.withIndent('  ').convert(jsonDecode(generateTraceFidelExercise())));
-  print('\n=== Fidel-Pronunciation Choice ===');
-  print(JsonEncoder.withIndent('  ').convert(jsonDecode(generateFidelPronunciationExercise())));
-  print('\n=== Pronunciation-Fidel Choice ===');
-  print(JsonEncoder.withIndent('  ').convert(jsonDecode(generatePronunciationFidelExercise())));
-  print('\n=== Listening Fidel Choice ===');
-  print(JsonEncoder.withIndent('  ').convert(jsonDecode(generateListeningFidelExercise())));
+  // Build a list of exercises
+  final exercises = [
+    {
+      'title': 'Trace Fidel',
+      'data': generateTraceFidelChoiceExerciseData(),
+    },
+    {
+      'title': 'Fidel-Pronunciation Choice',
+      'data': generateFidelPronunciationChoiceExerciseData(),
+    },
+    {
+      'title': 'Pronunciation-Fidel Choice',
+      'data': generatePronunciationFidelChoiceExerciseData(),
+    },
+    {
+      'title': 'Listening Fidel Choice',
+      'data': generateListeningFidelChoiceExerciseData(),
+    },
+  ];
+
+  // Print the list by iterating on it
+  for (final exercise in exercises) {
+    print('=== ${exercise['title']} ===');
+    print(JsonEncoder.withIndent('  ').convert(exercise['data']!));
+    print('');
+  }
 }
