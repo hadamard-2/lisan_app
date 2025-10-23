@@ -87,7 +87,7 @@ class _LessonTemplateState extends State<LessonTemplate>
       vsync: this,
     );
     _transitionController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
 

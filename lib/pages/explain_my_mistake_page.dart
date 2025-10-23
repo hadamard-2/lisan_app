@@ -102,6 +102,13 @@ class _ExplainMyMistakeState extends State<ExplainMyMistake> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.close_rounded),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        surfaceTintColor: Colors.transparent,
+      ),
       body: SafeArea(
         child: Column(
           children: [

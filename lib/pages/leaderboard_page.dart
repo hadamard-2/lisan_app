@@ -6,7 +6,6 @@ class User {
   final int id;
   final String name;
   final int xp;
-  final String country;
   final int streak;
   final bool online;
 
@@ -14,7 +13,6 @@ class User {
     required this.id,
     required this.name,
     required this.xp,
-    required this.country,
     required this.streak,
     this.online = false,
   });
@@ -30,34 +28,13 @@ class LeaderboardPage extends StatefulWidget {
 class _LeaderboardPageState extends State<LeaderboardPage> {
   // Mock data matching the screenshot
   final List<User> mockUsers = [
-    User(
-      id: 1,
-      name: 'Salmann',
-      xp: 1145,
-      country: '🇺🇸',
-      streak: 28,
-      online: true,
-    ),
-    User(id: 2, name: 'Rawand Alammori', xp: 1135, country: '🇫🇷', streak: 8),
-    User(id: 3, name: 'Iyob G.', xp: 1091, country: '🇫🇷', streak: 31),
-    User(
-      id: 4,
-      name: 'kübra',
-      xp: 636,
-      country: '🇺🇸',
-      streak: 15,
-      online: true,
-    ),
-    User(id: 5, name: 'алиса', xp: 375, country: '🇪🇸', streak: 11),
-    User(
-      id: 6,
-      name: 'Den Kot',
-      xp: 297,
-      country: '🇺🇸',
-      streak: 15,
-      online: true,
-    ),
-    User(id: 7, name: 'Yarenn Altaş', xp: 0, country: '🇺🇸', streak: 16),
+    User(id: 1, name: 'Salmann', xp: 1145, streak: 28, online: true),
+    User(id: 2, name: 'Rawand Alammori', xp: 1135, streak: 8),
+    User(id: 3, name: 'Iyob G.', xp: 1091, streak: 31),
+    User(id: 4, name: 'kübra', xp: 636, streak: 15, online: true),
+    User(id: 5, name: 'алиса', xp: 375, streak: 11),
+    User(id: 6, name: 'Den Kot', xp: 297, streak: 15, online: true),
+    User(id: 7, name: 'Yarenn Altaş', xp: 0, streak: 16),
   ];
 
   @override
@@ -355,19 +332,13 @@ class LeaderboardItem extends StatelessWidget {
 
                 SizedBox(height: 2),
 
-                Row(
-                  children: [
-                    Text(user.country, style: TextStyle(fontSize: 14)),
-                    SizedBox(width: DesignSpacing.xs),
-                    Text(
-                      user.streak.toString(),
-                      style: TextStyle(
-                        color: DesignColors.textTertiary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                Text(
+                  '${user.streak} 🔥',
+                  style: TextStyle(
+                    color: DesignColors.textTertiary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),

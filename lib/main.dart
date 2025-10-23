@@ -62,8 +62,7 @@ class _MyAppState extends State<MyApp> {
             );
           } else {
             final isLoggedIn = snapshot.data ?? false;
-            return ExplainMyMistake();
-            // return isLoggedIn ? LoginPage() : RootScreen();
+            return isLoggedIn ? RootScreen() : LoginPage();
           }
         },
       ),

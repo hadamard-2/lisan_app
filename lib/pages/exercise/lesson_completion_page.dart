@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/lesson_stats.dart';
 import 'package:lisan_app/root_screen.dart';
+import 'package:lisan_app/services/auth_service.dart';
+import 'package:lisan_app/services/notification_service.dart';
 
 class LessonCompletionPage extends StatefulWidget {
   final LessonStats stats;
@@ -20,6 +22,7 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
   late Animation<Offset> _slideAnimation;
 
   bool _isClaimingXP = false;
+  final NotificationService _notificationService = NotificationService();
 
   @override
   void initState() {
@@ -41,6 +44,16 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
         );
 
     _slideController.forward();
+
+    // Call async method without awaiting
+    _initializeNotificationService();
+  }
+
+  Future<void> _initializeNotificationService() async {
+    final token = await AuthService.getAccessToken();
+    if (token != null && mounted) {
+      _notificationService.setAccessToken(token);
+    }
   }
 
   @override
@@ -51,12 +64,65 @@ class _LessonCompletionPageState extends State<LessonCompletionPage>
   }
 
   Future<void> _claimXP() async {
-    // if (_isClaimingXP) return; // Prevent multiple taps
+    if (_isClaimingXP) return; // Prevent multiple taps
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => RootScreen()),
-    );
+    setState(() {
+      _isClaimingXP = true;
+    });
+
+    try {
+      // Complete the lesson
+      final success = await _notificationService.completeLesson(
+        '31eca335-5566-4d4d-bf88-c908cef3e3c7',
+      );
+
+      if (success) {
+        // Show success message (optional)
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('XP claimed successfully!'),
+              backgroundColor: DesignColors.success,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      } else {
+        // Show error message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to claim XP. Please try again.'),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error claiming XP: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('An error occurred. Please try again.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isClaimingXP = false;
+        });
+
+        // Navigate to home screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => RootScreen()),
+        );
+      }
+    }
   }
 
   String _getIllustrationPath() {
