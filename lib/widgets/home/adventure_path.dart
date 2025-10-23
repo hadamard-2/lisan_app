@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:json5/json5.dart' as json5;
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -231,7 +232,6 @@ class _AdventurePathState extends State<AdventurePath> {
       ),
 
       validateAnswer: (String id) async {
-        // Only call once and cache the result
         if (exerciseResults[id] == null) {
           exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
             exerciseAnswers[id],
@@ -241,7 +241,6 @@ class _AdventurePathState extends State<AdventurePath> {
       },
 
       getFeedbackMessage: (String id) async {
-        // Use cached result
         if (exerciseResults[id] == null) {
           exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
             exerciseAnswers[id],
@@ -251,7 +250,6 @@ class _AdventurePathState extends State<AdventurePath> {
       },
 
       getCorrectAnswer: (String id) async {
-        // Use cached result
         if (exerciseResults[id] == null) {
           exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
             exerciseAnswers[id],
@@ -260,14 +258,79 @@ class _AdventurePathState extends State<AdventurePath> {
         return exerciseResults[id]!.correctAnswer;
       },
 
+      // Add AI context generator
+      getAIContext: (String id) async {
+        // Get the exercise data
+        final exercise = exerciseData.firstWhere((e) => e['id'] == id);
+
+        // Get the user's answer
+        final userAnswer = exerciseAnswers[id];
+
+        // Get the correct answer
+        if (exerciseResults[id] == null) {
+          exerciseResults[id] = await handlers[id]!.validateAndGetFeedback(
+            userAnswer,
+          );
+        }
+        final correctAnswer = exerciseResults[id]!.correctAnswer;
+
+        // Format the context based on exercise type
+        String questionText = _formatQuestionForAI(exercise, userAnswer);
+
+        return '''
+I got this ${exercise['type']} exercise wrong:
+
+$questionText
+
+My Answer: ${_formatUserAnswer(exercise['type'], userAnswer)}
+Correct Answer: $correctAnswer
+
+Please explain my mistake briefly and help me understand why the correct answer is right.
+''';
+      },
+
       onExerciseRequeued: (String id) {
         print('Exercise requeued for additional practice');
         setState(() {
           exerciseAnswers.remove(id);
-          exerciseResults.remove(id); // Clear cached result
+          exerciseResults.remove(id);
         });
       },
     );
+  }
+
+String _formatQuestionForAI(
+  Map<String, dynamic> exercise,
+  dynamic userAnswer,
+) {
+  // Create a JsonEncoder with indentation for pretty printing
+  const encoder = JsonEncoder.withIndent('  ');
+  
+  switch (exercise['type']) {
+    case 'translation':
+      final data = exercise['data'] as Map<String, dynamic>;
+      return 'Question: Translate "${encoder.convert(data)}"';
+    case 'complete_sentence':
+      final data = exercise['data'] as Map<String, dynamic>;
+      return 'Question: Complete the sentence: "${encoder.convert(data)}"';
+    case 'fill_in_blank':
+      final data = exercise['data'] as Map<String, dynamic>;
+      return 'Question: Fill in the blank: "${encoder.convert(data)}"';
+    default:
+      return 'Question: ${encoder.convert(exercise)}';
+  }
+}
+
+  String _formatUserAnswer(String exerciseType, dynamic answer) {
+    if (answer == null) return '(No answer provided)';
+
+    switch (exerciseType) {
+      case 'fill_in_blank':
+      case 'picture_multiple_choice':
+        return 'Option $answer';
+      default:
+        return answer.toString();
+    }
   }
 
   // Mathematical positioning for smooth curves

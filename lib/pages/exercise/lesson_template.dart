@@ -9,7 +9,7 @@ import 'package:lisan_app/models/lesson_stats.dart';
 
 class LessonTemplate extends StatefulWidget {
   final List<Widget> exercises;
-  final double? initialProgress; // Optional: override auto-calculated progress
+  final double? initialProgress;
   final int hearts;
   final bool requeueIncorrectAnswers;
 
@@ -20,10 +20,12 @@ class LessonTemplate extends StatefulWidget {
   final Function(int currentIndex, int totalRemaining)? onExerciseComplete;
   final Function(String id)? onExerciseRequeued;
 
-  // Per-exercise data (functions that take current exercise index)
+  // Per-exercise data
   final Future<String?> Function(String id)? getFeedbackMessage;
   final Future<String?> Function(String id)? getCorrectAnswer;
   final Future<bool> Function(String id)? validateAnswer;
+  // Add callback to generate AI context
+  final Future<String> Function(String id)? getAIContext;
 
   const LessonTemplate({
     super.key,
@@ -38,6 +40,7 @@ class LessonTemplate extends StatefulWidget {
     this.getFeedbackMessage,
     this.getCorrectAnswer,
     this.validateAnswer,
+    this.getAIContext,
   });
 
   @override
@@ -143,10 +146,18 @@ class _LessonTemplateState extends State<LessonTemplate>
     return widget.getFeedbackMessage?.call(_currentExercise.exerciseData.id);
   }
 
-  /// Only fetch the “correct answer” when we’re showing incorrect feedback.
+  /// Only fetch the "correct answer" when we're showing incorrect feedback.
   Future<String?>? get _currentCorrectAnswer {
     if (_exerciseState != ExerciseState.incorrect) return null;
     return widget.getCorrectAnswer?.call(_currentExercise.exerciseData.id);
+  }
+
+  Future<String> Function()? get _currentAIContext {
+    if (_exerciseState != ExerciseState.incorrect ||
+        widget.getAIContext == null) {
+      return null;
+    }
+    return () => widget.getAIContext!(_currentExercise.exerciseData.id);
   }
 
   void _handleSkip() {
@@ -389,6 +400,7 @@ class _LessonTemplateState extends State<LessonTemplate>
               feedbackSlideAnimation: _feedbackSlideAnimation,
               buttonText: _getButtonText(),
               buttonColor: _getButtonColor(),
+              getAIContext: _currentAIContext,
             ),
           ],
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/models/exercise_state.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:lisan_app/pages/explain_my_mistake_page.dart';
 
 class FeedbackPanel extends StatefulWidget {
   final ExerciseState exerciseState;
@@ -11,6 +12,8 @@ class FeedbackPanel extends StatefulWidget {
   final Animation<Offset> feedbackSlideAnimation;
   final String buttonText;
   final Color buttonColor;
+  // Add callback to get AI context
+  final Future<String> Function()? getAIContext;
 
   const FeedbackPanel({
     super.key,
@@ -21,6 +24,7 @@ class FeedbackPanel extends StatefulWidget {
     required this.feedbackSlideAnimation,
     required this.buttonText,
     required this.buttonColor,
+    this.getAIContext,
   });
 
   @override
@@ -51,12 +55,28 @@ class _FeedbackPanelState extends State<FeedbackPanel> {
         final soundFile = widget.exerciseState == ExerciseState.correct
             ? 'assets/sound_effects/correct_answer.m4a'
             : 'assets/sound_effects/incorrect_answer.mp3';
-        
+
         await _audioPlayer.setAsset(soundFile);
         await _audioPlayer.play();
       } catch (e) {
         debugPrint('Error playing feedback sound: $e');
       }
+    }
+  }
+
+  void _openAIExplanation() async {
+    if (widget.getAIContext != null) {
+      final contextMessage = await widget.getAIContext!();
+
+      if (!mounted) return;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              ExplainMyMistake(initialMessage: contextMessage),
+        ),
+      );
     }
   }
 
@@ -199,30 +219,71 @@ class _FeedbackPanelState extends State<FeedbackPanel> {
 
               // Button Section
               Container(
-                padding: const EdgeInsets.all(DesignSpacing.md),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: widget.handleContinue,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: widget.buttonColor,
-                      foregroundColor: DesignColors.backgroundDark,
-                      elevation: 8,
-                      shadowColor: widget.buttonColor.withValues(alpha: 0.3),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                padding: const EdgeInsets.fromLTRB(DesignSpacing.md, 0, DesignSpacing.md, DesignSpacing.md),
+                child: Column(
+                  children: [
+                    // AI Help Button (only show for incorrect answers)
+                    if (!isCorrect &&
+                        !isSkipped &&
+                        widget.getAIContext != null) ...[
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: OutlinedButton.icon(
+                          onPressed: _openAIExplanation,
+                          icon: const Icon(Icons.psychology_rounded, size: 20),
+                          label: const Text(
+                            'Explain My Mistake',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: DesignColors.primary,
+                            side: BorderSide(
+                              color: DesignColors.primary.withValues(
+                                alpha: 0.5,
+                              ),
+                              width: 1.5,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: DesignSpacing.sm),
+                    ],
+
+                    // Continue Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: widget.handleContinue,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: widget.buttonColor,
+                          foregroundColor: DesignColors.backgroundDark,
+                          elevation: 8,
+                          shadowColor: widget.buttonColor.withValues(
+                            alpha: 0.3,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          widget.buttonText,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
                       ),
                     ),
-                    child: Text(
-                      widget.buttonText,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
               ),
             ],

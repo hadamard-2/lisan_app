@@ -4,7 +4,9 @@ import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:lisan_app/design/theme.dart';
 
 class ExplainMyMistake extends StatefulWidget {
-  const ExplainMyMistake({super.key});
+  final String? initialMessage;
+
+  const ExplainMyMistake({super.key, this.initialMessage});
 
   @override
   State<ExplainMyMistake> createState() => _ExplainMyMistakeState();
@@ -24,6 +26,8 @@ class _ExplainMyMistakeState extends State<ExplainMyMistake> {
   @override
   void initState() {
     super.initState();
+
+    // Add initial welcome message
     _messages.add(
       ChatMessage(
         text:
@@ -32,6 +36,14 @@ class _ExplainMyMistakeState extends State<ExplainMyMistake> {
         timestamp: DateTime.now(),
       ),
     );
+
+    // If there's an initial message, send it automatically
+    if (widget.initialMessage != null && widget.initialMessage!.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _controller.text = widget.initialMessage!;
+        _sendMessage();
+      });
+    }
   }
 
   void _sendMessage() {
