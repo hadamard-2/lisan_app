@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
+
 import 'package:lisan_app/design/theme.dart';
 import 'package:lisan_app/pages/auth/login_page.dart';
+import 'package:lisan_app/pages/explain_my_mistake_page.dart';
 
 import 'package:lisan_app/root_screen.dart';
 import 'package:lisan_app/services/auth_service.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load();
+  Gemini.init(apiKey: dotenv.env['GEMINI_API_KEY']!);
+
   runApp(MyApp());
 }
 
@@ -52,7 +62,7 @@ class _MyAppState extends State<MyApp> {
             );
           } else {
             final isLoggedIn = snapshot.data ?? false;
-            return RootScreen();
+            return ExplainMyMistake();
             // return isLoggedIn ? LoginPage() : RootScreen();
           }
         },

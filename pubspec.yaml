@@ -44,6 +44,10 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   json5: ^0.8.2
   google_ml_kit: ^0.20.0
+  chapasdk: ^0.0.8+1
+  flutter_gemini: ^3.0.0
+  flutter_dotenv: ^6.0.0
+  gpt_markdown: ^1.1.4
 
 dev_dependencies:
   flutter_test:
@@ -82,6 +86,7 @@ flutter:
     - assets/fidel_audio/
     - assets/sound_effects/
     - assets/illustrations/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

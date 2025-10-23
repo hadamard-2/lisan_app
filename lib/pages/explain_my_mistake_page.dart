@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:lisan_app/design/theme.dart';
 
 class ExplainMyMistake extends StatefulWidget {
@@ -12,14 +14,20 @@ class _ExplainMyMistakeState extends State<ExplainMyMistake> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<ChatMessage> _messages = [];
+  final Gemini _gemini = Gemini.instance;
   bool _isTyping = false;
+
+  // Constants
+  static const _scrollDelay = Duration(milliseconds: 100);
+  static const _scrollDuration = Duration(milliseconds: 300);
 
   @override
   void initState() {
     super.initState();
     _messages.add(
       ChatMessage(
-        text: "Hello! I'm your AI assistant. How can I help you today?",
+        text:
+            "Hello! I'm your AI assistant. I can help explain mistakes, answer questions, and have conversations with you. How can I help you today?",
         isUser: false,
         timestamp: DateTime.now(),
       ),
@@ -29,54 +37,62 @@ class _ExplainMyMistakeState extends State<ExplainMyMistake> {
   void _sendMessage() {
     if (_controller.text.trim().isEmpty) return;
 
+    final userMessage = _controller.text.trim();
+
     setState(() {
       _messages.add(
-        ChatMessage(
-          text: _controller.text,
-          isUser: true,
-          timestamp: DateTime.now(),
-        ),
+        ChatMessage(text: userMessage, isUser: true, timestamp: DateTime.now()),
       );
       _isTyping = true;
     });
 
-    final userMessage = _controller.text;
     _controller.clear();
-
     _scrollToBottom();
 
-    // Simulate AI response
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      setState(() {
-        _messages.add(
-          ChatMessage(
-            text: _generateResponse(userMessage),
-            isUser: false,
-            timestamp: DateTime.now(),
-          ),
-        );
-        _isTyping = false;
-      });
-      _scrollToBottom();
-    });
-  }
+    // Send message to Gemini AI using non-streaming for complete response
+    _gemini
+        .prompt(parts: [Part.text(userMessage)])
+        .then((response) {
+          if (!mounted) return;
 
-  String _generateResponse(String input) {
-    final responses = [
-      "That's an interesting question! Let me think about that...",
-      "I understand what you're asking. Here's what I think...",
-      "Great question! Based on what you've shared...",
-      "Thanks for asking! Here's my take on that...",
-    ];
-    return responses[DateTime.now().millisecond % responses.length];
+          setState(() {
+            _messages.add(
+              ChatMessage(
+                text:
+                    response?.output ??
+                    'Sorry, I could not generate a response.',
+                isUser: false,
+                timestamp: DateTime.now(),
+              ),
+            );
+            _isTyping = false;
+          });
+          _scrollToBottom();
+        })
+        .catchError((error) {
+          if (!mounted) return;
+
+          setState(() {
+            _messages.add(
+              ChatMessage(
+                text:
+                    "Sorry, I encountered an error: ${error.toString()}. Please try again.",
+                isUser: false,
+                timestamp: DateTime.now(),
+              ),
+            );
+            _isTyping = false;
+          });
+          _scrollToBottom();
+        });
   }
 
   void _scrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 100), () {
+    Future.delayed(_scrollDelay, () {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
+          duration: _scrollDuration,
           curve: Curves.easeOut,
         );
       }
@@ -89,89 +105,87 @@ class _ExplainMyMistakeState extends State<ExplainMyMistake> {
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: DesignSpacing.lg),
+            const SizedBox(height: DesignSpacing.lg),
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
                 padding: const EdgeInsets.all(DesignSpacing.md),
                 itemCount: _messages.length + (_isTyping ? 1 : 0),
                 itemBuilder: (context, index) {
-                  if (index == _messages.length && _isTyping) {
+                  if (index == _messages.length) {
                     return const TypingIndicator();
                   }
                   return MessageBubble(message: _messages[index]);
                 },
               ),
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: DesignColors.backgroundCard,
-                border: Border(
-                  top: BorderSide(
-                    color: DesignColors.backgroundBorder,
-                    width: 1,
-                  ),
-                ),
-              ),
-              padding: const EdgeInsets.all(DesignSpacing.md),
-              child: SafeArea(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: DesignColors.backgroundDark,
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                            color: DesignColors.backgroundBorder,
-                            width: 1,
-                          ),
-                        ),
-                        child: TextField(
-                          controller: _controller,
-                          style: const TextStyle(
-                            color: DesignColors.textPrimary,
-                          ),
-                          decoration: const InputDecoration(
-                            hintText: 'Type a message...',
-                            hintStyle: TextStyle(
-                              color: DesignColors.textTertiary,
-                            ),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: DesignSpacing.md,
-                              vertical: DesignSpacing.sm,
-                            ),
-                          ),
-                          maxLines: null,
-                          textInputAction: TextInputAction.send,
-                          onSubmitted: (_) => _sendMessage(),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: DesignSpacing.sm),
-                    GestureDetector(
-                      onTap: _sendMessage,
-                      child: Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: DesignColors.primary,
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: const Icon(
-                          Icons.arrow_upward_rounded,
-                          color: DesignColors.backgroundDark,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            _buildInputArea(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildInputArea() {
+    return Container(
+      decoration: BoxDecoration(
+        color: DesignColors.backgroundCard,
+        border: Border(
+          top: BorderSide(color: DesignColors.backgroundBorder, width: 1),
+        ),
+      ),
+      padding: const EdgeInsets.all(DesignSpacing.md),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: DesignColors.backgroundDark,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: DesignColors.backgroundBorder,
+                  width: 1,
+                ),
+              ),
+              child: TextField(
+                controller: _controller,
+                enabled: !_isTyping,
+                style: const TextStyle(color: DesignColors.textPrimary),
+                decoration: const InputDecoration(
+                  hintText: 'Type a message...',
+                  hintStyle: TextStyle(color: DesignColors.textTertiary),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: DesignSpacing.md,
+                    vertical: DesignSpacing.sm,
+                  ),
+                ),
+                maxLines: null,
+                textInputAction: TextInputAction.send,
+                onSubmitted: (_) => _sendMessage(),
+              ),
+            ),
+          ),
+          const SizedBox(width: DesignSpacing.sm),
+          GestureDetector(
+            onTap: _isTyping ? null : _sendMessage,
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: _isTyping
+                    ? DesignColors.textTertiary
+                    : DesignColors.primary,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: const Icon(
+                Icons.arrow_upward_rounded,
+                color: DesignColors.backgroundDark,
+                size: 24,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -189,6 +203,8 @@ class MessageBubble extends StatelessWidget {
 
   const MessageBubble({super.key, required this.message});
 
+  static const _messagePadding = DesignSpacing.sm + 4.0;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -197,36 +213,44 @@ class MessageBubble extends StatelessWidget {
         mainAxisAlignment: message.isUser
             ? MainAxisAlignment.end
             : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Flexible(
             child: Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: DesignSpacing.md,
-                vertical: DesignSpacing.sm + 4,
+                vertical: _messagePadding,
               ),
               decoration: BoxDecoration(
                 color: message.isUser
                     ? DesignColors.primary
                     : DesignColors.backgroundCard,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: message.isUser
-                      ? DesignColors.primary
-                      : DesignColors.backgroundBorder,
-                  width: 1,
-                ),
+                border: message.isUser
+                    ? null
+                    : Border.all(
+                        color: DesignColors.backgroundBorder,
+                        width: 1,
+                      ),
               ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  color: message.isUser
-                      ? DesignColors.backgroundDark
-                      : DesignColors.textPrimary,
-                  fontSize: 15,
-                  height: 1.4,
-                ),
-              ),
+              child: message.isUser
+                  ? Text(
+                      message.text,
+                      style: const TextStyle(
+                        color: DesignColors.backgroundDark,
+                        fontSize: 15,
+                        height: 1.4,
+                      ),
+                    )
+                  : SelectionArea(
+                      child: GptMarkdown(
+                        message.text,
+                        style: const TextStyle(
+                          color: DesignColors.textPrimary,
+                          fontSize: 15,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
             ),
           ),
         ],
@@ -246,6 +270,12 @@ class _TypingIndicatorState extends State<TypingIndicator>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
+  static const _messagePadding = DesignSpacing.sm + 4.0;
+  static const _dotCount = 3;
+  static const _dotSize = 8.0;
+  static const _dotSpacing = 2.0;
+  static const _animationDelay = 0.2;
+
   @override
   void initState() {
     super.initState();
@@ -260,12 +290,11 @@ class _TypingIndicatorState extends State<TypingIndicator>
     return Padding(
       padding: const EdgeInsets.only(bottom: DesignSpacing.md),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.symmetric(
               horizontal: DesignSpacing.md,
-              vertical: DesignSpacing.sm + 4,
+              vertical: _messagePadding,
             ),
             decoration: BoxDecoration(
               color: DesignColors.backgroundCard,
@@ -280,17 +309,20 @@ class _TypingIndicatorState extends State<TypingIndicator>
               builder: (context, child) {
                 return Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: List.generate(3, (index) {
-                    final delay = index * 0.2;
+                  children: List.generate(_dotCount, (index) {
+                    final delay = index * _animationDelay;
                     final value = (_controller.value - delay) % 1.0;
                     final opacity = value < 0.5 ? value * 2 : 2 - value * 2;
+
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: _dotSpacing,
+                      ),
                       child: Opacity(
                         opacity: opacity.clamp(0.3, 1.0),
                         child: Container(
-                          width: 8,
-                          height: 8,
+                          width: _dotSize,
+                          height: _dotSize,
                           decoration: const BoxDecoration(
                             color: DesignColors.textSecondary,
                             shape: BoxShape.circle,
